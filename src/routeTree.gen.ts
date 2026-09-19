@@ -27,6 +27,7 @@ import { Route as AppAgentRouteImport } from './routes/app.agent'
 import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-settings'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
+import { Route as AppContextRouteImport } from './routes/app.context'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppHelpRouteImport } from './routes/app.help'
 import { Route as AppIntegrityRouteImport } from './routes/app.integrity'
@@ -42,6 +43,7 @@ import { Route as AppProtectedRouteImport } from './routes/app.protected'
 import { Route as AppRecurringRouteImport } from './routes/app.recurring'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
+import { Route as AppStrategyRouteImport } from './routes/app.strategy'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppWalletsRouteImport } from './routes/app.wallets'
 import { Route as AppAccountsIndexRouteImport } from './routes/app.accounts.index'
@@ -152,6 +154,11 @@ const AppAutomationsRoute = AppAutomationsRouteImport.update({
   path: '/automations',
   getParentRoute: () => AppRoute,
 } as any)
+const AppContextRoute = AppContextRouteImport.update({
+  id: '/context',
+  path: '/context',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
   id: '/goals',
   path: '/goals',
@@ -225,6 +232,11 @@ const AppReportsRoute = AppReportsRouteImport.update({
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppStrategyRoute = AppStrategyRouteImport.update({
+  id: '/strategy',
+  path: '/strategy',
   getParentRoute: () => AppRoute,
 } as any)
 const AppTransactionsRoute = AppTransactionsRouteImport.update({
@@ -342,6 +354,7 @@ export interface FileRoutesByFullPath {
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
+  '/app/context': typeof AppContextRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
@@ -357,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRouteWithChildren
   '/app/': typeof AppIndexRoute
@@ -392,6 +406,7 @@ export interface FileRoutesByTo {
   '/app/activity': typeof AppActivityRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/automations': typeof AppAutomationsRoute
+  '/app/context': typeof AppContextRoute
   '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
@@ -404,6 +419,7 @@ export interface FileRoutesByTo {
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
   '/app': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
@@ -443,6 +459,7 @@ export interface FileRoutesById {
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
+  '/app/context': typeof AppContextRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
@@ -458,6 +475,7 @@ export interface FileRoutesById {
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
+  '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRouteWithChildren
   '/app/': typeof AppIndexRoute
@@ -499,6 +517,7 @@ export interface FileRouteTypes {
     | '/app/agent-settings'
     | '/app/analytics'
     | '/app/automations'
+    | '/app/context'
     | '/app/goals'
     | '/app/help'
     | '/app/integrity'
@@ -514,6 +533,7 @@ export interface FileRouteTypes {
     | '/app/recurring'
     | '/app/reports'
     | '/app/settings'
+    | '/app/strategy'
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
@@ -549,6 +569,7 @@ export interface FileRouteTypes {
     | '/app/activity'
     | '/app/agent-settings'
     | '/app/automations'
+    | '/app/context'
     | '/app/help'
     | '/app/integrity'
     | '/app/money-map'
@@ -561,6 +582,7 @@ export interface FileRouteTypes {
     | '/app/recurring'
     | '/app/reports'
     | '/app/settings'
+    | '/app/strategy'
     | '/app/transactions'
     | '/app'
     | '/app/accounts/$accountId'
@@ -599,6 +621,7 @@ export interface FileRouteTypes {
     | '/app/agent-settings'
     | '/app/analytics'
     | '/app/automations'
+    | '/app/context'
     | '/app/goals'
     | '/app/help'
     | '/app/integrity'
@@ -614,6 +637,7 @@ export interface FileRouteTypes {
     | '/app/recurring'
     | '/app/reports'
     | '/app/settings'
+    | '/app/strategy'
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
@@ -778,6 +802,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAutomationsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/context': {
+      id: '/app/context'
+      path: '/context'
+      fullPath: '/app/context'
+      preLoaderRoute: typeof AppContextRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/goals': {
       id: '/app/goals'
       path: '/goals'
@@ -881,6 +912,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/app/settings'
       preLoaderRoute: typeof AppSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/strategy': {
+      id: '/app/strategy'
+      path: '/strategy'
+      fullPath: '/app/strategy'
+      preLoaderRoute: typeof AppStrategyRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/transactions': {
@@ -1130,6 +1168,7 @@ interface AppRouteChildren {
   AppAgentSettingsRoute: typeof AppAgentSettingsRoute
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
   AppAutomationsRoute: typeof AppAutomationsRoute
+  AppContextRoute: typeof AppContextRoute
   AppGoalsRoute: typeof AppGoalsRouteWithChildren
   AppHelpRoute: typeof AppHelpRoute
   AppIntegrityRoute: typeof AppIntegrityRoute
@@ -1145,6 +1184,7 @@ interface AppRouteChildren {
   AppRecurringRoute: typeof AppRecurringRoute
   AppReportsRoute: typeof AppReportsRoute
   AppSettingsRoute: typeof AppSettingsRoute
+  AppStrategyRoute: typeof AppStrategyRoute
   AppTransactionsRoute: typeof AppTransactionsRoute
   AppWalletsRoute: typeof AppWalletsRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
@@ -1157,6 +1197,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAgentSettingsRoute: AppAgentSettingsRoute,
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
   AppAutomationsRoute: AppAutomationsRoute,
+  AppContextRoute: AppContextRoute,
   AppGoalsRoute: AppGoalsRouteWithChildren,
   AppHelpRoute: AppHelpRoute,
   AppIntegrityRoute: AppIntegrityRoute,
@@ -1172,6 +1213,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppRecurringRoute: AppRecurringRoute,
   AppReportsRoute: AppReportsRoute,
   AppSettingsRoute: AppSettingsRoute,
+  AppStrategyRoute: AppStrategyRoute,
   AppTransactionsRoute: AppTransactionsRoute,
   AppWalletsRoute: AppWalletsRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
