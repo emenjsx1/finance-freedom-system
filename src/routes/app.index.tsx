@@ -19,6 +19,7 @@ import {
   Receipt,
   RotateCcw,
   Target,
+  TriangleAlert,
 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { ComponentType } from "react";
@@ -566,6 +567,29 @@ function SummaryTile({
       <Icon className={cn("size-4", toneClass)} />
       <p className="type-meta mt-2">{label}</p>
       <Money minor={minor} className="mt-0.5 block text-[0.9375rem] font-semibold" options={{ withSymbol: false, compactDecimals: true }} />
+    </div>
+  );
+}
+
+/** Financial summary placeholder: never flash a 0 MZN that is not real. */
+function HomeSkeleton() {
+  return (
+    <div className="space-y-6" aria-busy="true" aria-label="A carregar o teu resumo">
+      <div className="card-hero space-y-5">
+        <div className="h-4 w-28 rounded-full bg-subtle" />
+        <div className="h-11 w-48 rounded-2xl bg-subtle" />
+        <div className="h-2.5 w-full rounded-full bg-subtle" />
+        <div className="flex justify-between gap-4">
+          <div className="h-6 w-24 rounded-full bg-subtle" />
+          <div className="h-6 w-24 rounded-full bg-subtle" />
+        </div>
+      </div>
+      <div className="grid grid-cols-4 gap-2">
+        {[0, 1, 2, 3].map((i) => (
+          <div key={i} className="h-20 rounded-2xl bg-subtle" />
+        ))}
+      </div>
+      <div className="h-24 rounded-2xl bg-subtle" />
     </div>
   );
 }
