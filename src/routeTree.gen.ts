@@ -39,7 +39,10 @@ import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
 import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$conversationId'
 import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.index'
 import { Route as AppProfileIndexRouteImport } from './routes/app.profile.index'
+import { Route as AppProfileMethodsRouteImport } from './routes/app.profile.methods'
+import { Route as AppProfilePasswordRouteImport } from './routes/app.profile.password'
 import { Route as AppProfilePersonalRouteImport } from './routes/app.profile.personal'
+import { Route as AppProfileSecurityRouteImport } from './routes/app.profile.security'
 import { Route as AppWalletsIndexRouteImport } from './routes/app.wallets.index'
 import { Route as AppWalletsWalletIdRouteImport } from './routes/app.wallets.$walletId'
 import { Route as AppAnalyticsCategoryCategoryIdRouteImport } from './routes/app.analytics.category.$categoryId'
@@ -194,9 +197,24 @@ const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppProfileRoute,
 } as any)
+const AppProfileMethodsRoute = AppProfileMethodsRouteImport.update({
+  id: '/methods',
+  path: '/methods',
+  getParentRoute: () => AppProfileRoute,
+} as any)
+const AppProfilePasswordRoute = AppProfilePasswordRouteImport.update({
+  id: '/password',
+  path: '/password',
+  getParentRoute: () => AppProfileRoute,
+} as any)
 const AppProfilePersonalRoute = AppProfilePersonalRouteImport.update({
   id: '/personal',
   path: '/personal',
+  getParentRoute: () => AppProfileRoute,
+} as any)
+const AppProfileSecurityRoute = AppProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
   getParentRoute: () => AppProfileRoute,
 } as any)
 const AppWalletsIndexRoute = AppWalletsIndexRouteImport.update({
@@ -243,7 +261,10 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/profile/methods': typeof AppProfileMethodsRoute
+  '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
+  '/app/profile/security': typeof AppProfileSecurityRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
@@ -273,7 +294,10 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/profile/methods': typeof AppProfileMethodsRoute
+  '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
+  '/app/profile/security': typeof AppProfileSecurityRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts': typeof AppAccountsIndexRoute
   '/app/agent': typeof AppAgentIndexRoute
@@ -310,7 +334,10 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/profile/methods': typeof AppProfileMethodsRoute
+  '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
+  '/app/profile/security': typeof AppProfileSecurityRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
@@ -348,7 +375,10 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/profile/methods'
+    | '/app/profile/password'
     | '/app/profile/personal'
+    | '/app/profile/security'
     | '/app/wallets/$walletId'
     | '/app/accounts/'
     | '/app/agent/'
@@ -378,7 +408,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/profile/methods'
+    | '/app/profile/password'
     | '/app/profile/personal'
+    | '/app/profile/security'
     | '/app/wallets/$walletId'
     | '/app/accounts'
     | '/app/agent'
@@ -414,7 +447,10 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/profile/methods'
+    | '/app/profile/password'
     | '/app/profile/personal'
+    | '/app/profile/security'
     | '/app/wallets/$walletId'
     | '/app/accounts/'
     | '/app/agent/'
@@ -644,11 +680,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppProfileIndexRouteImport
       parentRoute: typeof AppProfileRoute
     }
+    '/app/profile/methods': {
+      id: '/app/profile/methods'
+      path: '/methods'
+      fullPath: '/app/profile/methods'
+      preLoaderRoute: typeof AppProfileMethodsRouteImport
+      parentRoute: typeof AppProfileRoute
+    }
+    '/app/profile/password': {
+      id: '/app/profile/password'
+      path: '/password'
+      fullPath: '/app/profile/password'
+      preLoaderRoute: typeof AppProfilePasswordRouteImport
+      parentRoute: typeof AppProfileRoute
+    }
     '/app/profile/personal': {
       id: '/app/profile/personal'
       path: '/personal'
       fullPath: '/app/profile/personal'
       preLoaderRoute: typeof AppProfilePersonalRouteImport
+      parentRoute: typeof AppProfileRoute
+    }
+    '/app/profile/security': {
+      id: '/app/profile/security'
+      path: '/security'
+      fullPath: '/app/profile/security'
+      preLoaderRoute: typeof AppProfileSecurityRouteImport
       parentRoute: typeof AppProfileRoute
     }
     '/app/wallets/': {
@@ -718,12 +775,18 @@ const AppAnalyticsRouteWithChildren = AppAnalyticsRoute._addFileChildren(
 )
 
 interface AppProfileRouteChildren {
+  AppProfileMethodsRoute: typeof AppProfileMethodsRoute
+  AppProfilePasswordRoute: typeof AppProfilePasswordRoute
   AppProfilePersonalRoute: typeof AppProfilePersonalRoute
+  AppProfileSecurityRoute: typeof AppProfileSecurityRoute
   AppProfileIndexRoute: typeof AppProfileIndexRoute
 }
 
 const AppProfileRouteChildren: AppProfileRouteChildren = {
+  AppProfileMethodsRoute: AppProfileMethodsRoute,
+  AppProfilePasswordRoute: AppProfilePasswordRoute,
   AppProfilePersonalRoute: AppProfilePersonalRoute,
+  AppProfileSecurityRoute: AppProfileSecurityRoute,
   AppProfileIndexRoute: AppProfileIndexRoute,
 }
 
