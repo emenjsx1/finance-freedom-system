@@ -53,7 +53,7 @@ function tx(partial: Partial<Transaction> & Pick<Transaction, "id" | "kind" | "a
 
 // Purposes are user-created now, so tests declare the ones they need.
 const ruleItems = [
-  { id: "r1", name: "Construção", kind: "build", percentage: 0, icon: "🏗️", order: 0, source: "custom" },
+  { id: "r1", name: "Construção", kind: "wealth", percentage: 0, icon: "🏗️", order: 0, source: "custom" },
   { id: "r3", name: "Vida", kind: "life", percentage: 0, icon: "🏠", order: 1, source: "custom" },
 ] as AnalyticsInput["setup"]["ruleItems"];
 
