@@ -10,6 +10,7 @@ import {
 
 import { askAgent } from "@/lib/agent/agent.functions";
 import { buildAgentContext, type AgentDeps } from "@/lib/agent/context-builder";
+import { usePersonal } from "@/hooks/use-personal";
 import {
   EMPTY_AGENT_STATE,
   type AgentAuditEntry,
@@ -80,8 +81,9 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       recurring: ledger.recurring,
       memories: state.memories,
       profile: state.profile,
+      personal,
     }),
-    [setup, snapshot, ledger, state.memories, state.profile],
+    [setup, snapshot, ledger, state.memories, state.profile, personal],
   );
 
   const createConversation = useCallback(() => {
