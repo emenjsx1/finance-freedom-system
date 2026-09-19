@@ -119,39 +119,31 @@ function PlanDetailPage() {
               <ProgressIndicator value={pace.ratio} className="mt-4" />
               <p className="type-meta mt-3">
                 Faltam <Money minor={pace.remainingMinor} options={{ compactDecimals: true }} />
-                {pace.requiredMonthlyMinor ? (
-                  <>
-                    {" · "}
-                    <Money minor={pace.requiredMonthlyMinor} options={{ compactDecimals: true }} /> por mês
-                    até à data
-                  </>
-                ) : null}
                 {pace.overdue ? " · a data já passou" : null}
               </p>
+              {pace.requiredMonthlyMinor ? (
+                <p className="type-meta mt-1">
+                  Para chegares à meta na data: cerca de{" "}
+                  <Money minor={pace.requiredMonthlyMinor} options={{ compactDecimals: true }} /> por
+                  mês. É só informação — nada é separado automaticamente.
+                </p>
+              ) : null}
             </>
           ) : (
-            <p className="type-secondary">Ainda não definiste quanto custa este plano.</p>
+            <>
+              <p className="type-hero">
+                <Money minor={savedMinor} options={{ withSymbol: false, compactDecimals: true }} />
+              </p>
+              <p className="type-secondary mt-1">
+                Define um valor-alvo para veres quanto precisarias separar por mês.
+              </p>
+            </>
           )}
 
           <div className="mt-5 flex flex-col gap-2">
-            {plan.walletId ? (
-              <Button
-                onClick={() =>
-                  openComposer({ kind: "reallocation", preset: { toBucketId: plan.walletId! } })
-                }
-              >
-                Guardar dinheiro
-              </Button>
-            ) : (
-              <Button onClick={connectMoney}>Ligar este plano ao meu dinheiro</Button>
-            )}
-            {plan.walletId ? (
-              <Button variant="secondary" asChild>
-                <Link to="/app/wallets/$walletId" params={{ walletId: plan.walletId }}>
-                  Ver o dinheiro reservado
-                </Link>
-              </Button>
-            ) : null}
+            <Button onClick={() => setFunding(true)}>
+              {savedMinor > 0 ? "Adicionar dinheiro" : "Começar a guardar"}
+            </Button>
           </div>
         </section>
       ) : (
@@ -163,125 +155,194 @@ function PlanDetailPage() {
         </section>
       )}
 
-      <section>
-        <SectionHeader title="Passos" />
-        <div className="list-group">
-          {plan.milestones.map((item) => (
-            <button
-              key={item.id}
-              type="button"
-              className="list-row w-full text-left"
-              onClick={() => toggleMilestone(plan.id, item.id)}
-              aria-pressed={item.done}
-            >
-              <span
-                className={`icon-tile ${item.done ? "text-primary" : "text-muted-foreground"}`}
-                aria-hidden
-              >
-                <Check className="size-4" />
-              </span>
-              <span className={item.done ? "line-through opacity-60" : ""}>{item.title}</span>
-            </button>
-          ))}
-          {plan.milestones.length === 0 ? (
-            <p className="list-row type-meta">Ainda sem passos.</p>
+      {plan.financial && savedMinor > 0 ? (
+        <section>
+          <SectionHeader title="Dinheiro" />
+          <ul className="list-group">
+            <li className="list-row justify-between">
+              <span>Reservado</span>
+              <Money minor={savedMinor} className="font-medium" />
+            </li>
+            {plan.targetMinor ? (
+              <li className="list-row justify-between">
+                <span>Falta</span>
+                <Money minor={Math.max(0, plan.targetMinor - savedMinor)} className="font-medium" />
+              </li>
+            ) : null}
+            {sources.map((source) => (
+              <li key={source.accountId} className="list-row justify-between">
+                <span className="type-meta">Está em {source.name}</span>
+                <Money minor={source.amountMinor} className="text-sm" />
+              </li>
+            ))}
+          </ul>
+          {plan.walletId ? (
+            <Button variant="ghost" className="mt-2" asChild>
+              <Link to="/app/wallets/$walletId" params={{ walletId: plan.walletId }}>
+                Ver movimentos deste plano
+              </Link>
+            </Button>
           ) : null}
-        </div>
-        <form
-          className="mt-3 flex gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (!milestone.trim()) return;
-            addMilestone(plan.id, milestone.trim());
-            setMilestone("");
-          }}
+        </section>
+      ) : null}
+
+      {plan.financial && plan.funding && plan.funding !== "manual" ? (
+        <section>
+          <SectionHeader title="Organização futura" />
+          <p className="card-standard type-secondary">
+            {FUNDING_STRATEGY_LABELS[plan.funding]} para dinheiro que ainda vai entrar. Não tem
+            relação com o que já está reservado.
+          </p>
+        </section>
+      ) : null}
+
+      <section>
+        <button
+          type="button"
+          onClick={() => setShowSteps((value) => !value)}
+          className="flex w-full items-center justify-between py-2 text-left"
+          aria-expanded={showSteps}
         >
-          <Input
-            value={milestone}
-            onChange={(e) => setMilestone(e.target.value)}
-            placeholder="Adicionar um passo"
-            aria-label="Adicionar um passo"
-          />
-          <Button type="submit" size="icon" aria-label="Adicionar passo">
-            <Plus className="size-4" aria-hidden />
-          </Button>
-        </form>
+          <span className="type-section">Passos</span>
+          <span className="type-meta flex items-center gap-1">
+            {plan.milestones.length ? `${plan.milestones.filter((m) => m.done).length}/${plan.milestones.length}` : "Opcional"}
+            <ChevronDown className={`size-4 transition-transform ${showSteps ? "rotate-180" : ""}`} aria-hidden />
+          </span>
+        </button>
+        {showSteps ? (
+          <>
+            <div className="list-group">
+              {plan.milestones.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  className="list-row w-full text-left"
+                  onClick={() => toggleMilestone(plan.id, item.id)}
+                  aria-pressed={item.done}
+                >
+                  <span
+                    className={`icon-tile ${item.done ? "text-primary" : "text-muted-foreground"}`}
+                    aria-hidden
+                  >
+                    <Check className="size-4" />
+                  </span>
+                  <span className={item.done ? "line-through opacity-60" : ""}>{item.title}</span>
+                </button>
+              ))}
+              {plan.milestones.length === 0 ? (
+                <p className="list-row type-meta">Nem todos os planos precisam de passos.</p>
+              ) : null}
+            </div>
+            <form
+              className="mt-3 flex gap-2"
+              onSubmit={(event) => {
+                event.preventDefault();
+                if (!milestone.trim()) return;
+                addMilestone(plan.id, milestone.trim());
+                setMilestone("");
+              }}
+            >
+              <Input
+                value={milestone}
+                onChange={(e) => setMilestone(e.target.value)}
+                placeholder="Adicionar um passo"
+                aria-label="Adicionar um passo"
+              />
+              <Button type="submit" variant="secondary">
+                Adicionar
+              </Button>
+            </form>
+          </>
+        ) : null}
       </section>
 
-      <section className="space-y-4">
-        <SectionHeader title="Detalhes" />
+      <section>
+        <button
+          type="button"
+          onClick={() => setShowDetails((value) => !value)}
+          className="flex w-full items-center justify-between py-2 text-left"
+          aria-expanded={showDetails}
+        >
+          <span className="type-section">Editar plano</span>
+          <ChevronDown className={`size-4 transition-transform ${showDetails ? "rotate-180" : ""}`} aria-hidden />
+        </button>
+        {showDetails ? (
+          <div className="space-y-4 pt-2">
+            <div className="space-y-2">
+              <Label>Notas</Label>
+              <Textarea
+                value={plan.description ?? ""}
+                onChange={(e) => updatePlan(plan.id, { description: e.target.value })}
+                placeholder="Porque é que este plano te importa?"
+              />
+            </div>
 
-        <div className="space-y-2">
-          <Label>Notas</Label>
-          <Textarea
-            value={plan.description ?? ""}
-            onChange={(e) => updatePlan(plan.id, { description: e.target.value })}
-            placeholder="Porque é que este plano te importa?"
-          />
-        </div>
+            <div className="space-y-2">
+              <Label>Estado</Label>
+              <Select
+                value={plan.status}
+                onValueChange={(value) => updatePlan(plan.id, { status: value as PlanStatus })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(PLAN_STATUS_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <div className="space-y-2">
-          <Label>Estado</Label>
-          <Select
-            value={plan.status}
-            onValueChange={(value) => updatePlan(plan.id, { status: value as PlanStatus })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(PLAN_STATUS_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+            <div className="space-y-2">
+              <Label>Importância</Label>
+              <Select
+                value={plan.priority}
+                onValueChange={(value) => updatePlan(plan.id, { priority: value as PlanPriority })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {Object.entries(PLAN_PRIORITY_LABELS).map(([value, label]) => (
+                    <SelectItem key={value} value={value}>
+                      {label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        <div className="space-y-2">
-          <Label>Importância</Label>
-          <Select
-            value={plan.priority}
-            onValueChange={(value) => updatePlan(plan.id, { priority: value as PlanPriority })}
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {Object.entries(PLAN_PRIORITY_LABELS).map(([value, label]) => (
-                <SelectItem key={value} value={value}>
-                  {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        {plan.financial ? (
-          <div className="space-y-2">
-            <Label>Como queres alimentar este plano</Label>
-            <Select
-              value={plan.funding ?? "manual"}
-              onValueChange={(value) => updatePlan(plan.id, { funding: value as FundingStrategy })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(FUNDING_STRATEGY_LABELS).map(([value, label]) => (
-                  <SelectItem key={value} value={value}>
-                    {label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="type-meta">
-              Isto é uma intenção. Nenhum dinheiro se move sem a tua confirmação.
-            </p>
+            {plan.financial ? (
+              <div className="space-y-2">
+                <Label>Quando entrar dinheiro novo</Label>
+                <Select
+                  value={plan.funding ?? "manual"}
+                  onValueChange={(value) => updatePlan(plan.id, { funding: value as FundingStrategy })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(FUNDING_STRATEGY_LABELS).map(([value, label]) => (
+                      <SelectItem key={value} value={value}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="type-meta">
+                  Isto é uma intenção para dinheiro futuro. Nada se move sem a tua confirmação.
+                </p>
+              </div>
+            ) : null}
           </div>
         ) : null}
       </section>
+
+      <PlanFundingSheet plan={plan} open={funding} onOpenChange={setFunding} />
 
       <section>
         <Button
