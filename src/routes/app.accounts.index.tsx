@@ -61,39 +61,33 @@ function AccountsPage() {
           action={<Button onClick={() => setFormOpen(true)}>Adicionar conta</Button>}
         />
       ) : (
-        <ul className="space-y-2">
+        <ul className="list-group">
           {accounts.map((account, index) => (
-            <li key={account.id} className="flex items-center gap-2">
+            <li key={account.id} className="flex items-center gap-1 pr-2">
               <Link
                 to="/app/accounts/$accountId"
                 params={{ accountId: account.id }}
-                className="flex flex-1 items-center justify-between rounded-2xl border border-border/70 bg-surface px-4 py-3.5 transition-colors hover:border-muted-foreground/40"
+                className="list-row flex-1"
               >
-                <span className="flex items-center gap-3">
-                  <span
-                    aria-hidden
-                    className="flex size-10 items-center justify-center rounded-xl text-lg"
-                    style={{ backgroundColor: `${account.color ?? "#34d399"}1f` }}
-                  >
-                    {account.icon ?? "🏦"}
+                <span className="icon-tile" aria-hidden>
+                  {account.icon ?? "🏦"}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-[0.9375rem] font-medium">
+                    {account.name}
+                    {account.last4 ? ` •••• ${account.last4}` : ""}
                   </span>
-                  <span>
-                    <span className="block text-sm font-medium">
-                      {account.name}
-                      {account.last4 ? ` •••• ${account.last4}` : ""}
-                    </span>
-                    <span className="block text-xs text-muted-foreground">
-                      {ACCOUNT_TYPE_LABELS[account.type]}
-                      {account.currencyCode && account.currencyCode !== setup.currencyCode
-                        ? ` • ${account.currencyCode}`
-                        : ""}
-                    </span>
+                  <span className="type-meta block">
+                    {ACCOUNT_TYPE_LABELS[account.type]}
+                    {account.currencyCode && account.currencyCode !== setup.currencyCode
+                      ? ` • ${account.currencyCode}`
+                      : ""}
                   </span>
                 </span>
                 <Money
                   minor={snapshot.accountBalances[account.id] ?? 0}
                   currency={account.currencyCode ?? setup.currencyCode}
-                  className="text-sm font-semibold"
+                  className="numeric text-[0.9375rem] font-semibold"
                 />
               </Link>
               <div className="flex flex-col">
