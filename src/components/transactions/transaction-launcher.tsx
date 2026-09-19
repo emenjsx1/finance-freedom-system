@@ -2,6 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { ArrowLeftRight, Minus, PiggyBank, Plus, Shuffle } from "lucide-react";
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { NativeSheet } from "@/components/design/native-sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
   TransactionComposer,
