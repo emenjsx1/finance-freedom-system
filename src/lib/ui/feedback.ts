@@ -25,8 +25,27 @@ function toMessage(value: unknown): string {
   return "Algo não correu bem. Tenta novamente.";
 }
 
+/**
+ * The same failure often fires from several sync domains at once (setup,
+ * ledger, personal…). Without dedupe the person closes one alert and the
+ * next identical one opens instantly — the dialog feels impossible to
+ * dismiss. Identical alerts are shown at most once per window; an alert
+ * dismissed by the user stays silent for a while.
+ */
+const REPEAT_WINDOW_MS = 60_000;
+const lastShownAt = new Map<string, number>();
+
+function signatureOf(payload: AppAlertPayload): string {
+  return `${payload.tone}:${payload.title}:${payload.message}`;
+}
+
 function emit(payload: AppAlertPayload) {
   if (typeof window === "undefined") return;
+  const signature = signatureOf(payload);
+  const now = Date.now();
+  const last = lastShownAt.get(signature);
+  if (last && now - last < REPEAT_WINDOW_MS) return;
+  lastShownAt.set(signature, now);
   window.dispatchEvent(new CustomEvent<AppAlertPayload>(APP_ALERT_EVENT, { detail: payload }));
 }
 
