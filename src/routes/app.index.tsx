@@ -167,9 +167,7 @@ function HomePage() {
       </header>
 
       {!editing ? (
-        <p className="type-meta leading-relaxed text-muted-foreground/90">
-          {APP_QUOTE}
-        </p>
+        <BrandQuote className="type-meta min-h-12 leading-relaxed text-muted-foreground/90" />
       ) : null}
 
       {/* A calm warning instead of impossible numbers — nothing is ever fabricated to balance. */}

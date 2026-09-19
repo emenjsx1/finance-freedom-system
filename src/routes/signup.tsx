@@ -130,8 +130,7 @@ function SignupPage() {
   return (
     <AuthShell>
       <h1 className="type-title">Cria a tua conta.</h1>
-      <p className="type-secondary mt-3">{APP_QUOTE}</p>
-      <p className="type-secondary mt-3">Organiza o teu dinheiro com calma e clareza.</p>
+      <BrandQuote className="type-secondary mt-3 min-h-16" />
 
       <div className="mt-9">
         <ProviderButtons busy={busy} onProvider={(provider) => void withOAuth(provider)} />
