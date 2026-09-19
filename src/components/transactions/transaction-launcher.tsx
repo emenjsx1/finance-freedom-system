@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowLeftRight, ArrowUp, Diamond, Plus } from "lucide-react";
 
