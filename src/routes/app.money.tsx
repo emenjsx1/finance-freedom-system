@@ -1,9 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
+import { useState } from "react";
 
 import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
 import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
+import { WalletForm } from "@/components/wallets/wallet-form";
 import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
@@ -31,12 +34,13 @@ function MoneyPage() {
   const { setup } = useSetup();
   const { snapshot } = useLedger();
   const { state } = usePersonal();
+  const [purposeOpen, setPurposeOpen] = useState(false);
 
   const accounts = [...setup.accounts]
     .filter((a) => !a.archived)
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
-  const planWallets = snapshot.wallets.filter((w) => !w.archived && w.kind === "goals");
+  const purposes = snapshot.wallets.filter((wallet) => !wallet.archived);
   const position = financialPosition(snapshot);
   const monthlyCommitments = state.commitments
     .filter((c) => c.active && c.cadence === "monthly")
@@ -144,20 +148,15 @@ function MoneyPage() {
           </section>
 
           <section>
-            <SectionHeader title="Para que serve" actionLabel="Estratégia" to="/app/strategy" />
+            <SectionHeader title="Para quê?" />
             <div className="list-group">
-              <div className="list-row justify-between">
-                <span>Protegido</span>
-                <Money
-                  minor={
-                    snapshot.protectedMinor -
-                    planWallets.reduce((sum, wallet) => sum + wallet.balanceMinor, 0)
-                  }
-                  options={{ compactDecimals: true }}
-                />
-              </div>
-              {planWallets.map((wallet) => (
-                <div key={wallet.id} className="list-row justify-between">
+              {purposes.map((wallet) => (
+                <Link
+                  key={wallet.id}
+                  to="/app/wallets/$walletId"
+                  params={{ walletId: wallet.id }}
+                  className="list-row justify-between"
+                >
                   <span className="flex items-center gap-3">
                     <span className="icon-tile" aria-hidden>
                       <Symbol name={wallet.icon} />
@@ -165,15 +164,19 @@ function MoneyPage() {
                     {wallet.name}
                   </span>
                   <Money minor={wallet.balanceMinor} options={{ compactDecimals: true }} />
-                </div>
+                </Link>
               ))}
               <div className="list-row justify-between">
                 <span>Sem propósito</span>
-                <Money minor={snapshot.unallocatedMinor} options={{ compactDecimals: true }} />
+                <Money minor={position.availableMinor} options={{ compactDecimals: true }} />
               </div>
             </div>
+            <Button variant="outline" className="mt-3 w-full" onClick={() => setPurposeOpen(true)}>
+              <Plus className="size-4" />
+              Criar propósito
+            </Button>
             <p className="type-meta mt-2">
-              Esta lista descreve o mesmo dinheiro da lista de cima. Não se somam.
+              Cada valor reservado continua na respetiva conta. Esta lista não se soma ao total.
             </p>
           </section>
 
@@ -225,6 +228,7 @@ function MoneyPage() {
           <span className="type-meta">Padrões e categorias</span>
         </Link>
       </section>
+      <WalletForm open={purposeOpen} onOpenChange={setPurposeOpen} />
     </div>
   );
 }

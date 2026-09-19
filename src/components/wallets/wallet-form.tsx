@@ -16,15 +16,11 @@ import {
   walletBehaviour,
 } from "@/lib/finance/wallet-config";
 import type { AllocationRuleItem, BucketKind, ProtectionLevel } from "@/lib/finance/types";
-import { cn } from "@/lib/utils";
 
-const KIND_LABELS: Record<BucketKind, string> = {
-  protected: "Protegido",
-  wealth: "Construção de património",
-  goals: "Objetivos",
-  life: "Vida",
-  family: "Família",
-  free: "Livre",
+const KIND_LABELS: Partial<Record<BucketKind, string>> = {
+  protected: "Proteção",
+  wealth: "Património",
+  goals: "Plano ou objetivo",
 };
 
 export function WalletForm({
@@ -67,16 +63,11 @@ export function WalletForm({
     onOpenChange(false);
   }
 
-  const totalPercent =
-    setup.ruleItems
-      .filter((item) => item.id !== wallet?.id && !item.archived)
-      .reduce((sum, item) => sum + item.percentage, 0) + (Number(form.percentage) || 0);
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-3xl lg:max-w-lg">
         <SheetHeader className="px-0">
-          <SheetTitle>{wallet ? "Editar carteira" : "Nova carteira"}</SheetTitle>
+          <SheetTitle>{wallet ? "Editar propósito" : "Novo propósito"}</SheetTitle>
         </SheetHeader>
 
         <div className="space-y-4 pb-6">
@@ -103,19 +94,6 @@ export function WalletForm({
             </select>
           </Field>
 
-          <Field label="Percentagem da regra" htmlFor="w-pct">
-            <Input
-              id="w-pct"
-              inputMode="decimal"
-              value={form.percentage}
-              onChange={(e) => setForm((f) => ({ ...f, percentage: e.target.value.replace(/[^\d.,]/g, "") }))}
-            />
-            <p className={cn("mt-1 text-xs", totalPercent === 100 ? "text-muted-foreground" : "text-warning")}>
-              Total da regra: {totalPercent.toFixed(0)}%
-              {totalPercent === 100 ? "" : " — a regra só distribui entradas quando soma 100%."}
-            </p>
-          </Field>
-
           <Field label="Ícone">
             <div className="flex flex-wrap gap-2">
               {WALLET_ICONS.map((icon) => (
@@ -125,10 +103,9 @@ export function WalletForm({
                   aria-label={`Ícone ${symbolLabel(icon)}`}
                   aria-pressed={form.icon === icon}
                   onClick={() => setForm((f) => ({ ...f, icon }))}
-                  className={cn(
-                    "flex size-10 items-center justify-center rounded-xl border",
-                    form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70",
-                  )}
+                    className={`flex size-10 items-center justify-center rounded-xl border ${
+                      form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70"
+                    }`}
                 >
                   <Symbol name={icon} />
                 </button>
@@ -145,10 +122,9 @@ export function WalletForm({
                   aria-label={`Cor ${color}`}
                   aria-pressed={form.color === color}
                   onClick={() => setForm((f) => ({ ...f, color }))}
-                  className={cn(
-                    "size-8 rounded-full border-2",
-                    form.color === color ? "border-foreground" : "border-transparent",
-                  )}
+                    className={`size-8 rounded-full border-2 ${
+                      form.color === color ? "border-foreground" : "border-transparent"
+                    }`}
                   style={{ backgroundColor: color }}
                 />
               ))}
@@ -234,7 +210,7 @@ export function WalletForm({
           />
 
           <Button className="w-full" onClick={save} disabled={!form.name.trim()}>
-            {wallet ? "Guardar alterações" : "Criar carteira"}
+            {wallet ? "Guardar alterações" : "Criar propósito"}
           </Button>
         </div>
       </SheetContent>
