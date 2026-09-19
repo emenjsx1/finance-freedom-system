@@ -69,7 +69,7 @@ export function TransactionComposer({
     base?.accountId ?? preset?.accountId ?? suggestions.suggestedAccountId ?? setup.accounts[0]?.id,
   );
   const [bucketId, setBucketId] = useState<string | undefined>(
-    base?.bucketId ?? preset?.bucketId ?? suggestions.suggestedBucketId ?? setup.ruleItems.find((r) => r.kind === "life")?.id,
+    base?.bucketId ?? preset?.bucketId ?? suggestions.suggestedBucketId,
   );
   const [fromAccountId, setFromAccountId] = useState<string | undefined>(
     base?.fromAccountId ?? setup.accounts[0]?.id,
@@ -78,10 +78,10 @@ export function TransactionComposer({
     base?.toAccountId ?? setup.accounts[1]?.id,
   );
   const [fromBucketId, setFromBucketId] = useState<string | undefined>(
-    base?.fromBucketId ?? setup.ruleItems.find((r) => r.kind === "free")?.id,
+    base?.fromBucketId ?? preset?.fromBucketId,
   );
   const [toBucketId, setToBucketId] = useState<string | undefined>(
-    base?.toBucketId ?? preset?.toBucketId ?? setup.ruleItems.find((r) => r.kind === "goals")?.id,
+    base?.toBucketId ?? preset?.toBucketId,
   );
   const [occurredAt, setOccurredAt] = useState(localInputValue(base?.occurredAt ?? new Date().toISOString()));
   const [merchant, setMerchant] = useState(base?.merchant ?? "");
@@ -90,19 +90,23 @@ export function TransactionComposer({
   const [tagsText, setTagsText] = useState((base?.tags ?? []).join(" "));
   const [attachments, setAttachments] = useState<Attachment[]>(base?.attachments ?? []);
   const [moneyType, setMoneyType] = useState<MoneyType>(base?.moneyType ?? "personal");
-  const [manualAllocation, setManualAllocation] = useState(false);
-  const [allocations, setAllocations] = useState<Allocation[]>(base?.allocations ?? []);
+  // Income no longer distributes itself. New money lands in an account and is
+  // available until the person decides it has a purpose.
+  const [allocations] = useState<Allocation[]>(base?.allocations ?? []);
 
-  useEffect(() => {
-    if (kind !== "income" || manualAllocation) return;
-    setAllocations(moneyType === "personal" ? previewAllocation(amountMinor, setup.ruleItems) : []);
-  }, [kind, amountMinor, moneyType, manualAllocation, setup.ruleItems]);
+  const position = financialPosition(snapshot);
+  const purposes = useMemo(() => listPurposes(setup.ruleItems, snapshot), [setup.ruleItems, snapshot]);
+  const purposeOptions = purposes.map((p) => ({ value: p.id, label: p.name }));
+  const accountOptions = setup.accounts
+    .filter((a) => !a.archived)
+    .map((a) => ({ value: a.id, label: a.name || "Conta" }));
 
   const bucket = setup.ruleItems.find((r) => r.id === bucketId);
   const bucketBalance = bucketId ? (snapshot.bucketBalances[bucketId] ?? 0) : 0;
   const ratio = kind === "expense" ? largeExpenseRatio(amountMinor, bucketBalance) : null;
   const isLarge = ratio !== null && ratio >= 0.4;
-  const sourceWalletId = kind === "reallocation" ? fromBucketId : kind === "expense" ? bucketId : undefined;
+  const sourceWalletId =
+    kind === "reallocation" || kind === "release" ? fromBucketId : kind === "expense" ? bucketId : undefined;
   const sourceWallet = setup.ruleItems.find((r) => r.id === sourceWalletId);
   // Money leaving a protected wallet asks for a deliberate, recorded reason.
   const protectedWarning = Boolean(sourceWallet && isProtectedWallet(sourceWallet));
