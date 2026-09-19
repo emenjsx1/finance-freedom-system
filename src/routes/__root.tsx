@@ -125,6 +125,7 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AuthProvider>
       <SetupProvider>
         <PrefsProvider>
           <LedgerProvider>
