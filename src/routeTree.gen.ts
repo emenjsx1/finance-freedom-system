@@ -14,13 +14,13 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AppIndexRouteImport } from './routes/app.index'
-import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppRecurringRouteImport } from './routes/app.recurring'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppWalletsRouteImport } from './routes/app.wallets'
+import { Route as AppAccountsIndexRouteImport } from './routes/app.accounts.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -45,11 +45,6 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppAccountsRoute = AppAccountsRouteImport.update({
-  id: '/accounts',
-  path: '/accounts',
   getParentRoute: () => AppRoute,
 } as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
@@ -82,13 +77,17 @@ const AppWalletsRoute = AppWalletsRouteImport.update({
   path: '/wallets',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAccountsIndexRoute = AppAccountsIndexRouteImport.update({
+  id: '/accounts/',
+  path: '/accounts/',
+  getParentRoute: () => AppRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
-  '/app/accounts': typeof AppAccountsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -96,12 +95,12 @@ export interface FileRoutesByFullPath {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRoute
   '/app/': typeof AppIndexRoute
+  '/app/accounts/': typeof AppAccountsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
-  '/app/accounts': typeof AppAccountsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -109,6 +108,7 @@ export interface FileRoutesByTo {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRoute
   '/app': typeof AppIndexRoute
+  '/app/accounts': typeof AppAccountsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -116,7 +116,6 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
-  '/app/accounts': typeof AppAccountsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -124,6 +123,7 @@ export interface FileRoutesById {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRoute
   '/app/': typeof AppIndexRoute
+  '/app/accounts/': typeof AppAccountsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -132,7 +132,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
-    | '/app/accounts'
     | '/app/goals'
     | '/app/recurring'
     | '/app/reports'
@@ -140,12 +139,12 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
+    | '/app/accounts/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/onboarding'
-    | '/app/accounts'
     | '/app/goals'
     | '/app/recurring'
     | '/app/reports'
@@ -153,13 +152,13 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app'
+    | '/app/accounts'
   id:
     | '__root__'
     | '/'
     | '/app'
     | '/auth'
     | '/onboarding'
-    | '/app/accounts'
     | '/app/goals'
     | '/app/recurring'
     | '/app/reports'
@@ -167,6 +166,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
+    | '/app/accounts/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -213,13 +213,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/app/accounts': {
-      id: '/app/accounts'
-      path: '/accounts'
-      fullPath: '/app/accounts'
-      preLoaderRoute: typeof AppAccountsRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/app/goals': {
       id: '/app/goals'
       path: '/goals'
@@ -262,11 +255,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppWalletsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/accounts/': {
+      id: '/app/accounts/'
+      path: '/accounts'
+      fullPath: '/app/accounts/'
+      preLoaderRoute: typeof AppAccountsIndexRouteImport
+      parentRoute: typeof AppRoute
+    }
   }
 }
 
 interface AppRouteChildren {
-  AppAccountsRoute: typeof AppAccountsRoute
   AppGoalsRoute: typeof AppGoalsRoute
   AppRecurringRoute: typeof AppRecurringRoute
   AppReportsRoute: typeof AppReportsRoute
@@ -274,10 +273,10 @@ interface AppRouteChildren {
   AppTransactionsRoute: typeof AppTransactionsRoute
   AppWalletsRoute: typeof AppWalletsRoute
   AppIndexRoute: typeof AppIndexRoute
+  AppAccountsIndexRoute: typeof AppAccountsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAccountsRoute: AppAccountsRoute,
   AppGoalsRoute: AppGoalsRoute,
   AppRecurringRoute: AppRecurringRoute,
   AppReportsRoute: AppReportsRoute,
@@ -285,6 +284,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppTransactionsRoute: AppTransactionsRoute,
   AppWalletsRoute: AppWalletsRoute,
   AppIndexRoute: AppIndexRoute,
+  AppAccountsIndexRoute: AppAccountsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
