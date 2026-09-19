@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { APP_QUOTE } from "@/lib/brand";
 import { getSignedInDestination } from "@/lib/auth/destination";
 import { notifyError } from "@/lib/ui/feedback";
 
