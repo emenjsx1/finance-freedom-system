@@ -15,6 +15,10 @@ import {
   ShieldCheck,
   User,
   Wallet,
+  Landmark,
+  Map,
+  Lock,
+  EyeOff,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -36,7 +40,7 @@ export const Route = createFileRoute("/app/settings")({
   component: SettingsPage,
 });
 
-const APP_VERSION = "0.1.0 (Fase 01)";
+const APP_VERSION = "0.4.0 (Fase 04)";
 
 const notificationLabels: Record<keyof NotificationPreferences, string> = {
   monthlySummary: "Resumo mensal",
@@ -56,8 +60,10 @@ function SettingsPage() {
 
       <Section title="Conta">
         <Row icon={User} label="Perfil" value={setup.fullName || "Por definir"} />
-        <Row icon={Wallet} label="As minhas contas" value={`${setup.accounts.length}`} to="/app/wallets" />
-        <Row icon={Layers} label="Potes" value={`${setup.ruleItems.length}`} />
+        <Row icon={Landmark} label="As minhas contas" value={`${setup.accounts.length}`} to="/app/accounts" />
+        <Row icon={Wallet} label="Carteiras" value={`${setup.ruleItems.length}`} to="/app/wallets" />
+        <Row icon={Map} label="Mapa do dinheiro" to="/app/money-map" />
+        <Row icon={Lock} label="Dinheiro protegido" to="/app/protected" />
         <Row icon={Scale} label="Regra financeira" value="100% distribuído" />
         <Row icon={ListTree} label="Categorias" value="Padrão" />
         <Row icon={Repeat} label="Pagamentos recorrentes" to="/app/recurring" />
@@ -84,6 +90,17 @@ function SettingsPage() {
       </Section>
 
       <Section title="Aplicação">
+        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+          <span className="flex items-center gap-3 text-sm">
+            <EyeOff className="size-4 text-muted-foreground" />
+            Modo privado
+          </span>
+          <Switch
+            checked={setup.privacyMode}
+            aria-label="Modo privado"
+            onCheckedChange={(checked) => update({ privacyMode: checked })}
+          />
+        </div>
         <Row icon={Palette} label="Aparência" value="Escuro" />
         <Row icon={ShieldCheck} label="Segurança" value="Por ativar" />
         <Row icon={Download} label="Exportar dados" value="CSV" />
@@ -124,7 +141,7 @@ function Row({
   icon: ComponentType<{ className?: string }>;
   label: string;
   value?: string;
-  to?: "/app/wallets" | "/app/recurring";
+  to?: "/app/wallets" | "/app/recurring" | "/app/accounts" | "/app/money-map" | "/app/protected";
 }) {
   const content = (
     <>
