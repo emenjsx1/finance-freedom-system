@@ -1,3 +1,4 @@
+import markUrl from "@/assets/brand-mark.png";
 import { APP_NAME } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -27,15 +28,19 @@ export function BrandMark({
           box,
         )}
       >
-        <svg viewBox="0 0 24 24" className="h-[62%] w-[62%]" fill="none" aria-hidden="true">
-          <path
-            d="M6 18V6l12 12V6"
-            stroke="currentColor"
-            strokeWidth="2.2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
+        <span
+          className="h-[66%] w-[66%] bg-current"
+          style={{
+            WebkitMaskImage: `url(${markUrl})`,
+            maskImage: `url(${markUrl})`,
+            WebkitMaskSize: "contain",
+            maskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            maskRepeat: "no-repeat",
+            WebkitMaskPosition: "center",
+            maskPosition: "center",
+          }}
+        />
       </span>
       {showName ? (
         <span className={cn("font-semibold tracking-[-0.02em] text-foreground", text)}>
