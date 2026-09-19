@@ -63,9 +63,29 @@ function MePage() {
             {state.direction.length ? `${state.direction.length} notas` : "Por escrever"}
           </span>
         </Link>
+        <Link to="/app/development" className="list-row justify-between">
+          <span>Meu desenvolvimento</span>
+          <span className="type-meta">
+            {state.development.programs.filter((p) => p.status === "active").length
+              ? `${state.development.programs.filter((p) => p.status === "active").length} a decorrer`
+              : "Explorar"}
+          </span>
+        </Link>
         <Link to="/app/plans" className="list-row justify-between">
           <span>Planos</span>
           <span className="type-meta">{state.plans.length || "Nenhum"}</span>
+        </Link>
+        <Link to="/app/development/programs" className="list-row justify-between">
+          <span>Os meus programas</span>
+          <span className="type-meta">{state.development.programs.length || "Nenhum"}</span>
+        </Link>
+        <Link to="/app/development/evolution" className="list-row justify-between">
+          <span>A minha evolução</span>
+          <span className="type-meta">{state.development.evolution.length || "Ainda nada"}</span>
+        </Link>
+        <Link to="/app/development/decisions" className="list-row justify-between">
+          <span>As minhas decisões</span>
+          <span className="type-meta">{state.development.decisions.length || "Nenhuma"}</span>
         </Link>
         <Link to="/app/strategy" className="list-row justify-between">
           <span>Estratégia</span>
