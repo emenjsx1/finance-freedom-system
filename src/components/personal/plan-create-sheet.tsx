@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 
-import { AmountInput } from "@/components/amount-input";
+import { AmountInput } from "@/components/transactions/amount-input";
 import { NativeSheet } from "@/components/design/native-sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { usePersonal } from "@/hooks/use-personal";
+import { useSetup } from "@/hooks/use-setup";
 import { Symbol } from "@/lib/icons/symbols";
 import {
   PLAN_PRIORITY_LABELS,
@@ -42,6 +43,7 @@ export function PlanCreateSheet({
   onOpenChange: (open: boolean) => void;
 }) {
   const { createPlan } = usePersonal();
+  const { setup } = useSetup();
   const navigate = useNavigate();
   const [step, setStep] = useState(0);
   const [type, setType] = useState<PlanType>("travel");
@@ -140,7 +142,7 @@ export function PlanCreateSheet({
           {financial ? (
             <div className="space-y-2">
               <Label>Quanto custa?</Label>
-              <AmountInput valueMinor={targetMinor} onChange={setTargetMinor} />
+              <AmountInput valueMinor={targetMinor} onChange={setTargetMinor} currencyCode={setup.currencyCode} label="Quanto custa" />
             </div>
           ) : null}
 
