@@ -112,3 +112,15 @@ Regras de produto:
 - Prioridade humana: Agora / Importante / Depois.
 - Sem pontuações, sem streaks, sem culpa. Uma ação passada da data fica "atrasada", nunca "falhada".
 - Nada pessoal é guardado sem a pessoa dizer que sim.
+
+## Modelo de dinheiro (limpeza crítica)
+
+- Conta = onde o dinheiro está (BIM, M-Pesa, e-Mola, Cash). Só contas físicas reais.
+- Propósito = para que serve (Turquia, Carro, Protegido, Compromisso). Nunca é conta.
+- Estratégia = como organizar dinheiro futuro. Modos: none, manual, suggest, automatic, paused.
+- Disponível é calculado, não é conta nem propósito.
+- Nova entrada não tem bloco de distribuição. Depois de registada, a pessoa pode
+  escolher "Organizar esta entrada".
+- Guardar = conta → propósito (Quanto? De onde? Para quê?). Mudar propósito =
+  propósito → propósito. Transferência = conta → conta. Três fluxos distintos.
+- Detalhe em docs/FINANCIAL_ENGINE.md.

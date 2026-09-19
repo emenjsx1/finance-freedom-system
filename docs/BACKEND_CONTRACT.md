@@ -96,3 +96,15 @@ Regras:
 - Passar a hora nunca muda o estado para "falhada": fica pendente/atrasada com Completar, Remarcar, Ignorar, Remover.
 - RLS por user_id em todas as tabelas, com GRANT explícito para authenticated e service_role.
 - Nada de dados semeados: nenhuma vida, prioridade ou programa de exemplo é criado pelo sistema.
+
+## Money model (post-cleanup)
+
+- `accounts` — physical locations only.
+- `purposes` — id, name, source (plan | protection | commitment | custom | legacy),
+  plan_id (unique when present), icon, kind, target, archived.
+- `reservation_allocations` — account_id, purpose_type, purpose_id, amount_minor,
+  status, created_at. Enables the purpose × account matrix.
+- `transactions.kind` — income | expense | transfer | reservation | release |
+  reallocation | adjustment.
+- `strategies.mode` — none | manual | suggest | automatic | paused. Deleting a
+  strategy stops future suggestions and never rewrites historical reservations.
