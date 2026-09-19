@@ -115,7 +115,7 @@ export const TERMINOLOGY_DEFAULTS: Record<TerminologyKey, string> = {
 
 export const DEFAULT_PAGES = [
   { to: "/app", label: "Início" },
-  { to: "/app/transactions", label: "Atividade" },
+  { to: "/app/activity", label: "Atividade" },
   { to: "/app/plan", label: "Plano" },
   { to: "/app/analytics", label: "Análise" },
   { to: "/app/agent", label: "Agente" },

@@ -230,7 +230,7 @@ export function eventDrafts(signals: Signals, cooldowns: CooldownState, now = ne
         ...(item.accountName ? { accountName: item.accountName } : {}),
         ...(item.walletName ? { walletName: item.walletName } : {}),
       },
-      to: "/app/transactions",
+      to: "/app/activity",
       actions: ["view"],
     });
   }
