@@ -11,7 +11,7 @@ import {
 import { buildSnapshot } from "@/lib/finance/engine";
 import type { Transaction } from "@/lib/finance/ledger-types";
 import { DEFAULT_CATEGORIES } from "@/lib/finance/categories";
-import { DEFAULT_RULE_ITEMS, EMPTY_SETUP } from "@/lib/storage/local-setup-store";
+import { EMPTY_SETUP } from "@/lib/storage/local-setup-store";
 import type { Account } from "@/lib/finance/types";
 
 const accounts: Account[] = [
@@ -53,8 +53,8 @@ function tx(partial: Partial<Transaction> & Pick<Transaction, "id" | "kind" | "a
 
 // Purposes are user-created now, so tests declare the ones they need.
 const ruleItems = [
-  { id: "r1", name: "Construção", kind: "build", percent: 0, icon: "🏗️", order: 0, source: "custom" },
-  { id: "r3", name: "Vida", kind: "life", percent: 0, icon: "🏠", order: 1, source: "custom" },
+  { id: "r1", name: "Construção", kind: "build", percentage: 0, icon: "🏗️", order: 0, source: "custom" },
+  { id: "r3", name: "Vida", kind: "life", percentage: 0, icon: "🏠", order: 1, source: "custom" },
 ] as AnalyticsInput["setup"]["ruleItems"];
 
 function makeInput(transactions: Transaction[]): AnalyticsInput {
