@@ -266,9 +266,12 @@ export function TransactionComposer({
 
   function announceSuccess(tx: Transaction) {
     if (tx.kind === "expense") {
+      const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
       const before = bucketBalance;
       toast.success("Despesa registada", {
-        description: `${bucket?.name ?? ""} · ${amountLabel(before)} → ${amountLabel(before - tx.amountMinor)}`,
+        description: bucket
+          ? `${bucket.name} · ${amountLabel(before)} → ${amountLabel(before - tx.amountMinor)}`
+          : `Saiu de ${accountName}, do dinheiro disponível.`,
       });
       return;
     }
