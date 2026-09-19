@@ -36,6 +36,7 @@ import { Route as AppIntegrityRouteImport } from './routes/app.integrity'
 import { Route as AppMeRouteImport } from './routes/app.me'
 import { Route as AppMoneyRouteImport } from './routes/app.money'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
+import { Route as AppNetworthRouteImport } from './routes/app.networth'
 import { Route as AppNotificationSettingsRouteImport } from './routes/app.notification-settings'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppOrganizeRouteImport } from './routes/app.organize'
@@ -203,6 +204,11 @@ const AppMoneyRoute = AppMoneyRouteImport.update({
 const AppMoneyMapRoute = AppMoneyMapRouteImport.update({
   id: '/money-map',
   path: '/money-map',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNetworthRoute = AppNetworthRouteImport.update({
+  id: '/networth',
+  path: '/networth',
   getParentRoute: () => AppRoute,
 } as any)
 const AppNotificationSettingsRoute = AppNotificationSettingsRouteImport.update({
@@ -399,6 +405,7 @@ export interface FileRoutesByFullPath {
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/networth': typeof AppNetworthRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/organize': typeof AppOrganizeRoute
@@ -456,6 +463,7 @@ export interface FileRoutesByTo {
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/networth': typeof AppNetworthRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/organize': typeof AppOrganizeRoute
@@ -516,6 +524,7 @@ export interface FileRoutesById {
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/networth': typeof AppNetworthRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
   '/app/organize': typeof AppOrganizeRoute
@@ -580,6 +589,7 @@ export interface FileRouteTypes {
     | '/app/me'
     | '/app/money'
     | '/app/money-map'
+    | '/app/networth'
     | '/app/notification-settings'
     | '/app/notifications'
     | '/app/organize'
@@ -637,6 +647,7 @@ export interface FileRouteTypes {
     | '/app/me'
     | '/app/money'
     | '/app/money-map'
+    | '/app/networth'
     | '/app/notification-settings'
     | '/app/notifications'
     | '/app/organize'
@@ -696,6 +707,7 @@ export interface FileRouteTypes {
     | '/app/me'
     | '/app/money'
     | '/app/money-map'
+    | '/app/networth'
     | '/app/notification-settings'
     | '/app/notifications'
     | '/app/organize'
@@ -935,6 +947,13 @@ declare module '@tanstack/react-router' {
       path: '/money-map'
       fullPath: '/app/money-map'
       preLoaderRoute: typeof AppMoneyMapRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/networth': {
+      id: '/app/networth'
+      path: '/networth'
+      fullPath: '/app/networth'
+      preLoaderRoute: typeof AppNetworthRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/notification-settings': {
@@ -1291,6 +1310,7 @@ interface AppRouteChildren {
   AppMeRoute: typeof AppMeRoute
   AppMoneyRoute: typeof AppMoneyRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
+  AppNetworthRoute: typeof AppNetworthRoute
   AppNotificationSettingsRoute: typeof AppNotificationSettingsRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppOrganizeRoute: typeof AppOrganizeRoute
@@ -1326,6 +1346,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMeRoute: AppMeRoute,
   AppMoneyRoute: AppMoneyRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
+  AppNetworthRoute: AppNetworthRoute,
   AppNotificationSettingsRoute: AppNotificationSettingsRoute,
   AppNotificationsRoute: AppNotificationsRoute,
   AppOrganizeRoute: AppOrganizeRoute,

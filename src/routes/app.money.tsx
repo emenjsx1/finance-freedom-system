@@ -87,6 +87,20 @@ function MoneyPage() {
             </div>
           </section>
 
+          <section className="list-group">
+            <div className="list-row justify-between">
+              <span className="type-meta">Livre após compromissos</span>
+              <Money
+                minor={position.availableMinor - monthlyCommitments}
+                className="font-medium"
+              />
+            </div>
+            <Link to="/app/networth" className="list-row justify-between">
+              <span>Património</span>
+              <span className="type-meta">Dinheiro, bens e dívidas</span>
+            </Link>
+          </section>
+
           <section className="card-standard">
             <h2 className="text-base font-semibold">Ajuda-me a organizar</h2>
             <p className="mt-1 type-secondary">
