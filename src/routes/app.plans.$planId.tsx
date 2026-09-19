@@ -50,7 +50,7 @@ function PlanDetailPage() {
   const { planId } = Route.useParams();
   const navigate = useNavigate();
   const { state, updatePlan, removePlan, addMilestone, toggleMilestone } = usePersonal();
-  const { snapshot } = useLedger();
+  const { snapshot, ledger } = useLedger();
   const { setup } = useSetup();
   const [milestone, setMilestone] = useState("");
   const [funding, setFunding] = useState(false);
@@ -76,6 +76,25 @@ function PlanDetailPage() {
   }
 
   const pace = goalPace(plan, savedMinor);
+
+  /**
+   * Where the reserved money physically sits, read from the reservations that
+   * recorded a source account. Reserving never moved the money.
+   */
+  const sources = plan.walletId
+    ? Object.entries(
+        ledger.transactions
+          .filter((tx) => tx.kind === "reallocation" && tx.toBucketId === plan.walletId && tx.accountId)
+          .reduce<Record<string, number>>((acc, tx) => {
+            acc[tx.accountId!] = (acc[tx.accountId!] ?? 0) + tx.amountMinor;
+            return acc;
+          }, {}),
+      ).map(([accountId, amountMinor]) => ({
+        accountId,
+        amountMinor,
+        name: setup.accounts.find((a) => a.id === accountId)?.name ?? "Conta",
+      }))
+    : [];
 
   return (
     <div className="space-y-8">
