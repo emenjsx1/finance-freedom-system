@@ -195,7 +195,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       }
       commit((prev) => markActed(prev, notification.id));
     },
-    [commit],
+    [commit, updateAction],
   );
 
   const confirmPrepared = useCallback(() => {
