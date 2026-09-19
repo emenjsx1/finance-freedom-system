@@ -160,6 +160,15 @@ function MoneyMapPage() {
           <p className="mt-2 text-xs text-muted-foreground">
             Moedas diferentes nunca são somadas sem uma taxa que tenhas indicado.
           </p>
+
+          <div className="mt-4 space-y-2">
+            {snapshot.totalsByCurrency
+              .filter((total) => total.currencyCode !== setup.currencyCode)
+              .map((total) => (
+                <RateRow key={total.currencyCode} currencyCode={total.currencyCode} />
+              ))}
+          </div>
+
         </section>
       ) : null}
     </div>
