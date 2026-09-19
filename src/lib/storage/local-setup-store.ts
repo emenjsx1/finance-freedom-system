@@ -30,13 +30,16 @@ export interface SetupState {
   onboardingCompleted: boolean;
 }
 
-export const DEFAULT_RULE_ITEMS: AllocationRuleItem[] = [
-  { id: "r1", name: "Construção", percentage: 40, icon: "build", kind: "wealth" },
-  { id: "r2", name: "Objetivos", percentage: 20, icon: "target", kind: "goals" },
-  { id: "r3", name: "Vida", percentage: 20, icon: "home", kind: "life" },
-  { id: "r4", name: "Família", percentage: 10, icon: "family", kind: "family" },
-  { id: "r5", name: "Livre", percentage: 10, icon: "sparkle", kind: "free" },
-];
+/**
+ * No universal purposes. A purpose exists only because the person created a
+ * plan, protected money, or named one themselves. The old fixed split
+ * (Construção 40 / Objetivos 20 / Vida 20 / Família 10 / Livre 10) was a system
+ * assumption, not the person's decision, and is gone.
+ */
+export const DEFAULT_RULE_ITEMS: AllocationRuleItem[] = [];
+
+/** Ids of the removed fixed split, recognised only to migrate old devices. */
+export const LEGACY_RULE_ITEM_IDS = ["r1", "r2", "r3", "r4", "r5"] as const;
 
 export const EMPTY_SETUP: SetupState = {
   fullName: "",
