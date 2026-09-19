@@ -223,11 +223,25 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
     [setup.accounts, setup.ruleItems, ledger.transactions],
   );
 
+  const integrity = useMemo(
+    () =>
+      checkIntegrity(
+        {
+          openingAccounts: setup.accounts,
+          ruleItems: setup.ruleItems,
+          transactions: ledger.transactions,
+        },
+        snapshot,
+      ),
+    [setup.accounts, setup.ruleItems, ledger.transactions, snapshot],
+  );
+
   const value = useMemo(
     () => ({
       ledger,
       hydrated,
       snapshot,
+      integrity,
       addTransaction,
       updateTransaction,
       deleteTransaction,
@@ -240,6 +254,7 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       ledger,
       hydrated,
       snapshot,
+      integrity,
       addTransaction,
       updateTransaction,
       deleteTransaction,
