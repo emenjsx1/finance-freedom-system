@@ -142,3 +142,11 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - Eu: área pessoal + definições silenciosas abaixo de uma separação.
 - Documentos finais: PRODUCT_MAP, BACKEND_CONTRACT, AGENT_CONTRACT, IOS_NATIVE_REQUIREMENTS, MIGRATION_PLAN.
 - Arquitetura declarada CONGELADA para a fase de backend.
+
+## Ajuda-me a organizar (done)
+- Motor determinístico de organização (2–3 opções, nunca "a melhor"), validação em tempo real e mapa de origem por conta.
+- Ecrã guiado /app/organize: dinheiro encontrado, reconciliação sem inventar valores, proteção, planos (com criação inline), compromissos, entrada de dinheiro, conforto e limites, opções, ajuste, revisão, aplicar.
+- Aplicar muda só o propósito: saldos das contas não se movem; TOTAL = DISPONÍVEL + RESERVADO.
+- Entradas: Dinheiro, Início (quando há dinheiro sem propósito) e Estratégia.
+- Agente: ferramenta simulate_organization usa o mesmo motor; explica, nunca calcula nem aplica.
+- Onboarding sem a antiga regra fixa 40/20/20/10/10; novos utilizadores começam sem carteiras impostas.
