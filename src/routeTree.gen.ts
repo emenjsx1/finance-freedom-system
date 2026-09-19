@@ -17,6 +17,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
+import { Route as AppPlanRouteImport } from './routes/app.plan'
 import { Route as AppProtectedRouteImport } from './routes/app.protected'
 import { Route as AppRecurringRouteImport } from './routes/app.recurring'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
@@ -66,6 +67,11 @@ const AppGoalsRoute = AppGoalsRouteImport.update({
 const AppMoneyMapRoute = AppMoneyMapRouteImport.update({
   id: '/money-map',
   path: '/money-map',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPlanRoute = AppPlanRouteImport.update({
+  id: '/plan',
+  path: '/plan',
   getParentRoute: () => AppRoute,
 } as any)
 const AppProtectedRoute = AppProtectedRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/app/accounts'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/plan'
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
@@ -205,6 +215,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/plan'
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
@@ -224,6 +235,7 @@ export interface FileRouteTypes {
     | '/app/accounts'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/plan'
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
@@ -300,6 +312,13 @@ declare module '@tanstack/react-router' {
       path: '/money-map'
       fullPath: '/app/money-map'
       preLoaderRoute: typeof AppMoneyMapRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/plan': {
+      id: '/app/plan'
+      path: '/plan'
+      fullPath: '/app/plan'
+      preLoaderRoute: typeof AppPlanRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/protected': {
@@ -407,6 +426,7 @@ interface AppRouteChildren {
   AppAccountsRoute: typeof AppAccountsRouteWithChildren
   AppGoalsRoute: typeof AppGoalsRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
+  AppPlanRoute: typeof AppPlanRoute
   AppProtectedRoute: typeof AppProtectedRoute
   AppRecurringRoute: typeof AppRecurringRoute
   AppReportsRoute: typeof AppReportsRoute
@@ -420,6 +440,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAccountsRoute: AppAccountsRouteWithChildren,
   AppGoalsRoute: AppGoalsRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
+  AppPlanRoute: AppPlanRoute,
   AppProtectedRoute: AppProtectedRoute,
   AppRecurringRoute: AppRecurringRoute,
   AppReportsRoute: AppReportsRoute,

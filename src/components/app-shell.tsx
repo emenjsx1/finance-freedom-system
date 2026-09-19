@@ -4,21 +4,24 @@ import {
   Home,
   ArrowLeftRight,
   Plus,
-  Target,
-  MoreHorizontal,
+  LayoutGrid,
+  MessageSquare,
   Wallet,
   PieChart,
   Repeat,
   Settings,
   Landmark,
   Map,
+  Target,
+  Lock,
+  Sliders,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
-import { pt } from "@/lib/i18n/pt";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
 import { haptic } from "@/hooks/use-ledger";
+import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
 
 interface NavItem {
@@ -27,33 +30,62 @@ interface NavItem {
   icon: ComponentType<{ className?: string }>;
 }
 
-const primaryNav: NavItem[] = [
-  { to: "/app", label: pt.nav.home, icon: Home },
-  { to: "/app/transactions", label: pt.nav.transactions, icon: ArrowLeftRight },
-  { to: "/app/goals", label: pt.nav.goals, icon: Target },
+/** Mobile: five deliberate destinations, the middle one is the action. */
+const mobileLeft: NavItem[] = [
+  { to: "/app", label: "Início", icon: Home },
+  { to: "/app/transactions", label: "Atividade", icon: ArrowLeftRight },
+];
+const mobileRight: NavItem[] = [
+  { to: "/app/plan", label: "Plano", icon: LayoutGrid },
+  { to: "/app/agent", label: "Agente", icon: MessageSquare },
 ];
 
-const desktopNav: NavItem[] = [
-  { to: "/app", label: pt.nav.home, icon: Home },
-  { to: "/app/transactions", label: pt.nav.transactions, icon: ArrowLeftRight },
-  { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
-  { to: "/app/accounts", label: "Contas", icon: Landmark },
-  { to: "/app/wallets", label: "Carteiras", icon: Wallet },
-  { to: "/app/money-map", label: "Mapa do dinheiro", icon: Map },
-  { to: "/app/goals", label: pt.nav.goals, icon: Target },
-  { to: "/app/reports", label: pt.nav.reports, icon: PieChart },
-  { to: "/app/settings", label: pt.nav.settings, icon: Settings },
+const desktopGroups: { title: string; items: NavItem[] }[] = [
+  {
+    title: "Diário",
+    items: [
+      { to: "/app", label: "Início", icon: Home },
+      { to: "/app/transactions", label: "Atividade", icon: ArrowLeftRight },
+      { to: "/app/agent", label: "Agente", icon: MessageSquare },
+    ],
+  },
+  {
+    title: "Dinheiro",
+    items: [
+      { to: "/app/accounts", label: "Contas", icon: Landmark },
+      { to: "/app/wallets", label: "Carteiras", icon: Wallet },
+      { to: "/app/money-map", label: "Mapa do dinheiro", icon: Map },
+      { to: "/app/protected", label: "Protegido", icon: Lock },
+    ],
+  },
+  {
+    title: "Planeamento",
+    items: [
+      { to: "/app/goals", label: "Objetivos", icon: Target },
+      { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
+      { to: "/app/reports", label: "Relatórios", icon: PieChart },
+    ],
+  },
+  {
+    title: "Sistema",
+    items: [
+      { to: "/app/personalization", label: "Personalização", icon: Sliders },
+      { to: "/app/settings", label: "Definições", icon: Settings },
+    ],
+  },
 ];
 
 export function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { openQuickActions, openComposer } = useTransactionLauncher();
   const { setup } = useSetup();
+  const { prefs } = usePrefs();
 
   // Privacy mode hides every monetary value, including screens that format money directly.
   useEffect(() => {
     document.documentElement.classList.toggle("privacy-mode", setup.privacyMode);
   }, [setup.privacyMode]);
+
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heldRef = useRef(false);
 
@@ -80,80 +112,97 @@ export function AppShell() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar p-5 lg:flex">
-        <div className="mb-8 flex items-center gap-2">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-            <Wallet className="size-5" />
+      <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
+        <div className="mb-8 flex items-center gap-3 px-2">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
+            <span aria-hidden className="text-lg leading-none">
+              ◈
+            </span>
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-semibold">Finance OS</p>
-            <p className="text-xs text-muted-foreground">Pessoal</p>
+            <p className="text-sm font-semibold tracking-tight">Finance OS</p>
+            <p className="type-meta">Sistema pessoal</p>
           </div>
         </div>
-        <nav className="flex flex-1 flex-col gap-1">
-          {desktopNav.map((item) => {
-            const active = pathname === item.to;
-            return (
-              <Link
-                key={item.to}
-                to={item.to}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                  active
-                    ? "bg-sidebar-accent text-sidebar-primary"
-                    : "text-muted-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                )}
-              >
-                <item.icon className="size-4.5" />
-                {item.label}
-              </Link>
-            );
-          })}
+
+        <nav className="flex flex-1 flex-col gap-6 overflow-y-auto">
+          {desktopGroups.map((group) => (
+            <div key={group.title}>
+              <p className="type-section mb-2 px-3">{group.title}</p>
+              <div className="flex flex-col gap-0.5">
+                {group.items.map((item) => {
+                  const active =
+                    item.to === "/app" ? pathname === "/app" : pathname.startsWith(item.to);
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      className={cn(
+                        "flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors",
+                        active
+                          ? "bg-sidebar-accent font-medium text-foreground"
+                          : "text-muted-foreground hover:bg-sidebar-accent/70 hover:text-foreground",
+                      )}
+                    >
+                      <item.icon
+                        className={cn("size-4", active ? "text-primary" : "text-muted-foreground")}
+                      />
+                      {item.label}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </nav>
+
         <button
           type="button"
           onClick={openQuickActions}
-          className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
+          className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-primary text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
         >
           <Plus className="size-4" />
-          {pt.nav.add}
+          Adicionar
         </button>
       </aside>
 
-      <main className="pb-28 lg:ml-64 lg:pb-10">
-        <div className="mx-auto w-full max-w-3xl px-4 pt-6 lg:max-w-4xl lg:px-8 lg:pt-10">
+      <main className="pb-28 lg:ml-64 lg:pb-12">
+        <div className="mx-auto w-full max-w-2xl px-5 pt-7 lg:max-w-4xl lg:px-10 lg:pt-12">
           <Outlet />
         </div>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 backdrop-blur lg:hidden">
-        <div className="mx-auto grid max-w-md grid-cols-5 items-end px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2">
-          {primaryNav.slice(0, 2).map((item) => (
-            <BottomLink key={item.to} item={item} active={pathname === item.to} />
+      {/* The action lives inside the bar, not floating above it. */}
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/90 backdrop-blur-xl lg:hidden">
+        <div className="mx-auto grid max-w-md grid-cols-5 items-center px-2 pb-[max(env(safe-area-inset-bottom),0.4rem)] pt-1.5">
+          {mobileLeft.map((item) => (
+            <BottomLink
+              key={item.to}
+              item={item}
+              active={item.to === "/app" ? pathname === "/app" : pathname.startsWith(item.to)}
+            />
           ))}
           <div className="flex justify-center">
             <button
               type="button"
-              aria-label={`${pt.nav.add} transação`}
+              aria-label="Adicionar"
               onClick={handleAddClick}
               onPointerDown={startHold}
               onPointerUp={endHold}
               onPointerLeave={endHold}
               onContextMenu={(e) => e.preventDefault()}
-              className="-mt-7 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-transform active:scale-95"
+              className="flex h-11 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform active:scale-95"
             >
-              <Plus className="size-6" />
+              <Plus className="size-5" />
             </button>
           </div>
-          {primaryNav.slice(2).map((item) => (
-            <BottomLink key={item.to} item={item} active={pathname === item.to} />
+          {mobileRight.map((item) => (
+            <BottomLink key={item.to} item={item} active={pathname.startsWith(item.to)} />
           ))}
-          <BottomLink
-            item={{ to: "/app/settings", label: pt.nav.more, icon: MoreHorizontal }}
-            active={pathname.startsWith("/app/settings") || pathname === "/app/wallets"}
-          />
         </div>
       </nav>
+
+      {prefs.density === "compact" ? null : null}
     </div>
   );
 }
@@ -163,12 +212,12 @@ function BottomLink({ item, active }: { item: NavItem; active: boolean }) {
     <Link
       to={item.to}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg py-1.5 text-[11px] font-medium transition-colors",
-        active ? "text-primary" : "text-muted-foreground",
+        "flex flex-col items-center gap-1 rounded-lg py-1.5 transition-colors",
+        active ? "text-foreground" : "text-muted-foreground",
       )}
     >
-      <item.icon className="size-5" />
-      {item.label}
+      <item.icon className={cn("size-5", active && "text-primary")} />
+      <span className="text-[10.5px] font-medium tracking-tight">{item.label}</span>
     </Link>
   );
 }
