@@ -3,9 +3,9 @@ export interface Category {
   name: string;
   icon: string;
   kind: "expense" | "income";
-  archived?: boolean;
+  archived?: boolean | undefined;
   order: number;
-  custom?: boolean;
+  custom?: boolean | undefined;
 }
 
 const expense: [string, string][] = [

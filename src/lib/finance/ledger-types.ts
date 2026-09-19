@@ -9,7 +9,7 @@ export interface Attachment {
   size: number;
   mime: string;
   /** Data URL preview. Replaced by secure storage paths once data lives in the backend. */
-  dataUrl?: string;
+  dataUrl?: string | undefined;
 }
 
 export interface Allocation {
@@ -27,28 +27,28 @@ export interface Transaction {
   createdAt: string;
   moneyType: MoneyType;
 
-  categoryId?: string;
-  merchant?: string;
-  description?: string;
-  note?: string;
+  categoryId?: string | undefined;
+  merchant?: string | undefined;
+  description?: string | undefined;
+  note?: string | undefined;
   tags: string[];
   attachments: Attachment[];
 
   /** expense: paid from / income: received into */
-  accountId?: string;
+  accountId?: string | undefined;
   /** expense: purpose bucket */
-  bucketId?: string;
+  bucketId?: string | undefined;
   /** income: distribution across buckets */
-  allocations?: Allocation[];
+  allocations?: Allocation[] | undefined;
   /** transfer */
-  fromAccountId?: string;
-  toAccountId?: string;
+  fromAccountId?: string | undefined;
+  toAccountId?: string | undefined;
   /** reallocation */
-  fromBucketId?: string;
-  toBucketId?: string;
+  fromBucketId?: string | undefined;
+  toBucketId?: string | undefined;
 
   /** Set when created from a recurring rule. */
-  recurringId?: string;
+  recurringId?: string | undefined;
 }
 
 export type Frequency =
@@ -69,17 +69,17 @@ export interface RecurringRule {
   amountMinor: number;
   frequency: Frequency;
   /** Days between occurrences when frequency === "custom". */
-  customIntervalDays?: number;
+  customIntervalDays?: number | undefined;
   startDate: string;
-  endDate?: string;
+  endDate?: string | undefined;
   mode: RecurrenceMode;
   active: boolean;
-  categoryId?: string;
-  accountId?: string;
-  bucketId?: string;
-  isSubscription?: boolean;
+  categoryId?: string | undefined;
+  accountId?: string | undefined;
+  bucketId?: string | undefined;
+  isSubscription?: boolean | undefined;
   /** ISO date of the last occurrence marked paid or skipped. */
-  lastHandledAt?: string;
+  lastHandledAt?: string | undefined;
 }
 
 export interface BucketView {
