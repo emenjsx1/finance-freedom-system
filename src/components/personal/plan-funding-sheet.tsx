@@ -109,7 +109,7 @@ export function PlanFundingSheet({
       description={
         confirming
           ? "O dinheiro continua na mesma conta. Só passa a ter um destino."
-          : undefined
+          : "Separar não move dinheiro entre contas."
       }
     >
       {confirming ? (
