@@ -161,8 +161,8 @@ export function TransactionComposer({
     if (kind === "expense") {
       if (!categoryId) return "Escolhe uma categoria.";
       if (!accountId) return "Escolhe a conta de onde saiu o dinheiro.";
-      if (!bucketId) return "Escolhe o propósito do dinheiro.";
-      if (moneyType === "personal") {
+      // A purpose is optional: most spending simply comes out of available money.
+      if (moneyType === "personal" && bucketId) {
         // Domain guard: a purpose can never hold less than zero.
         const walletName = setup.ruleItems.find((r) => r.id === bucketId)?.name;
         const error = debitWalletError(snapshot, bucketId, amountMinor, walletName, creditBackFor(bucketId));
