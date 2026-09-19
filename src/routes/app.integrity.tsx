@@ -181,8 +181,8 @@ function IssueCard({
 }: {
   title: string;
   detail: string;
-  amountMinor?: number;
-  fix?: React.ReactNode;
+  amountMinor?: number | undefined;
+  fix?: React.ReactNode | undefined;
 }) {
   return (
     <article className="card-standard">
@@ -241,7 +241,7 @@ function FixNegativeWallet({
   return (
     <div className="space-y-3">
       <p className="type-meta">Cobre a diferença a partir de outro propósito. O histórico mantém-se intacto.</p>
-      <Select value={sourceId} onValueChange={setSourceId}>
+      <Select value={sourceId ?? ""} onValueChange={setSourceId}>
         <SelectTrigger>
           <SelectValue placeholder="Escolher propósito" />
         </SelectTrigger>
