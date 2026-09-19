@@ -330,7 +330,7 @@ export function TransactionComposer({
             )}
           >
             {kind === "expense" ? "−" : kind === "income" ? "+" : ""}
-            {formatMoney(amountMinor, currency)}
+            {amountLabel(amountMinor)}
           </p>
         </div>
 
@@ -490,7 +490,7 @@ export function TransactionComposer({
               <TriangleAlert className="size-4" aria-hidden /> Estás a retirar dinheiro protegido.
             </p>
             <p className="mt-1 text-muted-foreground">
-              {formatMoney(amountMinor, currency)} de {sourceWallet?.name}. O dinheiro continua acessível — só
+              {amountLabel(amountMinor)} de {sourceWallet?.name}. O dinheiro continua acessível — só
               queremos que a decisão fique registada.
             </p>
             <Label htmlFor="protected-reason" className="mt-3 block text-xs text-muted-foreground">
@@ -633,7 +633,7 @@ export function TransactionComposer({
           )}
           {accountId ? (
             <p className="type-meta">
-              Disponível nesta conta: {formatMoney(snapshot.accountAvailable[accountId] ?? 0, currency)}
+              Disponível nesta conta: {amountLabel(snapshot.accountAvailable[accountId] ?? 0)}
             </p>
           ) : null}
           {purposeOptions.length > 0 ? (
