@@ -98,11 +98,10 @@ function AgentChat() {
 
       <PromptInput
         className="mt-4"
-        onSubmit={(message, event) => {
-          event.preventDefault();
+        onSubmit={(message) => {
+          // PromptInput already resets the form before calling this.
           const text = message.text?.trim();
           if (!text) return;
-          event.currentTarget.reset();
           void send(conversationId, text);
         }}
       >
