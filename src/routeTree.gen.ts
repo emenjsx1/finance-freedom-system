@@ -38,6 +38,8 @@ import { Route as AppAccountsAccountIdRouteImport } from './routes/app.accounts.
 import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
 import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$conversationId'
 import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.index'
+import { Route as AppProfileIndexRouteImport } from './routes/app.profile.index'
+import { Route as AppProfilePersonalRouteImport } from './routes/app.profile.personal'
 import { Route as AppWalletsIndexRouteImport } from './routes/app.wallets.index'
 import { Route as AppWalletsWalletIdRouteImport } from './routes/app.wallets.$walletId'
 import { Route as AppAnalyticsCategoryCategoryIdRouteImport } from './routes/app.analytics.category.$categoryId'
@@ -187,6 +189,16 @@ const AppAnalyticsIndexRoute = AppAnalyticsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppAnalyticsRoute,
 } as any)
+const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppProfileRoute,
+} as any)
+const AppProfilePersonalRoute = AppProfilePersonalRouteImport.update({
+  id: '/personal',
+  path: '/personal',
+  getParentRoute: () => AppProfileRoute,
+} as any)
 const AppWalletsIndexRoute = AppWalletsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -221,7 +233,7 @@ export interface FileRoutesByFullPath {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
-  '/app/profile': typeof AppProfileRoute
+  '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -231,10 +243,12 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/profile/personal': typeof AppProfilePersonalRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
   '/app/analytics/': typeof AppAnalyticsIndexRoute
+  '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
@@ -251,7 +265,6 @@ export interface FileRoutesByTo {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
-  '/app/profile': typeof AppProfileRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -260,10 +273,12 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/profile/personal': typeof AppProfilePersonalRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts': typeof AppAccountsIndexRoute
   '/app/agent': typeof AppAgentIndexRoute
   '/app/analytics': typeof AppAnalyticsIndexRoute
+  '/app/profile': typeof AppProfileIndexRoute
   '/app/wallets': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
@@ -285,7 +300,7 @@ export interface FileRoutesById {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
-  '/app/profile': typeof AppProfileRoute
+  '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
@@ -295,10 +310,12 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/profile/personal': typeof AppProfilePersonalRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
   '/app/analytics/': typeof AppAnalyticsIndexRoute
+  '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
@@ -331,10 +348,12 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/profile/personal'
     | '/app/wallets/$walletId'
     | '/app/accounts/'
     | '/app/agent/'
     | '/app/analytics/'
+    | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
   fileRoutesByTo: FileRoutesByTo
@@ -351,7 +370,6 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
-    | '/app/profile'
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
@@ -360,10 +378,12 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/profile/personal'
     | '/app/wallets/$walletId'
     | '/app/accounts'
     | '/app/agent'
     | '/app/analytics'
+    | '/app/profile'
     | '/app/wallets'
     | '/app/analytics/category/$categoryId'
   id:
@@ -394,10 +414,12 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/profile/personal'
     | '/app/wallets/$walletId'
     | '/app/accounts/'
     | '/app/agent/'
     | '/app/analytics/'
+    | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
   fileRoutesById: FileRoutesById
@@ -615,6 +637,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAnalyticsIndexRouteImport
       parentRoute: typeof AppAnalyticsRoute
     }
+    '/app/profile/': {
+      id: '/app/profile/'
+      path: '/'
+      fullPath: '/app/profile/'
+      preLoaderRoute: typeof AppProfileIndexRouteImport
+      parentRoute: typeof AppProfileRoute
+    }
+    '/app/profile/personal': {
+      id: '/app/profile/personal'
+      path: '/personal'
+      fullPath: '/app/profile/personal'
+      preLoaderRoute: typeof AppProfilePersonalRouteImport
+      parentRoute: typeof AppProfileRoute
+    }
     '/app/wallets/': {
       id: '/app/wallets/'
       path: '/'
@@ -681,6 +717,20 @@ const AppAnalyticsRouteWithChildren = AppAnalyticsRoute._addFileChildren(
   AppAnalyticsRouteChildren,
 )
 
+interface AppProfileRouteChildren {
+  AppProfilePersonalRoute: typeof AppProfilePersonalRoute
+  AppProfileIndexRoute: typeof AppProfileIndexRoute
+}
+
+const AppProfileRouteChildren: AppProfileRouteChildren = {
+  AppProfilePersonalRoute: AppProfilePersonalRoute,
+  AppProfileIndexRoute: AppProfileIndexRoute,
+}
+
+const AppProfileRouteWithChildren = AppProfileRoute._addFileChildren(
+  AppProfileRouteChildren,
+)
+
 interface AppWalletsRouteChildren {
   AppWalletsWalletIdRoute: typeof AppWalletsWalletIdRoute
   AppWalletsIndexRoute: typeof AppWalletsIndexRoute
@@ -707,7 +757,7 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
-  AppProfileRoute: typeof AppProfileRoute
+  AppProfileRoute: typeof AppProfileRouteWithChildren
   AppProtectedRoute: typeof AppProtectedRoute
   AppRecurringRoute: typeof AppRecurringRoute
   AppReportsRoute: typeof AppReportsRoute
@@ -729,7 +779,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
-  AppProfileRoute: AppProfileRoute,
+  AppProfileRoute: AppProfileRouteWithChildren,
   AppProtectedRoute: AppProtectedRoute,
   AppRecurringRoute: AppRecurringRoute,
   AppReportsRoute: AppReportsRoute,

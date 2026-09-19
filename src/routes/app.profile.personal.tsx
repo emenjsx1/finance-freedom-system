@@ -105,7 +105,7 @@ function PersonalInfoPage() {
       <PageHeader title="Informação pessoal" subtitle="Como te tratamos e como o dinheiro é apresentado." />
 
       <div className="flex items-center gap-4">
-        <UserAvatar size="lg" name={preferredName || fullName} email={user.email} imageUrl={avatarUrl} />
+        <UserAvatar size="lg" name={preferredName || fullName} email={user.email ?? null} imageUrl={avatarUrl} />
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="secondary" size="sm" onClick={() => fileRef.current?.click()}>
             Alterar fotografia
