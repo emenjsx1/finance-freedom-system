@@ -13,17 +13,13 @@ import { haptic, newId, useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { findCategory } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
-import {
-  allocationsTotal,
-  largeExpenseRatio,
-  previewAllocation,
-  suggestFromHistory,
-} from "@/lib/finance/engine";
+import { largeExpenseRatio, suggestFromHistory } from "@/lib/finance/engine";
 import { debitWalletError } from "@/lib/finance/integrity";
+import { financialPosition } from "@/lib/finance/position";
+import { listPurposes } from "@/lib/finance/purposes";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
-import { Symbol } from "@/lib/icons/symbols";
 
 export interface ComposerOptions {
   kind: TxKind;
