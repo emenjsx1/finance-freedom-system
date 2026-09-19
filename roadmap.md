@@ -95,3 +95,17 @@
 ## Migração visual completa (referência iPhone) — done
 
 ## Correção UI/UX — perfil, autenticação, atividade, header pessoal — done
+
+## Fase 10 — Parte A: integridade financeira (done)
+- [x] Auditoria completa (working / partial / UI only / missing) registada no plano da fase 10
+- [x] Guarda de domínio única no `LedgerProvider`: nenhum propósito pode ficar negativo
+      (despesa, redistribuição, ajuste negativo) — cobre composer, agente, recorrências e reconciliação
+- [x] Proteção de idempotência: movimento idêntico em menos de 3s não é duplicado
+- [x] `src/lib/finance/integrity.ts` + testes: saldos negativos, propósitos acima do dinheiro real,
+      alocações órfãs, referências em falta, distribuição incompleta, moedas sem taxa
+- [x] Ecrã "Verificação financeira" (/app/integrity) com correção auditável por redistribuição
+      e diagnóstico técnico só em desenvolvimento
+- [x] Home: aviso calmo quando as contas não fecham (nunca números inventados) + esqueleto de carregamento
+- [ ] Parte B: migrar contas, movimentos, carteiras, objetivos, memórias e preferências para a base de dados
+- [ ] Parte C: atividade paginada no servidor
+- [ ] Parte D: foto de perfil, sessões, erros centralizados, automações no servidor
