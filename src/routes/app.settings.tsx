@@ -59,7 +59,8 @@ function SettingsPage() {
       <PageHeader title="Mais" subtitle="Controla o teu sistema financeiro." />
 
       <Section title="Conta">
-        <Row icon={User} label="Perfil" value={setup.fullName || "Por definir"} />
+        <Row icon={User} label="Perfil e conta" value={setup.fullName || "Por definir"} to="/app/profile" />
+        <Row icon={Lock} label="Privacidade e dados" to="/app/privacy" />
         <Row icon={Landmark} label="As minhas contas" value={`${setup.accounts.length}`} to="/app/accounts" />
         <Row icon={Wallet} label="Carteiras" value={`${setup.ruleItems.length}`} to="/app/wallets" />
         <Row icon={Map} label="Mapa do dinheiro" to="/app/money-map" />
