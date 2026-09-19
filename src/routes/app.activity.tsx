@@ -168,7 +168,7 @@ function ActivityPage() {
           <button
             type="button"
             aria-label="Mês anterior"
-            onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1))}
+            onClick={() => { setCursorTouched(true); setCursor(new Date(cursor.getFullYear(), cursor.getMonth() - 1, 1)); }}
             className="rounded-full p-2 text-muted-foreground hover:text-foreground"
           >
             <ChevronLeft className="size-4" />
@@ -178,7 +178,7 @@ function ActivityPage() {
             type="button"
             aria-label="Mês seguinte"
             disabled={!canGoForward}
-            onClick={() => setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1))}
+            onClick={() => { setCursorTouched(true); setCursor(new Date(cursor.getFullYear(), cursor.getMonth() + 1, 1)); }}
             className="rounded-full p-2 text-muted-foreground disabled:opacity-30 hover:text-foreground"
           >
             <ChevronRight className="size-4" />
