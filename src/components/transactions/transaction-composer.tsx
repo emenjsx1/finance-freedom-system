@@ -265,7 +265,7 @@ export function TransactionComposer({
       toast.success("Transferência registada", { description: "O teu património não mudou." });
       return;
     }
-    toast.success("Redistribuição registada", { description: "O dinheiro continua na mesma conta." });
+    toast.success("Propósito alterado", { description: "As contas não mudaram." });
   }
 
   const titles: Record<TxKind, string> = {
