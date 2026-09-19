@@ -97,7 +97,7 @@ function MePage() {
 
       {activePlans.length ? (
         <section>
-          <SectionHeader title="Planos ativos" action={<Link to="/app/plans">Ver todos</Link>} />
+          <SectionHeader title="Planos ativos" actionLabel="Ver todos" to="/app/plans" />
           <div className="space-y-3">
             {activePlans.slice(0, 3).map((plan) => (
               <PlanCard key={plan.id} plan={plan} savedMinor={savedFor(plan.walletId)} />

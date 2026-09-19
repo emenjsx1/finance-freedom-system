@@ -44,6 +44,7 @@ import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppProtectedRouteImport } from './routes/app.protected'
 import { Route as AppRecurringRouteImport } from './routes/app.recurring'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
+import { Route as AppReviewRouteImport } from './routes/app.review'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppStrategyRouteImport } from './routes/app.strategy'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
@@ -241,6 +242,11 @@ const AppReportsRoute = AppReportsRouteImport.update({
   path: '/reports',
   getParentRoute: () => AppRoute,
 } as any)
+const AppReviewRoute = AppReviewRouteImport.update({
+  id: '/review',
+  path: '/review',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppSettingsRoute = AppSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -383,6 +389,7 @@ export interface FileRoutesByFullPath {
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -434,6 +441,7 @@ export interface FileRoutesByTo {
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -492,6 +500,7 @@ export interface FileRoutesById {
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
+  '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -552,6 +561,7 @@ export interface FileRouteTypes {
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
+    | '/app/review'
     | '/app/settings'
     | '/app/strategy'
     | '/app/transactions'
@@ -603,6 +613,7 @@ export interface FileRouteTypes {
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
+    | '/app/review'
     | '/app/settings'
     | '/app/strategy'
     | '/app/transactions'
@@ -660,6 +671,7 @@ export interface FileRouteTypes {
     | '/app/protected'
     | '/app/recurring'
     | '/app/reports'
+    | '/app/review'
     | '/app/settings'
     | '/app/strategy'
     | '/app/transactions'
@@ -945,6 +957,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppReportsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/review': {
+      id: '/app/review'
+      path: '/review'
+      fullPath: '/app/review'
+      preLoaderRoute: typeof AppReviewRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/settings': {
       id: '/app/settings'
       path: '/settings'
@@ -1223,6 +1242,7 @@ interface AppRouteChildren {
   AppProtectedRoute: typeof AppProtectedRoute
   AppRecurringRoute: typeof AppRecurringRoute
   AppReportsRoute: typeof AppReportsRoute
+  AppReviewRoute: typeof AppReviewRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppStrategyRoute: typeof AppStrategyRoute
   AppTransactionsRoute: typeof AppTransactionsRoute
@@ -1254,6 +1274,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProtectedRoute: AppProtectedRoute,
   AppRecurringRoute: AppRecurringRoute,
   AppReportsRoute: AppReportsRoute,
+  AppReviewRoute: AppReviewRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppStrategyRoute: AppStrategyRoute,
   AppTransactionsRoute: AppTransactionsRoute,
