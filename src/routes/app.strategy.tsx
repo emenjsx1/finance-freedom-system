@@ -88,6 +88,12 @@ function StrategyPage() {
           <Button className="mt-5" onClick={() => setGallery(true)}>
             Ver formas de organizar
           </Button>
+          <p className="type-secondary mt-6">
+            A estratégia é sobre dinheiro novo. Para organizar o que já tens:
+          </p>
+          <Button variant="secondary" className="mt-3" asChild>
+            <Link to="/app/organize">Ajuda-me a organizar</Link>
+          </Button>
         </section>
       ) : (
         <>
