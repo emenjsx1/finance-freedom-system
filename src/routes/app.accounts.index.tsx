@@ -36,11 +36,11 @@ function AccountsPage() {
 
   return (
     <div>
-      <PageHeader title="Minhas contas" subtitle="Onde o teu dinheiro existe fisicamente." />
+      <PageHeader title="Contas" subtitle="Onde o teu dinheiro existe fisicamente." />
 
-      <div className="mb-4 rounded-2xl border border-border/70 bg-surface p-5">
-        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total nas contas</p>
-        <Money minor={snapshot.wealthMinor} className="mt-1 block text-2xl font-semibold" />
+      <div className="card-hero mb-6">
+        <p className="type-caption">Total nas contas</p>
+        <Money minor={snapshot.wealthMinor} className="type-display mt-2 block" />
         {snapshot.totalsByCurrency.length > 1 ? (
           <p className="mt-1 text-xs text-muted-foreground">
             Inclui valores convertidos com taxas que indicaste manualmente.
