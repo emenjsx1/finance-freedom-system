@@ -145,8 +145,8 @@ function RootComponent() {
         <PrefsProvider>
           <LedgerProvider>
             <PersonalProvider>
-            <AgentProvider>
-              <NotificationsProvider>
+            <NotificationsProvider>
+              <AgentProvider>
                 <PwaProvider>
                 <MoneyModelMigration />
                 <AppStatus />
@@ -154,8 +154,8 @@ function RootComponent() {
                 <Outlet />
                 <Toaster position="top-center" />
                 </PwaProvider>
-              </NotificationsProvider>
-            </AgentProvider>
+              </AgentProvider>
+            </NotificationsProvider>
             </PersonalProvider>
           </LedgerProvider>
         </PrefsProvider>
