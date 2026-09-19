@@ -12,6 +12,8 @@
  * reserved money.
  */
 
+import { EMPTY_DEVELOPMENT_STATE, type DevelopmentState } from "@/lib/development/types";
+
 export type PlanType =
   | "travel"
   | "purchase"
@@ -287,6 +289,13 @@ export interface PersonalState {
   context: PersonalContextItem[];
   commitments: Commitment[];
   permissions: AgentPermissions;
+  /**
+   * Personal development: programs, actions, decisions and the evolution
+   * timeline. Kept in the same record because a Plan is shared by both sides,
+   * but the two domains never merge: money stays strict, development stays
+   * flexible.
+   */
+  development: DevelopmentState;
   /** Set once the legacy fixed-wallet rule was converted into a strategy. */
   legacyMigratedAt?: string | undefined;
 }
@@ -298,4 +307,5 @@ export const EMPTY_PERSONAL_STATE: PersonalState = {
   context: [],
   commitments: [],
   permissions: DEFAULT_AGENT_PERMISSIONS,
+  development: EMPTY_DEVELOPMENT_STATE,
 };

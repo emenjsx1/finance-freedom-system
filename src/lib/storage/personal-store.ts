@@ -21,6 +21,9 @@ export function loadPersonal(): PersonalState {
       context: parsed.context ?? [],
       commitments: parsed.commitments ?? [],
       strategy: parsed.strategy ?? null,
+      // Existing devices predate the development domain: they simply start
+      // empty. Nothing already stored is rewritten or thrown away.
+      development: { ...EMPTY_PERSONAL_STATE.development, ...(parsed.development ?? {}) },
       permissions: { ...EMPTY_PERSONAL_STATE.permissions, ...(parsed.permissions ?? {}) },
     };
   } catch {
