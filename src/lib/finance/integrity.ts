@@ -175,6 +175,20 @@ export function checkIntegrity(input: LedgerInput, snapshot: LedgerSnapshot): In
     }
   }
 
+  for (const [walletId, info] of orphanPurposes) {
+    issues.push({
+      code: "missing_wallet",
+      severity: "error",
+      title: "Um propósito que usaste já não existe",
+      detail:
+        info.movements === 1
+          ? "Há 1 movimento guardado com um propósito que foi apagado. Podes repor o propósito — o dinheiro não se move."
+          : `Há ${info.movements} movimentos guardados com um propósito que foi apagado. Podes repor o propósito — o dinheiro não se move.`,
+      walletId,
+      amountMinor: snapshot.bucketBalances[walletId] ?? 0,
+    });
+  }
+
   for (const code of snapshot.unconvertedCurrencies) {
     issues.push({
       code: "unconverted_currency",
