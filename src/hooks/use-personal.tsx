@@ -368,6 +368,229 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
+  /* ------------------------------------------------------------------ */
+  /* Personal development                                                */
+  /*                                                                     */
+  /* Flexible by design, but the same rules apply: nothing is created    */
+  /* without the person asking for it, nothing is scored, and the        */
+  /* evolution timeline only records changes that really happened.       */
+  /* ------------------------------------------------------------------ */
+
+  const patchDevelopment = useCallback(
+    (updater: (dev: DevelopmentState) => DevelopmentState) =>
+      commit((prev) => ({ ...prev, development: updater(prev.development) })),
+    [commit],
+  );
+
+  const logEvolution = useCallback<PersonalContextValue["logEvolution"]>(
+    (event) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        evolution: [{ ...event, id: newId(), at: event.at ?? now() }, ...dev.evolution].slice(0, 500),
+      })),
+    [patchDevelopment],
+  );
+
+  const createProgram = useCallback<PersonalContextValue["createProgram"]>(
+    (input) => {
+      const program: Program = {
+        ...input,
+        id: newId(),
+        items: input.items.map((item, index) => ({
+          ...item,
+          id: newId(),
+          status: "pending" as const,
+          order: item.order ?? index,
+        })),
+        createdAt: now(),
+        updatedAt: now(),
+      };
+      patchDevelopment((dev) => ({
+        ...dev,
+        programs: [program, ...dev.programs],
+        evolution: [
+          {
+            id: newId(),
+            kind: "program_created" as const,
+            title: program.title,
+            detail: `${program.durationDays} dias`,
+            at: now(),
+          },
+          ...dev.evolution,
+        ],
+      }));
+      return program;
+    },
+    [patchDevelopment],
+  );
+
+  const updateProgram = useCallback<PersonalContextValue["updateProgram"]>(
+    (id, patch) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        programs: dev.programs.map((p) => (p.id === id ? { ...p, ...patch, updatedAt: now() } : p)),
+      })),
+    [patchDevelopment],
+  );
+
+  const setProgramItemStatus = useCallback<PersonalContextValue["setProgramItemStatus"]>(
+    (programId, itemId, status) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        programs: dev.programs.map((p) =>
+          p.id !== programId
+            ? p
+            : {
+                ...p,
+                updatedAt: now(),
+                items: p.items.map((item) => (item.id === itemId ? { ...item, status } : item)),
+              },
+        ),
+      })),
+    [patchDevelopment],
+  );
+
+  const completeProgram = useCallback(
+    (id: string) =>
+      patchDevelopment((dev) => {
+        const program = dev.programs.find((p) => p.id === id);
+        if (!program) return dev;
+        return {
+          ...dev,
+          programs: dev.programs.map((p) =>
+            p.id === id ? { ...p, status: "completed" as const, completedAt: now(), updatedAt: now() } : p,
+          ),
+          evolution: [
+            { id: newId(), kind: "program_completed" as const, title: program.title, at: now() },
+            ...dev.evolution,
+          ],
+        };
+      }),
+    [patchDevelopment],
+  );
+
+  const removeProgram = useCallback(
+    (id: string) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        programs: dev.programs.filter((p) => p.id !== id),
+        // Actions created from the program stay: they were the person's work.
+        actions: dev.actions.map((a) =>
+          a.programId === id ? { ...a, programId: undefined, programItemId: undefined } : a,
+        ),
+      })),
+    [patchDevelopment],
+  );
+
+  const addAction = useCallback<PersonalContextValue["addAction"]>(
+    (input) => {
+      const action: PersonalAction = {
+        ...input,
+        status: input.status ?? "pending",
+        id: newId(),
+        createdAt: now(),
+        updatedAt: now(),
+      };
+      patchDevelopment((dev) => ({ ...dev, actions: [action, ...dev.actions] }));
+      return action;
+    },
+    [patchDevelopment],
+  );
+
+  const updateAction = useCallback<PersonalContextValue["updateAction"]>(
+    (id, patch) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        actions: dev.actions.map((a) =>
+          a.id !== id
+            ? a
+            : {
+                ...a,
+                ...patch,
+                updatedAt: now(),
+                ...(patch.status === "done" ? { completedAt: now() } : {}),
+                ...(patch.status && patch.status !== "done" ? { completedAt: undefined } : {}),
+              },
+        ),
+      })),
+    [patchDevelopment],
+  );
+
+  const removeAction = useCallback(
+    (id: string) =>
+      patchDevelopment((dev) => ({ ...dev, actions: dev.actions.filter((a) => a.id !== id) })),
+    [patchDevelopment],
+  );
+
+  const addDecision = useCallback<PersonalContextValue["addDecision"]>(
+    (input) => {
+      const decision: Decision = {
+        ...input,
+        status: input.status ?? "active",
+        id: newId(),
+        createdAt: now(),
+        updatedAt: now(),
+      };
+      patchDevelopment((dev) => ({
+        ...dev,
+        decisions: [decision, ...dev.decisions],
+        evolution: [
+          { id: newId(), kind: "decision_recorded" as const, title: decision.statement, at: now() },
+          ...dev.evolution,
+        ],
+      }));
+      return decision;
+    },
+    [patchDevelopment],
+  );
+
+  const updateDecision = useCallback<PersonalContextValue["updateDecision"]>(
+    (id, patch) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        decisions: dev.decisions.map((d) => (d.id === id ? { ...d, ...patch, updatedAt: now() } : d)),
+      })),
+    [patchDevelopment],
+  );
+
+  const removeDecision = useCallback(
+    (id: string) =>
+      patchDevelopment((dev) => ({ ...dev, decisions: dev.decisions.filter((d) => d.id !== id) })),
+    [patchDevelopment],
+  );
+
+  const addReflection = useCallback<PersonalContextValue["addReflection"]>(
+    (input) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        reflections: [{ ...input, id: newId(), createdAt: now() }, ...dev.reflections],
+      })),
+    [patchDevelopment],
+  );
+
+  const removeReflection = useCallback(
+    (id: string) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        reflections: dev.reflections.filter((r) => r.id !== id),
+      })),
+    [patchDevelopment],
+  );
+
+  const setDailyReflection = useCallback(
+    (enabled: boolean) => patchDevelopment((dev) => ({ ...dev, dailyReflectionEnabled: enabled })),
+    [patchDevelopment],
+  );
+
+  const hideEvolution = useCallback(
+    (id: string, hidden: boolean) =>
+      patchDevelopment((dev) => ({
+        ...dev,
+        evolution: dev.evolution.map((e) => (e.id === id ? { ...e, hidden } : e)),
+      })),
+    [patchDevelopment],
+  );
+
   const value = useMemo<PersonalContextValue>(
     () => ({
       state,
