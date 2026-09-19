@@ -48,7 +48,7 @@ export const AGENT_READ_TOOLS = [
 export type AgentReadTool = (typeof AGENT_READ_TOOLS)[number];
 
 function money(minor: number, currency: string) {
-  return formatMoney(minor, currency);
+  return `${formatMoney(minor, currency, { withSymbol: false, compactDecimals: true })} ${currency}`;
 }
 
 export function getFinancialSummary(d: AgentDeps) {
