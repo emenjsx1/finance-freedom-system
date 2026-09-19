@@ -80,6 +80,53 @@ function ReviewPage() {
         subtitle="Sem notas, sem pontuações, sem julgamento. Só o que aconteceu."
       />
 
+      <div className="flex gap-2" role="tablist" aria-label="Período da revisão">
+        {(["week", "month"] as const).map((id) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={period === id}
+            onClick={() => setPeriod(id)}
+            className={
+              period === id
+                ? "rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                : "rounded-full bg-subtle px-4 py-2 text-sm font-medium text-muted-foreground"
+            }
+          >
+            {id === "week" ? "Semana" : "Mês"}
+          </button>
+        ))}
+      </div>
+
+      <section className="card-standard grid grid-cols-2 gap-5">
+        <div>
+          <p className="type-meta">Entrou</p>
+          <p className="type-section mt-1">
+            <Money minor={totals.income} options={{ compactDecimals: true }} />
+          </p>
+        </div>
+        <div>
+          <p className="type-meta">Saiu</p>
+          <p className="type-section mt-1">
+            <Money minor={totals.expenses} options={{ compactDecimals: true }} />
+          </p>
+        </div>
+        <div>
+          <p className="type-meta">Reservado hoje</p>
+          <p className="type-section mt-1">
+            <Money
+              minor={snapshot.wealthMinor - snapshot.spendableMinor}
+              options={{ compactDecimals: true }}
+            />
+          </p>
+        </div>
+        <div>
+          <p className="type-meta">Compromissos ativos</p>
+          <p className="type-section mt-1">{upcoming.length}</p>
+        </div>
+      </section>
+
       {progressing.length ? (
         <section>
           <SectionHeader title="O que ganhou forma" />
