@@ -11,6 +11,7 @@ import {
 
 import { useAnalyticsInput } from "@/hooks/use-analytics";
 import { newId, useLedger } from "@/hooks/use-ledger";
+import { usePersonal } from "@/hooks/use-personal";
 import { buildDrafts } from "@/lib/notifications/rules";
 import { personalDrafts } from "@/lib/notifications/personal-rules";
 import {
