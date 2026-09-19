@@ -80,7 +80,7 @@ const Ctx = createContext<NotificationsContextValue | null>(null);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const input = useAnalyticsInput();
-  const { state: personal } = usePersonal();
+  const { state: personal, updateAction } = usePersonal();
   const { addTransaction, upsertRecurring, ledger } = useLedger();
   const [state, setState] = useState<NotificationsState>(EMPTY_NOTIFICATIONS_STATE);
   const [hydrated, setHydrated] = useState(false);
@@ -178,6 +178,15 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
           toBucketId: payload.walletId,
           summary: `Contribuição para ${payload.name}. Nada muda até confirmares.`,
         });
+        return;
+      }
+      /* Personal actions carry no money, so they complete directly. */
+      if (action === "complete_action" && notification.payload.kind === "personal_action") {
+        updateAction(notification.payload.actionId, {
+          status: "done",
+          completedAt: new Date().toISOString(),
+        });
+        commit((prev) => markActed(prev, notification.id));
         return;
       }
       if (action === "skip_contribution") {
