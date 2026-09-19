@@ -612,7 +612,11 @@ export function TransactionComposer({
             ? "Registar despesa"
             : kind === "transfer"
               ? "Transferir"
-              : "Guardar dinheiro"}
+              : kind === "reservation"
+                ? "Guardar dinheiro"
+                : kind === "release"
+                  ? "Libertar dinheiro"
+                  : "Mudar propósito"}
       </Button>
     </div>
   );
