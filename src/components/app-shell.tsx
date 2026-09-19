@@ -16,6 +16,7 @@ import {
   Target,
   Lock,
   Sliders,
+  User,
   Bell,
   Zap,
 } from "lucide-react";
