@@ -10,6 +10,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import { AuthProvider } from "@/hooks/use-auth";
 import { SetupProvider } from "@/hooks/use-setup";
 import { LedgerProvider } from "@/hooks/use-ledger";
 import { PrefsProvider } from "@/hooks/use-prefs";
