@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import logoUrl from "@/assets/finan-logo.png";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
