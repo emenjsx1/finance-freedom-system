@@ -142,12 +142,14 @@ export function buildSnapshot({
         add(accountBalances, tx.accountId, tx.amountMinor);
         for (const allocation of tx.allocations ?? []) {
           add(bucketBalances, allocation.bucketId, allocation.amountMinor);
+          attribute(allocation.bucketId, tx.accountId ?? UNKNOWN_ACCOUNT, allocation.amountMinor);
         }
         break;
       }
       case "expense": {
         add(accountBalances, tx.accountId, -tx.amountMinor);
         add(bucketBalances, tx.bucketId, -tx.amountMinor);
+        detach(tx.bucketId, tx.amountMinor);
         break;
       }
       case "transfer": {
@@ -155,9 +157,31 @@ export function buildSnapshot({
         add(accountBalances, tx.toAccountId, tx.amountMinor);
         break;
       }
+      case "reservation": {
+        // Classification only: the physical balance of the account does not move.
+        add(bucketBalances, tx.toBucketId, tx.amountMinor);
+        attribute(tx.toBucketId, tx.accountId ?? UNKNOWN_ACCOUNT, tx.amountMinor);
+        break;
+      }
+      case "release": {
+        add(bucketBalances, tx.fromBucketId, -tx.amountMinor);
+        detach(tx.fromBucketId, tx.amountMinor);
+        break;
+      }
       case "reallocation": {
+        // Purpose → purpose. Source-account attribution follows the money.
+        if (!tx.fromBucketId && tx.toBucketId) {
+          // Pre-cleanup rows written by the plan funding sheet were reservations.
+          add(bucketBalances, tx.toBucketId, tx.amountMinor);
+          attribute(tx.toBucketId, tx.accountId ?? UNKNOWN_ACCOUNT, tx.amountMinor);
+          break;
+        }
         add(bucketBalances, tx.fromBucketId, -tx.amountMinor);
         add(bucketBalances, tx.toBucketId, tx.amountMinor);
+        const moved = detach(tx.fromBucketId, tx.amountMinor);
+        for (const [accountId, value] of Object.entries(moved)) {
+          attribute(tx.toBucketId, accountId, value);
+        }
         break;
       }
       case "adjustment": {
@@ -166,7 +190,10 @@ export function buildSnapshot({
         const delta = tx.direction === "negative" ? -tx.amountMinor : tx.amountMinor;
         add(accountBalances, tx.accountId, delta);
         for (const allocation of tx.allocations ?? []) {
-          add(bucketBalances, allocation.bucketId, tx.direction === "negative" ? -allocation.amountMinor : allocation.amountMinor);
+          const signed = tx.direction === "negative" ? -allocation.amountMinor : allocation.amountMinor;
+          add(bucketBalances, allocation.bucketId, signed);
+          if (signed >= 0) attribute(allocation.bucketId, tx.accountId ?? UNKNOWN_ACCOUNT, signed);
+          else detach(allocation.bucketId, -signed);
         }
         break;
       }
