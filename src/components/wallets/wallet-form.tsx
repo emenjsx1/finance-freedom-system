@@ -7,6 +7,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { newId } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { upsertWallet } from "@/lib/finance/setup-ops";
+import { fromMinorUnits, toMinorUnits } from "@/lib/finance/currency";
 import {
   PROTECTION_LEVEL_LABELS,
   WALLET_COLORS,
@@ -56,6 +57,10 @@ export function WalletForm({
       color: form.color,
       order: wallet?.order,
       archived: wallet?.archived ?? false,
+      ...(form.target ? { targetMinor: toMinorUnits(form.target, setup.currencyCode) } : {}),
+      ...(form.targetDate ? { targetDate: new Date(form.targetDate).toISOString() } : {}),
+      ...(form.monthlyPlan ? { monthlyPlanMinor: toMinorUnits(form.monthlyPlan, setup.currencyCode) } : {}),
+      ...(form.threshold ? { lowBalanceThresholdMinor: toMinorUnits(form.threshold, setup.currencyCode) } : {}),
     };
     update(upsertWallet(setup, next));
     onOpenChange(false);
@@ -167,6 +172,50 @@ export function WalletForm({
             </p>
           </Field>
 
+          {form.kind === "goals" ? (
+            <>
+              <Field label="Valor do objetivo" htmlFor="w-target">
+                <Input
+                  id="w-target"
+                  inputMode="decimal"
+                  value={form.target}
+                  onChange={(e) => setForm((f) => ({ ...f, target: e.target.value.replace(/[^\d.,]/g, "") }))}
+                />
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Serve para acompanhar o progresso e avisar-te nos marcos. Não move dinheiro.
+                </p>
+              </Field>
+              <Field label="Data desejada" htmlFor="w-target-date">
+                <Input
+                  id="w-target-date"
+                  type="date"
+                  value={form.targetDate}
+                  onChange={(e) => setForm((f) => ({ ...f, targetDate: e.target.value }))}
+                />
+              </Field>
+              <Field label="Contribuição mensal planeada" htmlFor="w-plan">
+                <Input
+                  id="w-plan"
+                  inputMode="decimal"
+                  value={form.monthlyPlan}
+                  onChange={(e) => setForm((f) => ({ ...f, monthlyPlan: e.target.value.replace(/[^\d.,]/g, "") }))}
+                />
+              </Field>
+            </>
+          ) : null}
+
+          <Field label="Avisar-me abaixo de" htmlFor="w-threshold">
+            <Input
+              id="w-threshold"
+              inputMode="decimal"
+              value={form.threshold}
+              onChange={(e) => setForm((f) => ({ ...f, threshold: e.target.value.replace(/[^\d.,]/g, "") }))}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Deixa vazio para não receber avisos. A app nunca define um limite por ti.
+            </p>
+          </Field>
+
           <ToggleRow
             label="Pode ser gasto"
             checked={form.spendable}
@@ -201,6 +250,10 @@ function initial(wallet: AllocationRuleItem | undefined) {
     kind: (wallet?.kind ?? "free") as BucketKind,
     percentage: wallet ? String(wallet.percentage) : "0",
     icon: wallet?.icon ?? "✨",
+    target: wallet?.targetMinor ? String(fromMinorUnits(wallet.targetMinor, "MZN")) : "",
+    targetDate: wallet?.targetDate ? wallet.targetDate.slice(0, 10) : "",
+    monthlyPlan: wallet?.monthlyPlanMinor ? String(fromMinorUnits(wallet.monthlyPlanMinor, "MZN")) : "",
+    threshold: wallet?.lowBalanceThresholdMinor ? String(fromMinorUnits(wallet.lowBalanceThresholdMinor, "MZN")) : "",
     color: wallet?.color ?? WALLET_COLORS[0]!,
     ...behaviour,
   };

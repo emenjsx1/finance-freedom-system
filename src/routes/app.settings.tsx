@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MessageSquare, Sliders } from "lucide-react";
+import { MessageSquare, Sliders, Zap } from "lucide-react";
 import {
   Bell,
   ChevronRight,
@@ -67,6 +67,8 @@ function SettingsPage() {
         <Row icon={Scale} label="Regra financeira" value="100% distribuído" />
         <Row icon={ListTree} label="Categorias" value="Padrão" />
         <Row icon={Repeat} label="Pagamentos recorrentes" to="/app/recurring" />
+        <Row icon={Bell} label="Notificações" to="/app/notification-settings" />
+        <Row icon={Zap} label="Automações" to="/app/automations" />
         <Row icon={Sliders} label="Personalização" to="/app/personalization" />
         <Row icon={MessageSquare} label="Agente e memória" to="/app/agent-settings" />
         <Row icon={Coins} label="Moeda" value={`${currency.code} · ${currency.symbol}`} />
@@ -147,6 +149,8 @@ function Row({
     | "/app/wallets"
     | "/app/recurring"
     | "/app/accounts"
+    | "/app/notification-settings"
+    | "/app/automations"
     | "/app/money-map"
     | "/app/protected"
     | "/app/personalization"

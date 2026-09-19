@@ -61,6 +61,8 @@ export interface Account {
   archived?: boolean;
   isDefaultSpending?: boolean | undefined;
   isDefaultIncome?: boolean | undefined;
+  /** User-defined low-balance threshold. The app never invents one. */
+  lowBalanceThresholdMinor?: number | undefined;
 }
 
 export interface Bucket {
@@ -86,6 +88,13 @@ export interface AllocationRuleItem {
   color?: string | undefined;
   order?: number | undefined;
   archived?: boolean | undefined;
+  /** Goal wallets only: what the user is aiming for. Display and reminders only. */
+  targetMinor?: number | undefined;
+  targetDate?: string | undefined;
+  /** Planned monthly contribution, used for reminders. Never moves money by itself. */
+  monthlyPlanMinor?: number | undefined;
+  /** User-defined low-balance threshold. The app never invents one. */
+  lowBalanceThresholdMinor?: number | undefined;
 }
 
 export interface AllocationRule {
