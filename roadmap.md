@@ -47,3 +47,31 @@
       protected withdrawal reason + history, privacy mode, no console errors
 - [ ] Cross-currency transfers intentionally unavailable (would require FX accounting in the engine)
 - [ ] Backend (schema, RLS, auth, secure attachment storage) still pending — data is device-local
+
+## Phase 06 — Premium redesign, personalization & personal agent (in progress)
+- [x] Design foundation: spacing/radius/shadow tokens, typography scale with tabular numerals,
+      card system (hero/standard/compact/interactive/quiet), reduced-motion support
+- [x] Purpose-built light theme (not inverted) + curated accents (emerald, blue, violet, amber, neutral)
+- [x] Button system: primary, secondary, ghost, danger, icon, floating action, compact — with pressed,
+      disabled, loading and focus states
+- [x] Navigation redesign: mobile Início · Atividade · Adicionar · Plano · Agente (action inside the bar),
+      /app/plan hub, grouped desktop sidebar
+- [x] Home rebuilt around modules with in-place edit mode (show/hide, reorder, restore default)
+- [x] Centralised user preferences (theme, accent, density, modules, default page, currency display,
+      terminology overrides, agent settings) in one store
+- [x] Terminology renaming is display-only; internal ids unchanged
+- [x] Agent: threaded chat with dedicated conversation routes, rename/delete/search, AI Elements UI
+- [x] Deterministic context builder (11 read tools, keyword routing, capped payloads) — the model never
+      calculates balances
+- [x] PREPARE → user CONFIRM → engine EXECUTE for agent financial actions, with audit trail
+- [x] Structured personal memory (8 categories) + profile, fully inspectable/editable in agent settings
+- [x] Provider abstraction server-side; AI key never leaves the server; agent outage never breaks the app
+- [ ] Browser QA of tests A–N and technical report
+
+## Phase 07 — Analytics, financial intelligence & insights (requested, not started)
+- [ ] Centralised metric definitions + analytics service layer on top of the engine
+- [ ] Análise section: period selector, money flow, spending by category + detail, comparisons, trends
+- [ ] Income analysis, wealth building, build/spend rate, net worth history, wallet & protected analytics
+- [ ] Deterministic insights engine with data-sufficiency thresholds and ranked insights
+- [ ] Agent analytics tools + "Pergunta ao teu dinheiro" + structured response blocks
+- [ ] Reports (monthly, weekly, custom period) with clean serialisation for future export

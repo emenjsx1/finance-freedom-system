@@ -15,8 +15,11 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAccountsRouteImport } from './routes/app.accounts'
+import { Route as AppAgentRouteImport } from './routes/app.agent'
+import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-settings'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
+import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
 import { Route as AppPlanRouteImport } from './routes/app.plan'
 import { Route as AppProtectedRouteImport } from './routes/app.protected'
 import { Route as AppRecurringRouteImport } from './routes/app.recurring'
@@ -26,6 +29,8 @@ import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppWalletsRouteImport } from './routes/app.wallets'
 import { Route as AppAccountsIndexRouteImport } from './routes/app.accounts.index'
 import { Route as AppAccountsAccountIdRouteImport } from './routes/app.accounts.$accountId'
+import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
+import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$conversationId'
 import { Route as AppWalletsIndexRouteImport } from './routes/app.wallets.index'
 import { Route as AppWalletsWalletIdRouteImport } from './routes/app.wallets.$walletId'
 
@@ -59,6 +64,16 @@ const AppAccountsRoute = AppAccountsRouteImport.update({
   path: '/accounts',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAgentRoute = AppAgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAgentSettingsRoute = AppAgentSettingsRouteImport.update({
+  id: '/agent-settings',
+  path: '/agent-settings',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
   id: '/goals',
   path: '/goals',
@@ -67,6 +82,11 @@ const AppGoalsRoute = AppGoalsRouteImport.update({
 const AppMoneyMapRoute = AppMoneyMapRouteImport.update({
   id: '/money-map',
   path: '/money-map',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPersonalizationRoute = AppPersonalizationRouteImport.update({
+  id: '/personalization',
+  path: '/personalization',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPlanRoute = AppPlanRouteImport.update({
@@ -114,6 +134,16 @@ const AppAccountsAccountIdRoute = AppAccountsAccountIdRouteImport.update({
   path: '/$accountId',
   getParentRoute: () => AppAccountsRoute,
 } as any)
+const AppAgentIndexRoute = AppAgentIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAgentRoute,
+} as any)
+const AppAgentConversationIdRoute = AppAgentConversationIdRouteImport.update({
+  id: '/$conversationId',
+  path: '/$conversationId',
+  getParentRoute: () => AppAgentRoute,
+} as any)
 const AppWalletsIndexRoute = AppWalletsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -131,8 +161,11 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
+  '/app/agent': typeof AppAgentRouteWithChildren
+  '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -142,16 +175,20 @@ export interface FileRoutesByFullPath {
   '/app/wallets': typeof AppWalletsRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
+  '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
+  '/app/agent/': typeof AppAgentIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -160,8 +197,10 @@ export interface FileRoutesByTo {
   '/app/transactions': typeof AppTransactionsRoute
   '/app': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
+  '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts': typeof AppAccountsIndexRoute
+  '/app/agent': typeof AppAgentIndexRoute
   '/app/wallets': typeof AppWalletsIndexRoute
 }
 export interface FileRoutesById {
@@ -171,8 +210,11 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
+  '/app/agent': typeof AppAgentRouteWithChildren
+  '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -182,8 +224,10 @@ export interface FileRoutesById {
   '/app/wallets': typeof AppWalletsRouteWithChildren
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
+  '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
+  '/app/agent/': typeof AppAgentIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
 }
 export interface FileRouteTypes {
@@ -194,8 +238,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/accounts'
+    | '/app/agent'
+    | '/app/agent-settings'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/personalization'
     | '/app/plan'
     | '/app/protected'
     | '/app/recurring'
@@ -205,16 +252,20 @@ export interface FileRouteTypes {
     | '/app/wallets'
     | '/app/'
     | '/app/accounts/$accountId'
+    | '/app/agent/$conversationId'
     | '/app/wallets/$walletId'
     | '/app/accounts/'
+    | '/app/agent/'
     | '/app/wallets/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/app/agent-settings'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/personalization'
     | '/app/plan'
     | '/app/protected'
     | '/app/recurring'
@@ -223,8 +274,10 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app'
     | '/app/accounts/$accountId'
+    | '/app/agent/$conversationId'
     | '/app/wallets/$walletId'
     | '/app/accounts'
+    | '/app/agent'
     | '/app/wallets'
   id:
     | '__root__'
@@ -233,8 +286,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/accounts'
+    | '/app/agent'
+    | '/app/agent-settings'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/personalization'
     | '/app/plan'
     | '/app/protected'
     | '/app/recurring'
@@ -244,8 +300,10 @@ export interface FileRouteTypes {
     | '/app/wallets'
     | '/app/'
     | '/app/accounts/$accountId'
+    | '/app/agent/$conversationId'
     | '/app/wallets/$walletId'
     | '/app/accounts/'
+    | '/app/agent/'
     | '/app/wallets/'
   fileRoutesById: FileRoutesById
 }
@@ -300,6 +358,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/agent': {
+      id: '/app/agent'
+      path: '/agent'
+      fullPath: '/app/agent'
+      preLoaderRoute: typeof AppAgentRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/agent-settings': {
+      id: '/app/agent-settings'
+      path: '/agent-settings'
+      fullPath: '/app/agent-settings'
+      preLoaderRoute: typeof AppAgentSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/goals': {
       id: '/app/goals'
       path: '/goals'
@@ -312,6 +384,13 @@ declare module '@tanstack/react-router' {
       path: '/money-map'
       fullPath: '/app/money-map'
       preLoaderRoute: typeof AppMoneyMapRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/personalization': {
+      id: '/app/personalization'
+      path: '/personalization'
+      fullPath: '/app/personalization'
+      preLoaderRoute: typeof AppPersonalizationRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/plan': {
@@ -377,6 +456,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountsAccountIdRouteImport
       parentRoute: typeof AppAccountsRoute
     }
+    '/app/agent/': {
+      id: '/app/agent/'
+      path: '/'
+      fullPath: '/app/agent/'
+      preLoaderRoute: typeof AppAgentIndexRouteImport
+      parentRoute: typeof AppAgentRoute
+    }
+    '/app/agent/$conversationId': {
+      id: '/app/agent/$conversationId'
+      path: '/$conversationId'
+      fullPath: '/app/agent/$conversationId'
+      preLoaderRoute: typeof AppAgentConversationIdRouteImport
+      parentRoute: typeof AppAgentRoute
+    }
     '/app/wallets/': {
       id: '/app/wallets/'
       path: '/'
@@ -408,6 +501,20 @@ const AppAccountsRouteWithChildren = AppAccountsRoute._addFileChildren(
   AppAccountsRouteChildren,
 )
 
+interface AppAgentRouteChildren {
+  AppAgentConversationIdRoute: typeof AppAgentConversationIdRoute
+  AppAgentIndexRoute: typeof AppAgentIndexRoute
+}
+
+const AppAgentRouteChildren: AppAgentRouteChildren = {
+  AppAgentConversationIdRoute: AppAgentConversationIdRoute,
+  AppAgentIndexRoute: AppAgentIndexRoute,
+}
+
+const AppAgentRouteWithChildren = AppAgentRoute._addFileChildren(
+  AppAgentRouteChildren,
+)
+
 interface AppWalletsRouteChildren {
   AppWalletsWalletIdRoute: typeof AppWalletsWalletIdRoute
   AppWalletsIndexRoute: typeof AppWalletsIndexRoute
@@ -424,8 +531,11 @@ const AppWalletsRouteWithChildren = AppWalletsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAccountsRoute: typeof AppAccountsRouteWithChildren
+  AppAgentRoute: typeof AppAgentRouteWithChildren
+  AppAgentSettingsRoute: typeof AppAgentSettingsRoute
   AppGoalsRoute: typeof AppGoalsRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
+  AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
   AppProtectedRoute: typeof AppProtectedRoute
   AppRecurringRoute: typeof AppRecurringRoute
@@ -438,8 +548,11 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAccountsRoute: AppAccountsRouteWithChildren,
+  AppAgentRoute: AppAgentRouteWithChildren,
+  AppAgentSettingsRoute: AppAgentSettingsRoute,
   AppGoalsRoute: AppGoalsRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
+  AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
   AppProtectedRoute: AppProtectedRoute,
   AppRecurringRoute: AppRecurringRoute,
