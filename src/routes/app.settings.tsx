@@ -155,7 +155,9 @@ function Row({
     | "/app/money-map"
     | "/app/protected"
     | "/app/personalization"
-    | "/app/agent-settings";
+    | "/app/agent-settings"
+    | "/app/profile"
+    | "/app/privacy";
 }) {
   const content = (
     <>
