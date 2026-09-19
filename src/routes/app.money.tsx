@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
+import { financialPosition } from "@/lib/finance/position";
 import { ACCOUNT_TYPE_LABELS } from "@/lib/finance/types";
 import { Symbol } from "@/lib/icons/symbols";
 import { COMMITMENT_CADENCE_LABELS } from "@/lib/personal/types";
@@ -36,7 +37,7 @@ function MoneyPage() {
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const planWallets = snapshot.wallets.filter((w) => !w.archived && w.kind === "goals");
-  const reservedMinor = snapshot.wealthMinor - snapshot.spendableMinor;
+  const position = financialPosition(snapshot);
   const monthlyCommitments = state.commitments
     .filter((c) => c.active && c.cadence === "monthly")
     .reduce((sum, c) => sum + c.amountMinor, 0);
