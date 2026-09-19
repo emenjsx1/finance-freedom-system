@@ -174,3 +174,4 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - [x] Organizador guarda todos os propósitos numa única operação e atribui cada reserva à conta física
 - [x] Avisos do topo visíveis e clicáveis; Dinheiro mostra todos os propósitos e permite criar novos
 - [x] Disponível definido de forma única como total menos todo o dinheiro reservado
+- [x] Detalhe da conta mostra saldo físico, disponível, reservado e cada propósito guardado nessa conta
