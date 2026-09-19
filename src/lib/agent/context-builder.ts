@@ -12,6 +12,13 @@ import { monthTotals, nextOccurrence, type LedgerSnapshot } from "@/lib/finance/
 import type { RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import type { SetupState } from "@/lib/storage/local-setup-store";
 import type { Memory, AgentProfile } from "@/lib/agent/types";
+import { goalPace } from "@/lib/personal/engine";
+import {
+  PLAN_PRIORITY_LABELS,
+  PLAN_STATUS_LABELS,
+  PLAN_TYPE_LABELS,
+  type PersonalState,
+} from "@/lib/personal/types";
 
 import { runAnalyticsTool, selectAnalyticsTools } from "@/lib/agent/analytics-tools";
 import type { AnalyticsInput } from "@/lib/analytics/service";
@@ -24,6 +31,8 @@ export interface AgentDeps {
   recurring: RecurringRule[];
   memories: Memory[];
   profile: AgentProfile;
+  /** Plans, direction, strategy and stored context. Read only with permission. */
+  personal?: PersonalState | undefined;
 }
 
 const MAX_TRANSACTIONS = 12;
@@ -43,6 +52,9 @@ export const AGENT_READ_TOOLS = [
   "get_financial_rule",
   "get_month_summary",
   "get_personal_context",
+  "get_plans",
+  "get_direction",
+  "get_strategy",
 ] as const;
 
 export type AgentReadTool = (typeof AGENT_READ_TOOLS)[number];
@@ -201,6 +213,64 @@ export function getPersonalContext(d: AgentDeps) {
   };
 }
 
+/**
+ * Plans the person created. Amounts always come from the engine snapshot, never
+ * from the plan record, so the Agent cannot quote a stale figure.
+ */
+export function getPlans(d: AgentDeps) {
+  if (!d.personal?.permissions.plans) return { acesso: "nao_autorizado" };
+  return d.personal.plans
+    .filter((p) => p.status === "active" || p.status === "idea")
+    .slice(0, 12)
+    .map((plan) => {
+      const savedMinor = plan.walletId
+        ? (d.snapshot.wallets.find((w) => w.id === plan.walletId)?.balanceMinor ?? 0)
+        : 0;
+      const pace = goalPace(plan, savedMinor);
+      return {
+        id: plan.id,
+        nome: plan.name,
+        tipo: PLAN_TYPE_LABELS[plan.type],
+        estado: PLAN_STATUS_LABELS[plan.status],
+        importancia: PLAN_PRIORITY_LABELS[plan.priority],
+        envolve_dinheiro: plan.financial,
+        ...(pace
+          ? {
+              guardado: money(pace.savedMinor, d.setup.currencyCode),
+              objetivo: money(pace.targetMinor, d.setup.currencyCode),
+              em_falta: money(pace.remainingMinor, d.setup.currencyCode),
+              por_mes_necessario:
+                pace.requiredMonthlyMinor === null
+                  ? undefined
+                  : money(pace.requiredMonthlyMinor, d.setup.currencyCode),
+            }
+          : {}),
+        passos: plan.milestones.map((m) => ({ passo: m.title, feito: m.done })),
+      };
+    });
+}
+
+export function getDirection(d: AgentDeps) {
+  if (!d.personal?.permissions.personalContext) return { acesso: "nao_autorizado" };
+  return {
+    frase: d.personal.headline,
+    direcao: d.personal.direction.map((item) => ({ horizonte: item.horizon, conteudo: item.content })),
+  };
+}
+
+/** The strategy is an intention, not an instruction to move money. */
+export function getStrategy(d: AgentDeps) {
+  const strategy = d.personal?.strategy;
+  if (!strategy) return { estrategia: "nenhuma" };
+  return {
+    nome: strategy.name,
+    modo: strategy.mode,
+    regras: strategy.rules
+      .filter((r) => r.enabled)
+      .map((r) => ({ regra: r.label, metodo: r.method, valor: r.value, destino: r.targetKind })),
+  };
+}
+
 /** Keyword routing — only the relevant tools run, so context stays small. */
 export function selectTools(question: string): AgentReadTool[] {
   const q = question.toLowerCase();
@@ -208,6 +278,7 @@ export function selectTools(question: string): AgentReadTool[] {
     "get_financial_summary",
     "get_available_to_spend",
     "get_personal_context",
+    "get_plans",
   ]);
 
   const has = (...words: string[]) => words.some((w) => q.includes(w));
@@ -223,6 +294,9 @@ export function selectTools(question: string): AgentReadTool[] {
     tools.add("get_transactions");
   if (has("próxim", "recorrente", "subscri", "pagamento", "fatura", "vence"))
     tools.add("get_upcoming_transactions");
+  if (has("direção", "direcao", "futuro", "quero", "sonho", "vida")) tools.add("get_direction");
+  if (has("estratégia", "estrategia", "organizar", "distribuir", "guardar sempre"))
+    tools.add("get_strategy");
   if (has("regra", "distribui", "percentagem", "%")) tools.add("get_financial_rule");
   if (has("mês", "mes", "mensal", "este mês", "fecho", "resumo")) tools.add("get_month_summary");
 
@@ -258,6 +332,12 @@ export function runTool(tool: AgentReadTool, d: AgentDeps): unknown {
       return getMonthSummary(d);
     case "get_personal_context":
       return getPersonalContext(d);
+    case "get_plans":
+      return getPlans(d);
+    case "get_direction":
+      return getDirection(d);
+    case "get_strategy":
+      return getStrategy(d);
   }
 }
 
