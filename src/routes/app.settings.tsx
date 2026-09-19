@@ -6,7 +6,6 @@ import {
   Coins,
   Download,
   LifeBuoy,
-  Layers,
   ListTree,
   LogOut,
   Palette,
