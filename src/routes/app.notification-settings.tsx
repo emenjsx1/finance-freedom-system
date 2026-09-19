@@ -3,6 +3,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 import { PageHeader } from "@/components/page-header";
+import { PushPanel } from "@/components/notifications/push-panel";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -250,24 +251,23 @@ function NotificationSettingsPage() {
         </div>
       </Section>
 
-      <Section title="Dispositivos" description="Avisos fora da app. Nenhum outro utilizador vê os teus dispositivos.">
-        <Button variant="secondary" onClick={requestPush} disabled={busy}>
-          Autorizar avisos neste dispositivo
-        </Button>
-        <ul className="mt-3 space-y-2">
-          {state.devices.length === 0 ? (
-            <li className="type-meta">Sem dispositivos associados.</li>
-          ) : (
-            state.devices.map((device) => (
+      <Section
+        title="Avisos neste dispositivo"
+        description="Cada dispositivo decide por si. Nenhum outro utilizador vê os teus dispositivos."
+      >
+        <PushPanel />
+        {state.devices.length > 0 ? (
+          <ul className="mt-4 space-y-2">
+            {state.devices.map((device) => (
               <li key={device.id} className="flex items-center justify-between rounded-xl border border-border/70 p-3 text-sm">
                 <span className="truncate pr-3">{device.label || device.platform}</span>
                 <Button size="xs" variant="ghost" onClick={() => forgetDevice(device.id)}>
                   Remover
                 </Button>
               </li>
-            ))
-          )}
-        </ul>
+            ))}
+          </ul>
+        ) : null}
       </Section>
 
       <Section title="Limite diário" description="Quantos avisos não urgentes podes receber por dia.">
