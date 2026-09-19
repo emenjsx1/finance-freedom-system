@@ -18,9 +18,9 @@ const STATUSES: DecisionStatus[] = ["active", "revisit", "changed"];
 export const Route = createFileRoute("/app/development/decisions")({
   head: () => ({
     meta: [
-      { title: "As minhas decisões — Finan." },
+      { title: "As minhas decisões — Norte" },
       { name: "description", content: "As decisões que quiseste guardar, com a razão e a data." },
-      { property: "og:title", content: "As minhas decisões — Finan." },
+      { property: "og:title", content: "As minhas decisões — Norte" },
       { property: "og:description", content: "Para te lembrares do que já decidiste, e porquê." },
     ],
   }),

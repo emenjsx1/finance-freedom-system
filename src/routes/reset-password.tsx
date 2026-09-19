@@ -9,14 +9,15 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { getSignedInDestination } from "@/lib/auth/destination";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Nova palavra-passe — Finance OS" },
-      { name: "description", content: "Define uma nova palavra-passe para a tua conta Finance OS." },
-      { property: "og:title", content: "Nova palavra-passe — Finance OS" },
+      { title: "Nova palavra-passe — Norte" },
+      { name: "description", content: "Define uma nova palavra-passe para a tua conta Norte." },
+      { property: "og:title", content: "Nova palavra-passe — Norte" },
       { property: "og:description", content: "Define uma nova palavra-passe em segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -51,7 +52,7 @@ function ResetPasswordPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (password !== confirm) {
-      toast.error("As palavras-passe não coincidem.");
+      notifyError("As palavras-passe não coincidem.");
       return;
     }
     setBusy(true);
@@ -63,7 +64,7 @@ function ResetPasswordPage() {
       const to = await getSignedInDestination();
       setTimeout(() => void navigate({ to, replace: true }), 1200);
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }

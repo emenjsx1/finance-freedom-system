@@ -5,12 +5,12 @@ import { LegalPage, Placeholder, Section } from "@/components/legal/legal-page";
 export const Route = createFileRoute("/privacy")({
   head: () => ({
     meta: [
-      { title: "Política de Privacidade — Finan." },
+      { title: "Política de Privacidade — Norte" },
       {
         name: "description",
-        content: "Que dados a Finan. recolhe, porquê, como são usados e como os podes apagar.",
+        content: "Que dados a Norte recolhe, porquê, como são usados e como os podes apagar.",
       },
-      { property: "og:title", content: "Política de Privacidade — Finan." },
+      { property: "og:title", content: "Política de Privacidade — Norte" },
       { property: "og:description", content: "Como tratamos os teus dados financeiros e pessoais." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -23,7 +23,7 @@ function PrivacyPage() {
   return (
     <LegalPage title="Política de Privacidade" updated="fevereiro de 2026">
       <p>
-        Esta política descreve o funcionamento real da aplicação Finan. Não descreve funcionalidades
+        Esta política descreve o funcionamento real da aplicação Norte Não descreve funcionalidades
         que ainda não existem.
       </p>
 

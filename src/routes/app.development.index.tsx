@@ -20,12 +20,12 @@ import { DIRECTION_HORIZON_LABELS } from "@/lib/personal/types";
 export const Route = createFileRoute("/app/development/")({
   head: () => ({
     meta: [
-      { title: "Desenvolvimento — Finan." },
+      { title: "Desenvolvimento — Norte" },
       {
         name: "description",
         content: "O que estás a trabalhar, o que vem a seguir e o que mudou de facto.",
       },
-      { property: "og:title", content: "Desenvolvimento — Finan." },
+      { property: "og:title", content: "Desenvolvimento — Norte" },
       {
         property: "og:description",
         content: "Direção, programas, ações e evolução — sem pontuações.",

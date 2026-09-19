@@ -10,13 +10,14 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/profile/password")({
   head: () => ({
     meta: [
-      { title: "Palavra-passe — Finance OS" },
-      { name: "description", content: "Alterar ou definir a palavra-passe da tua conta Finance OS." },
-      { property: "og:title", content: "Palavra-passe — Finance OS" },
+      { title: "Palavra-passe — Norte" },
+      { name: "description", content: "Alterar ou definir a palavra-passe da tua conta Norte." },
+      { property: "og:title", content: "Palavra-passe — Norte" },
       { property: "og:description", content: "Gere a palavra-passe da tua conta em segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -49,7 +50,7 @@ function PasswordPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (next !== confirm) {
-      toast.error("As palavras-passe não coincidem.");
+      notifyError("As palavras-passe não coincidem.");
       return;
     }
     setBusy(true);
@@ -69,7 +70,7 @@ function PasswordPage() {
       setConfirm("");
       await refreshProfile();
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }

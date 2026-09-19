@@ -22,12 +22,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/app/agent")({
   head: () => ({
     meta: [
-      { title: "Agente — Finance OS" },
+      { title: "Agente — Norte" },
       {
         name: "description",
         content: "O teu assistente pessoal: compreende o teu dinheiro, organiza objetivos e prepara ações.",
       },
-      { property: "og:title", content: "Agente — Finance OS" },
+      { property: "og:title", content: "Agente — Norte" },
       { property: "og:description", content: "O teu assistente pessoal de organização financeira." },
     ],
   }),

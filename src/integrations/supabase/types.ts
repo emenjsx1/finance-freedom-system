@@ -390,10 +390,14 @@ export type Database = {
         Row: {
           avatar_url: string | null
           base_currency: string
+          birth_date: string | null
+          city: string | null
+          country: string | null
           created_at: string
           full_name: string | null
           id: string
           language: string
+          phone: string | null
           preferred_name: string | null
           timezone: string
           updated_at: string
@@ -401,10 +405,14 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           base_currency?: string
+          birth_date?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
           full_name?: string | null
           id: string
           language?: string
+          phone?: string | null
           preferred_name?: string | null
           timezone?: string
           updated_at?: string
@@ -412,10 +420,14 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           base_currency?: string
+          birth_date?: string | null
+          city?: string | null
+          country?: string | null
           created_at?: string
           full_name?: string | null
           id?: string
           language?: string
+          phone?: string | null
           preferred_name?: string | null
           timezone?: string
           updated_at?: string

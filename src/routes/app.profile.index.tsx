@@ -45,9 +45,9 @@ import { queryClientFreeSignOut } from "@/lib/auth/sign-out";
 export const Route = createFileRoute("/app/profile/")({
   head: () => ({
     meta: [
-      { title: "Conta — Finance OS" },
+      { title: "Conta — Norte" },
       { name: "description", content: "A tua conta: dados pessoais, acesso e segurança, finanças e aplicação." },
-      { property: "og:title", content: "Conta — Finance OS" },
+      { property: "og:title", content: "Conta — Norte" },
       { property: "og:description", content: "Gere o teu perfil, acesso e preferências." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -132,7 +132,7 @@ function ProfilePage() {
       <SettingsGroup title="Ajuda e legal">
         <SettingsRow icon={CircleHelp} label="Ajuda e legal" to="/app/help" />
         <SettingsRow icon={LifeBuoy} label="Falar com o apoio" onSelect={() => window.open("/support", "_blank")} />
-        <SettingsRow icon={Info} label="Sobre" value={`Finan. ${APP_VERSION}`} />
+        <SettingsRow icon={Info} label="Sobre" value={`Norte ${APP_VERSION}`} />
       </SettingsGroup>
 
       {user ? (

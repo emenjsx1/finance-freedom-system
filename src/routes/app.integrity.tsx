@@ -22,12 +22,12 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/integrity")({
   head: () => ({
     meta: [
-      { title: "Verificação financeira — Finance OS" },
+      { title: "Verificação financeira — Norte" },
       {
         name: "description",
         content: "Confirma que o total, o disponível e o reservado fecham, e corrige estados impossíveis.",
       },
-      { property: "og:title", content: "Verificação financeira — Finance OS" },
+      { property: "og:title", content: "Verificação financeira — Norte" },
       { property: "og:description", content: "O teu dinheiro conferido: total, disponível e reservado." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

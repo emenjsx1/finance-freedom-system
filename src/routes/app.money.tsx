@@ -15,12 +15,12 @@ import { COMMITMENT_CADENCE_LABELS } from "@/lib/personal/types";
 export const Route = createFileRoute("/app/money")({
   head: () => ({
     meta: [
-      { title: "O meu dinheiro — Finan." },
+      { title: "O meu dinheiro — Norte" },
       {
         name: "description",
         content: "Onde está o teu dinheiro e para que serve — duas leituras do mesmo dinheiro.",
       },
-      { property: "og:title", content: "O meu dinheiro — Finan." },
+      { property: "og:title", content: "O meu dinheiro — Norte" },
       { property: "og:description", content: "Total, disponível, reservado, contas e propósitos." },
     ],
   }),

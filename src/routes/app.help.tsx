@@ -14,10 +14,10 @@ const LINKS: { icon: typeof BookOpen; label: string; hint: string; href: string 
 export const Route = createFileRoute("/app/help")({
   head: () => ({
     meta: [
-      { title: "Ajuda e legal — Finan." },
+      { title: "Ajuda e legal — Norte" },
       { name: "description", content: "Ajuda, privacidade, termos e informação sobre a aplicação." },
-      { property: "og:title", content: "Ajuda e legal — Finan." },
-      { property: "og:description", content: "Apoio e documentos legais da Finan." },
+      { property: "og:title", content: "Ajuda e legal — Norte" },
+      { property: "og:description", content: "Apoio e documentos legais da Norte" },
     ],
   }),
   component: HelpPage,
@@ -43,7 +43,7 @@ function HelpPage() {
       </div>
 
       <p className="type-meta mt-6">
-        Finan. versão {APP_VERSION}. Feito com cuidado em Moçambique.
+        Norte versão {APP_VERSION}. Feito com cuidado em Moçambique.
       </p>
     </div>
   );

@@ -19,6 +19,11 @@ export interface Profile {
   language: string;
   base_currency: string;
   timezone: string;
+  /** ISO date (YYYY-MM-DD). Age is derived from it, never stored. */
+  birth_date: string | null;
+  phone: string | null;
+  city: string | null;
+  country: string | null;
 }
 
 export type ProviderId = "email" | "google" | "apple";

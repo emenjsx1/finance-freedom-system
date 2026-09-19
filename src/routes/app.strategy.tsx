@@ -30,9 +30,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/app/strategy")({
   head: () => ({
     meta: [
-      { title: "Estratégia — Finan." },
+      { title: "Estratégia — Norte" },
       { name: "description", content: "Como queres organizar o dinheiro que entra." },
-      { property: "og:title", content: "Estratégia — Finan." },
+      { property: "og:title", content: "Estratégia — Norte" },
       { property: "og:description", content: "Escolhe uma forma de organizar, ou não uses nenhuma." },
     ],
   }),

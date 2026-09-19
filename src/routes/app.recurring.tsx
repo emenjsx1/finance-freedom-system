@@ -22,9 +22,9 @@ import type { Frequency, RecurringRule } from "@/lib/finance/ledger-types";
 export const Route = createFileRoute("/app/recurring")({
   head: () => ({
     meta: [
-      { title: "Recorrentes — Finance OS" },
+      { title: "Recorrentes — Norte" },
       { name: "description", content: "Pagamentos recorrentes, próximos vencimentos e subscrições." },
-      { property: "og:title", content: "Recorrentes — Finance OS" },
+      { property: "og:title", content: "Recorrentes — Norte" },
       { property: "og:description", content: "Pagamentos recorrentes, próximos vencimentos e subscrições." },
     ],
   }),

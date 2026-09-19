@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { Plus, X } from "lucide-react";
-import { toast } from "sonner";
 
 import {
   Conversation,
@@ -23,6 +22,7 @@ import { Button } from "@/components/ui/button";
 import { useAgent } from "@/hooks/use-agent";
 import { usePrefs } from "@/hooks/use-prefs";
 import { AGENT_SUGGESTIONS } from "@/lib/agent/types";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/agent/$conversationId")({
   component: AgentChat,
@@ -43,11 +43,11 @@ function AgentChat() {
     const next: { mime: string; dataUrl: string; name: string }[] = [];
     for (const file of Array.from(list).slice(0, 3)) {
       if (!file.type.startsWith("image/")) {
-        toast.error("Só consigo ler imagens por agora.");
+        notifyError("Só consigo ler imagens por agora.");
         continue;
       }
       if (file.size > 5 * 1024 * 1024) {
-        toast.error("A imagem é demasiado grande (máx. 5 MB).");
+        notifyError("A imagem é demasiado grande (máx. 5 MB).");
         continue;
       }
       const dataUrl = await new Promise<string>((resolve, reject) => {

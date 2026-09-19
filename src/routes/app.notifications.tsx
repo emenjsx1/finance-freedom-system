@@ -48,9 +48,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/app/notifications")({
   head: () => ({
     meta: [
-      { title: "Notificações — Finance OS" },
+      { title: "Notificações — Norte" },
       { name: "description", content: "O que aconteceu com o teu dinheiro e o que precisa de atenção." },
-      { property: "og:title", content: "Notificações — Finance OS" },
+      { property: "og:title", content: "Notificações — Norte" },
       { property: "og:description", content: "O que aconteceu com o teu dinheiro e o que precisa de atenção." },
     ],
   }),

@@ -24,13 +24,14 @@ import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { deleteMyAccount } from "@/lib/account/account.functions";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacidade e dados — Finance OS" },
+      { title: "Privacidade e dados — Norte" },
       { name: "description", content: "Modo privado, exportação de dados e eliminação da conta." },
-      { property: "og:title", content: "Privacidade e dados — Finance OS" },
+      { property: "og:title", content: "Privacidade e dados — Norte" },
       { property: "og:description", content: "Controla os teus dados: exporta ou elimina quando quiseres." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -86,7 +87,7 @@ function PrivacyPage() {
       toast.success("A conta foi eliminada.");
       void navigate({ to: "/", replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
       setConfirmOpen(false);

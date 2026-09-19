@@ -5,10 +5,10 @@ import { LegalPage, Placeholder, Section } from "@/components/legal/legal-page";
 export const Route = createFileRoute("/support")({
   head: () => ({
     meta: [
-      { title: "Apoio — Finan." },
+      { title: "Apoio — Norte" },
       { name: "description", content: "Perguntas frequentes e como falar connosco." },
-      { property: "og:title", content: "Apoio — Finan." },
-      { property: "og:description", content: "Ajuda com acesso, dados e privacidade na Finan." },
+      { property: "og:title", content: "Apoio — Norte" },
+      { property: "og:description", content: "Ajuda com acesso, dados e privacidade na Norte" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

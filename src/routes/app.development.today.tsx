@@ -13,9 +13,9 @@ import type { PersonalAction } from "@/lib/development/types";
 export const Route = createFileRoute("/app/development/today")({
   head: () => ({
     meta: [
-      { title: "Hoje — Finan." },
+      { title: "Hoje — Norte" },
       { name: "description", content: "As próximas ações que escolheste, sem lista infinita." },
-      { property: "og:title", content: "Hoje — Finan." },
+      { property: "og:title", content: "Hoje — Norte" },
       { property: "og:description", content: "O que decidiste fazer, e nada mais." },
     ],
   }),

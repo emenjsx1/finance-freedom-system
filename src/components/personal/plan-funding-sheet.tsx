@@ -8,7 +8,6 @@
  * same money.
  */
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 import { NativeSheet } from "@/components/design/native-sheet";
 import { Money } from "@/components/money";
@@ -20,6 +19,7 @@ import { useSetup } from "@/hooks/use-setup";
 import { financialPosition } from "@/lib/finance/position";
 import { upsertWallet } from "@/lib/finance/setup-ops";
 import { PLAN_TYPE_SYMBOL, type Plan } from "@/lib/personal/types";
+import { notifyError } from "@/lib/ui/feedback";
 
 export function PlanFundingSheet({
   plan,
@@ -99,7 +99,7 @@ export function PlanFundingSheet({
     });
 
     if (!ok) {
-      toast.error("Não foi possível separar este dinheiro.");
+      notifyError("Não foi possível separar este dinheiro.");
       return;
     }
     onOpenChange(false);

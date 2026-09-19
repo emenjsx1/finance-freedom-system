@@ -21,9 +21,9 @@ export const Route = createFileRoute("/onboarding")({
   },
   head: () => ({
     meta: [
-      { title: "Configuração inicial — Finance OS" },
+      { title: "Configuração inicial — Norte" },
       { name: "description", content: "Sete passos para montares o teu sistema financeiro pessoal." },
-      { property: "og:title", content: "Configuração inicial — Finance OS" },
+      { property: "og:title", content: "Configuração inicial — Norte" },
       { property: "og:description", content: "Sete passos para montares o teu sistema financeiro pessoal." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

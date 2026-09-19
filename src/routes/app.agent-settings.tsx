@@ -27,12 +27,12 @@ import type { AgentStyle } from "@/lib/prefs/types";
 export const Route = createFileRoute("/app/agent-settings")({
   head: () => ({
     meta: [
-      { title: "Agente · Definições — Finance OS" },
+      { title: "Agente · Definições — Norte" },
       {
         name: "description",
         content: "Nome, estilo de comunicação, perfil pessoal e memória do teu assistente.",
       },
-      { property: "og:title", content: "Agente · Definições — Finance OS" },
+      { property: "og:title", content: "Agente · Definições — Norte" },
       { property: "og:description", content: "Controla o que o teu assistente sabe sobre ti." },
     ],
   }),

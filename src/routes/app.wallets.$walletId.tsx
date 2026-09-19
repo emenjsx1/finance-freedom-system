@@ -28,9 +28,9 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/wallets/$walletId")({
   head: () => ({
     meta: [
-      { title: "Carteira — Finance OS" },
+      { title: "Carteira — Norte" },
       { name: "description", content: "Saldo, proteção e atividade desta carteira de propósito." },
-      { property: "og:title", content: "Carteira — Finance OS" },
+      { property: "og:title", content: "Carteira — Norte" },
       { property: "og:description", content: "Saldo, proteção e atividade desta carteira." },
     ],
   }),

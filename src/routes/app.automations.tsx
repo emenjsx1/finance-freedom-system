@@ -27,9 +27,9 @@ import {
 export const Route = createFileRoute("/app/automations")({
   head: () => ({
     meta: [
-      { title: "Automações — Finance OS" },
+      { title: "Automações — Norte" },
       { name: "description", content: "Regras simples que tratam do que é repetitivo, sem mexer no teu dinheiro sem confirmação." },
-      { property: "og:title", content: "Automações — Finance OS" },
+      { property: "og:title", content: "Automações — Norte" },
       { property: "og:description", content: "Regras simples: quando acontece isto, faz aquilo." },
     ],
   }),

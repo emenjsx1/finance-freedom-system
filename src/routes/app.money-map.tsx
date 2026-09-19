@@ -17,12 +17,12 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/money-map")({
   head: () => ({
     meta: [
-      { title: "Mapa do dinheiro — Finance OS" },
+      { title: "Mapa do dinheiro — Norte" },
       {
         name: "description",
         content: "Onde está o teu dinheiro e para que serve — duas formas de ver exatamente o mesmo dinheiro.",
       },
-      { property: "og:title", content: "Mapa do dinheiro — Finance OS" },
+      { property: "og:title", content: "Mapa do dinheiro — Norte" },
       { property: "og:description", content: "Onde está o teu dinheiro e para que serve." },
     ],
   }),

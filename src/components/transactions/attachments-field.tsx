@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import { Camera, FileText, Image as ImageIcon, Paperclip, Trash2, Upload } from "lucide-react";
-import { toast } from "sonner";
 
 import { AttachmentThumb } from "@/components/transactions/attachment-thumb";
 import { AttachmentViewer } from "@/components/transactions/attachment-viewer";
@@ -13,6 +12,7 @@ import {
   uploadAttachment,
 } from "@/lib/attachments/storage";
 import type { Attachment } from "@/lib/finance/ledger-types";
+import { notifyError } from "@/lib/ui/feedback";
 
 /**
  * Receipts and proofs. When signed in the file goes straight into private
@@ -43,18 +43,18 @@ export function AttachmentsField({
       const next: Attachment[] = [];
       for (const file of Array.from(list)) {
         if (!ALLOWED_ATTACHMENT_TYPES.includes(file.type)) {
-          toast.error("Tipo de ficheiro não suportado. Usa imagem ou PDF.");
+          notifyError("Tipo de ficheiro não suportado. Usa imagem ou PDF.");
           continue;
         }
         if (file.size > MAX_ATTACHMENT_BYTES) {
-          toast.error("O ficheiro é demasiado grande (máx. 10 MB).");
+          notifyError("O ficheiro é demasiado grande (máx. 10 MB).");
           continue;
         }
 
         if (session) {
           const result = await uploadAttachment(file, transactionId ?? "rascunho");
           if ("error" in result) {
-            toast.error(result.error);
+            notifyError(result.error);
             continue;
           }
           next.push(result.attachment);
@@ -76,7 +76,7 @@ export function AttachmentsField({
     if (attachment.storagePath) {
       const ok = await deleteAttachment(attachment);
       if (!ok) {
-        toast.error("Não foi possível eliminar o comprovativo.");
+        notifyError("Não foi possível eliminar o comprovativo.");
         return;
       }
     }

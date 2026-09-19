@@ -11,13 +11,14 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePrefs } from "@/hooks/use-prefs";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/profile/security")({
   head: () => ({
     meta: [
-      { title: "Acesso e segurança — Finance OS" },
+      { title: "Acesso e segurança — Norte" },
       { name: "description", content: "Métodos de acesso, palavra-passe, dispositivos, bloqueio da app e atividade." },
-      { property: "og:title", content: "Acesso e segurança — Finance OS" },
+      { property: "og:title", content: "Acesso e segurança — Norte" },
       { property: "og:description", content: "Controla como entras e como proteges a aplicação." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -65,7 +66,7 @@ function SecurityPage() {
       toast.success("Sessão terminada em todos os dispositivos.");
       void navigate({ to: "/auth", replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }

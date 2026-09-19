@@ -25,9 +25,9 @@ import {
 export const Route = createFileRoute("/app/context")({
   head: () => ({
     meta: [
-      { title: "O que o Agente sabe — Finan." },
+      { title: "O que o Agente sabe — Norte" },
       { name: "description", content: "Tudo o que está guardado sobre ti, visível e editável." },
-      { property: "og:title", content: "O que o Agente sabe — Finan." },
+      { property: "og:title", content: "O que o Agente sabe — Norte" },
       { property: "og:description", content: "Contexto pessoal, sempre teu, sempre removível." },
     ],
   }),

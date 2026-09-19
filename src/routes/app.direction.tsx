@@ -15,9 +15,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/app/direction")({
   head: () => ({
     meta: [
-      { title: "Direção — Finan." },
+      { title: "Direção — Norte" },
       { name: "description", content: "Para onde queres ir, por palavras tuas." },
-      { property: "og:title", content: "Direção — Finan." },
+      { property: "og:title", content: "Direção — Norte" },
       { property: "og:description", content: "Agora, a seguir e futuro — escrito por ti." },
     ],
   }),

@@ -7,7 +7,6 @@
  */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 import { NativeSheet } from "@/components/design/native-sheet";
 import { SectionHeader } from "@/components/design/section-header";
@@ -34,17 +33,18 @@ import {
   type ScenarioLine,
 } from "@/lib/organize/types";
 import { PLAN_PRIORITY_LABELS, type PlanPriority } from "@/lib/personal/types";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/organize")({
   head: () => ({
     meta: [
-      { title: "Ajuda-me a organizar — Finan." },
+      { title: "Ajuda-me a organizar — Norte" },
       {
         name: "description",
         content:
           "Responde a algumas perguntas e vê formas de organizar o dinheiro que já tens.",
       },
-      { property: "og:title", content: "Ajuda-me a organizar — Finan." },
+      { property: "og:title", content: "Ajuda-me a organizar — Norte" },
       {
         property: "og:description",
         content: "Opções de organização a partir do dinheiro real das tuas contas.",
@@ -340,7 +340,7 @@ function OrganizePage() {
     }
 
     if (failures > 0) {
-      toast.error("Parte da organização não foi aplicada. Revê os valores.");
+      notifyError("Parte da organização não foi aplicada. Revê os valores.");
       return;
     }
 

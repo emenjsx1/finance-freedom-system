@@ -1,7 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { AuthShell, Field, LegalNotice, OrDivider, ProviderButtons } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
@@ -11,13 +10,14 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { getSignedInDestination } from "@/lib/auth/destination";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar — Finan." },
-      { name: "description", content: "Entra na tua conta Finan.: Apple, Google ou email." },
-      { property: "og:title", content: "Entrar — Finan." },
+      { title: "Entrar — Norte" },
+      { name: "description", content: "Entra na tua conta Norte: Apple, Google ou email." },
+      { property: "og:title", content: "Entrar — Norte" },
       { property: "og:description", content: "O teu dinheiro, os teus planos, num só lugar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -47,14 +47,14 @@ function AuthPage() {
         redirect_uri: window.location.origin,
       });
       if (result.error) {
-        toast.error(authErrorMessage(result.error));
+        notifyError(authErrorMessage(result.error));
         return;
       }
       if (result.redirected) return;
       const to = await getSignedInDestination();
       void navigate({ to, replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(null);
     }
@@ -69,7 +69,7 @@ function AuthPage() {
       const to = await getSignedInDestination();
       void navigate({ to, replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(null);
     }

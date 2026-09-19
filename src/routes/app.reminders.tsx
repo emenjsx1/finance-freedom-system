@@ -28,9 +28,9 @@ import { REMINDER_STATUS_LABELS, type Reminder } from "@/lib/reminders/types";
 export const Route = createFileRoute("/app/reminders")({
   head: () => ({
     meta: [
-      { title: "Lembretes — Finan." },
+      { title: "Lembretes — Norte" },
       { name: "description", content: "As coisas que pediste para te lembrar, à hora que escolheste." },
-      { property: "og:title", content: "Lembretes — Finan." },
+      { property: "og:title", content: "Lembretes — Norte" },
       { property: "og:description", content: "As coisas que pediste para te lembrar, à hora que escolheste." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

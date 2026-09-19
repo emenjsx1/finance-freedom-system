@@ -15,9 +15,9 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/wallets/")({
   head: () => ({
     meta: [
-      { title: "Carteiras — Finance OS" },
+      { title: "Carteiras — Norte" },
       { name: "description", content: "Para que serve o teu dinheiro: propósito, proteção e disponibilidade." },
-      { property: "og:title", content: "Carteiras — Finance OS" },
+      { property: "og:title", content: "Carteiras — Norte" },
       { property: "og:description", content: "Para que serve o teu dinheiro." },
     ],
   }),

@@ -1,21 +1,21 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { AuthShell, Field } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Recuperar acesso — Finan." },
+      { title: "Recuperar acesso — Norte" },
       { name: "description", content: "Recebe instruções para definir uma nova palavra-passe." },
-      { property: "og:title", content: "Recuperar acesso — Finan." },
-      { property: "og:description", content: "Volta a entrar na tua conta Finan." },
+      { property: "og:title", content: "Recuperar acesso — Norte" },
+      { property: "og:description", content: "Volta a entrar na tua conta Norte" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -39,7 +39,7 @@ function ForgotPasswordPage() {
       // Never reveal whether the address belongs to an account.
       setSent(true);
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }

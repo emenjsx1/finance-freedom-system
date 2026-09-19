@@ -1,4 +1,4 @@
-/** Domain model for Personal Finance OS. Presentation-free. */
+/** Domain model for Personal Norte. Presentation-free. */
 
 export type AccountType =
   | "bank"

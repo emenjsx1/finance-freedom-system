@@ -11,6 +11,7 @@ import { BellRing, Download, ShieldAlert, Smartphone } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { usePwa } from "@/hooks/use-pwa";
+import { notifyError } from "@/lib/ui/feedback";
 import {
   currentSubscription,
   deviceLabel,
@@ -65,7 +66,7 @@ export function PushPanel() {
       }
       const result = await subscribeThisDevice();
       if (!result.ok) {
-        toast.error("Não consegui ativar os avisos neste dispositivo.");
+        notifyError("Não consegui ativar os avisos neste dispositivo.");
         return;
       }
       setSubscribed(true);
@@ -80,7 +81,7 @@ export function PushPanel() {
     const result = await unsubscribeThisDevice();
     setBusy(false);
     if (!result.ok) {
-      toast.error("Não consegui desativar os avisos neste dispositivo.");
+      notifyError("Não consegui desativar os avisos neste dispositivo.");
       return;
     }
     setSubscribed(false);

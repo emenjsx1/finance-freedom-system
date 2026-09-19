@@ -11,14 +11,15 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useSetup } from "@/hooks/use-setup";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/profile/personal")({
   head: () => ({
     meta: [
-      { title: "Informação pessoal — Finance OS" },
+      { title: "Informação pessoal — Norte" },
       { name: "description", content: "Fotografia, nome preferido, idioma, moeda base e fuso horário." },
-      { property: "og:title", content: "Informação pessoal — Finance OS" },
-      { property: "og:description", content: "Os teus dados pessoais no Finance OS." },
+      { property: "og:title", content: "Informação pessoal — Norte" },
+      { property: "og:description", content: "Os teus dados pessoais no Norte." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -47,6 +48,10 @@ function PersonalInfoPage() {
   const [language, setLanguage] = useState("pt");
   const [currency, setCurrency] = useState("MZN");
   const [timezone, setTimezone] = useState("Africa/Maputo");
+  const [birthDate, setBirthDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -56,7 +61,14 @@ function PersonalInfoPage() {
     setLanguage(profile?.language ?? "pt");
     setCurrency(profile?.base_currency ?? setup.currencyCode);
     setTimezone(profile?.timezone ?? "Africa/Maputo");
+    setBirthDate(profile?.birth_date ?? "");
+    setPhone(profile?.phone ?? "");
+    setCity(profile?.city ?? "");
+    setCountry(profile?.country ?? "");
   }, [profile, setup.fullName, setup.currencyCode]);
+
+  const age = ageFromBirthDate(birthDate);
+
 
   if (!user) {
     return (
@@ -71,7 +83,7 @@ function PersonalInfoPage() {
 
   async function handlePhoto(file: File) {
     if (file.size > 3_000_000) {
-      toast.error("Escolhe uma imagem com menos de 3 MB.");
+      notifyError("Escolhe uma imagem com menos de 3 MB.");
       return;
     }
     const dataUrl = await resizeToDataUrl(file, 320);
@@ -89,12 +101,16 @@ function PersonalInfoPage() {
         language,
         base_currency: currency,
         timezone,
+        birth_date: birthDate || null,
+        phone: phone.trim() || null,
+        city: city.trim() || null,
+        country: country.trim() || null,
       });
       // Keep the on-device money architecture aligned with the account profile.
       updateSetup({ fullName: fullName.trim() || preferredName.trim() });
       toast.success("Informação atualizada.");
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setSaving(false);
     }
@@ -149,6 +165,65 @@ function PersonalInfoPage() {
             O email de acesso só pode ser alterado através do fluxo seguro em Acesso e segurança.
           </p>
         </div>
+
+        <div className="space-y-2">
+          <Label className="type-meta" htmlFor="birth-date">
+            Data de nascimento
+          </Label>
+          <Input
+            id="birth-date"
+            type="date"
+            value={birthDate}
+            max={new Date().toISOString().slice(0, 10)}
+            onChange={(e) => setBirthDate(e.target.value)}
+          />
+          <p className="type-meta">{age === null ? "Opcional." : `Tens ${age} anos.`}</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="type-meta" htmlFor="phone">
+            Telefone
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+258 84 000 0000"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label className="type-meta" htmlFor="city">
+              Cidade
+            </Label>
+            <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Maputo" />
+          </div>
+          <div className="space-y-2">
+            <Label className="type-meta" htmlFor="country">
+              País
+            </Label>
+            <Input
+              id="country"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              placeholder="Moçambique"
+            />
+          </div>
+        </div>
+
+        <Link
+          to="/app/profile/password"
+          className="list-row items-center justify-between text-[0.9375rem] text-foreground"
+        >
+          Alterar palavra-passe
+          <span aria-hidden="true" className="type-meta">
+            ›
+          </span>
+        </Link>
+
 
         <NativeSelect label="Idioma" value={language} onChange={setLanguage} options={[["pt", "Português"]]} />
         <NativeSelect
@@ -213,4 +288,18 @@ async function resizeToDataUrl(file: File, max: number): Promise<string> {
   if (!ctx) throw new Error("canvas");
   ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
   return canvas.toDataURL("image/jpeg", 0.85);
+}
+
+/** Age is always derived from the birth date, never stored separately. */
+function ageFromBirthDate(value: string): number | null {
+  if (!value) return null;
+  const birth = new Date(`${value}T00:00:00`);
+  if (Number.isNaN(birth.getTime())) return null;
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const beforeBirthday =
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate());
+  if (beforeBirthday) age -= 1;
+  return age >= 0 && age < 130 ? age : null;
 }
