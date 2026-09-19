@@ -139,6 +139,7 @@ function RootComponent() {
           </LedgerProvider>
         </PrefsProvider>
       </SetupProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
