@@ -7,6 +7,8 @@ import { PageHeader } from "@/components/page-header";
 import { Button } from "@/components/ui/button";
 import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
+import { developmentReviewFacts } from "@/lib/development/engine";
+import { EVOLUTION_KIND_LABELS } from "@/lib/development/types";
 import { goalPace } from "@/lib/personal/engine";
 
 export const Route = createFileRoute("/app/review")({
@@ -48,6 +50,26 @@ function ReviewPage() {
   }, [ledger.transactions, period]);
 
   const upcoming = state.commitments.filter((c) => c.active);
+
+  /** The same window, applied to the person's own work. Facts only. */
+  const devFacts = useMemo(() => {
+    const now = new Date();
+    const fromISO = new Date(
+      period === "week"
+        ? Date.now() - 1000 * 60 * 60 * 24 * 7
+        : new Date(now.getFullYear(), now.getMonth(), 1).getTime(),
+    ).toISOString();
+    return developmentReviewFacts(
+      {
+        actions: state.development.actions,
+        programs: state.development.programs,
+        decisions: state.development.decisions,
+        evolution: state.development.evolution,
+      },
+      fromISO,
+      now.toISOString(),
+    );
+  }, [period, state.development]);
 
   const savedFor = (walletId?: string) =>
     walletId ? (snapshot.wallets.find((w) => w.id === walletId)?.balanceMinor ?? 0) : 0;
@@ -126,6 +148,42 @@ function ReviewPage() {
           <p className="type-section mt-1">{upcoming.length}</p>
         </div>
       </section>
+
+      <section>
+        <SectionHeader title="O que fizeste" actionLabel="Desenvolvimento" to="/app/development" />
+        <div className="list-group">
+          <div className="list-row justify-between">
+            <span className="text-sm">Ações concluídas</span>
+            <span className="type-meta">{devFacts.actionsCompleted}</span>
+          </div>
+          <div className="list-row justify-between">
+            <span className="text-sm">Ações por fazer</span>
+            <span className="type-meta">{devFacts.actionsPending}</span>
+          </div>
+          <div className="list-row justify-between">
+            <span className="text-sm">Programas a decorrer</span>
+            <span className="type-meta">{devFacts.programsActive}</span>
+          </div>
+          <div className="list-row justify-between">
+            <span className="text-sm">Decisões registadas</span>
+            <span className="type-meta">{devFacts.decisionsRecorded}</span>
+          </div>
+        </div>
+      </section>
+
+      {devFacts.changes.length ? (
+        <section>
+          <SectionHeader title="O que mudou" actionLabel="Evolução" to="/app/development/evolution" />
+          <div className="list-group">
+            {devFacts.changes.slice(0, 6).map((event) => (
+              <div key={event.id} className="list-row justify-between">
+                <span className="text-sm">{event.title}</span>
+                <span className="type-meta">{EVOLUTION_KIND_LABELS[event.kind]}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       {progressing.length ? (
         <section>
