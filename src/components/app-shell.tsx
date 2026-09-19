@@ -10,6 +10,8 @@ import {
   PieChart,
   Repeat,
   Settings,
+  Landmark,
+  Map,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -34,7 +36,9 @@ const desktopNav: NavItem[] = [
   { to: "/app", label: pt.nav.home, icon: Home },
   { to: "/app/transactions", label: pt.nav.transactions, icon: ArrowLeftRight },
   { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
-  { to: "/app/wallets", label: pt.nav.wallets, icon: Wallet },
+  { to: "/app/accounts", label: "Contas", icon: Landmark },
+  { to: "/app/wallets", label: "Carteiras", icon: Wallet },
+  { to: "/app/money-map", label: "Mapa do dinheiro", icon: Map },
   { to: "/app/goals", label: pt.nav.goals, icon: Target },
   { to: "/app/reports", label: pt.nav.reports, icon: PieChart },
   { to: "/app/settings", label: pt.nav.settings, icon: Settings },
