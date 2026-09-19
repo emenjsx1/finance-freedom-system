@@ -28,6 +28,7 @@ import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-setting
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
+import { Route as AppHelpRouteImport } from './routes/app.help'
 import { Route as AppIntegrityRouteImport } from './routes/app.integrity'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
 import { Route as AppNotificationSettingsRouteImport } from './routes/app.notification-settings'
@@ -151,6 +152,11 @@ const AppAutomationsRoute = AppAutomationsRouteImport.update({
 const AppGoalsRoute = AppGoalsRouteImport.update({
   id: '/goals',
   path: '/goals',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHelpRoute = AppHelpRouteImport.update({
+  id: '/help',
+  path: '/help',
   getParentRoute: () => AppRoute,
 } as any)
 const AppIntegrityRoute = AppIntegrityRouteImport.update({
@@ -319,6 +325,7 @@ export interface FileRoutesByFullPath {
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
+  '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
@@ -364,6 +371,7 @@ export interface FileRoutesByTo {
   '/app/activity': typeof AppActivityRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/automations': typeof AppAutomationsRoute
+  '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
@@ -413,6 +421,7 @@ export interface FileRoutesById {
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
+  '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
@@ -465,6 +474,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/automations'
     | '/app/goals'
+    | '/app/help'
     | '/app/integrity'
     | '/app/money-map'
     | '/app/notification-settings'
@@ -510,6 +520,7 @@ export interface FileRouteTypes {
     | '/app/activity'
     | '/app/agent-settings'
     | '/app/automations'
+    | '/app/help'
     | '/app/integrity'
     | '/app/money-map'
     | '/app/notification-settings'
@@ -558,6 +569,7 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/automations'
     | '/app/goals'
+    | '/app/help'
     | '/app/integrity'
     | '/app/money-map'
     | '/app/notification-settings'
@@ -737,6 +749,13 @@ declare module '@tanstack/react-router' {
       path: '/goals'
       fullPath: '/app/goals'
       preLoaderRoute: typeof AppGoalsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/help': {
+      id: '/app/help'
+      path: '/help'
+      fullPath: '/app/help'
+      preLoaderRoute: typeof AppHelpRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/integrity': {
@@ -1043,6 +1062,7 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
   AppAutomationsRoute: typeof AppAutomationsRoute
   AppGoalsRoute: typeof AppGoalsRouteWithChildren
+  AppHelpRoute: typeof AppHelpRoute
   AppIntegrityRoute: typeof AppIntegrityRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
   AppNotificationSettingsRoute: typeof AppNotificationSettingsRoute
@@ -1068,6 +1088,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
   AppAutomationsRoute: AppAutomationsRoute,
   AppGoalsRoute: AppGoalsRouteWithChildren,
+  AppHelpRoute: AppHelpRoute,
   AppIntegrityRoute: AppIntegrityRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
   AppNotificationSettingsRoute: AppNotificationSettingsRoute,
