@@ -196,7 +196,17 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
         createdAt: now(),
         updatedAt: now(),
       };
-      commit((prev) => ({ ...prev, plans: [plan, ...prev.plans] }));
+      commit((prev) => ({
+        ...prev,
+        plans: [plan, ...prev.plans],
+        development: {
+          ...prev.development,
+          evolution: [
+            { id: newId(), kind: "plan_created" as const, title: plan.name, at: now() },
+            ...prev.development.evolution,
+          ],
+        },
+      }));
       return plan;
     },
     [commit],
