@@ -377,7 +377,6 @@ export function AgentProvider({ children }: { children: ReactNode }) {
                     : proposal.horizon === "later"
                       ? "later"
                       : "now",
-              source: "agent",
             });
             break;
           case "record_decision":
@@ -393,7 +392,6 @@ export function AgentProvider({ children }: { children: ReactNode }) {
               content: proposal.content ?? proposal.summary,
               category: "important",
               source: "agent_confirmed",
-              state: "active",
             });
             break;
         }
