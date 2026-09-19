@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppAgentRouteImport } from './routes/app.agent'
@@ -58,6 +59,11 @@ const AuthRoute = AuthRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -197,6 +203,7 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRoute
@@ -257,6 +265,7 @@ export interface FileRoutesById {
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/reset-password'
     | '/app/accounts'
     | '/app/agent'
     | '/app/agent-settings'
@@ -322,6 +332,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/onboarding'
+    | '/reset-password'
     | '/app/agent-settings'
     | '/app/automations'
     | '/app/goals'
@@ -350,6 +361,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/reset-password'
     | '/app/accounts'
     | '/app/agent'
     | '/app/agent-settings'
@@ -383,6 +395,7 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   OnboardingRoute: typeof OnboardingRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -413,6 +426,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -705,6 +725,7 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   OnboardingRoute: OnboardingRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
