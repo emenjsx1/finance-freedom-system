@@ -12,9 +12,9 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/protected")({
   head: () => ({
     meta: [
-      { title: "Dinheiro protegido — Finance OS" },
+      { title: "Dinheiro protegido — Norte" },
       { name: "description", content: "Entradas, retiradas e motivos do dinheiro que decidiste proteger." },
-      { property: "og:title", content: "Dinheiro protegido — Finance OS" },
+      { property: "og:title", content: "Dinheiro protegido — Norte" },
       { property: "og:description", content: "Entradas, retiradas e motivos do dinheiro protegido." },
     ],
   }),

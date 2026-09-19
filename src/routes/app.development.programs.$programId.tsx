@@ -13,9 +13,9 @@ import { PROGRAM_ITEM_TYPE_LABELS, PROGRAM_STATUS_LABELS } from "@/lib/developme
 export const Route = createFileRoute("/app/development/programs/$programId")({
   head: () => ({
     meta: [
-      { title: "Programa — Finan." },
+      { title: "Programa — Norte" },
       { name: "description", content: "Os dias deste programa e o que mudou de facto." },
-      { property: "og:title", content: "Programa — Finan." },
+      { property: "og:title", content: "Programa — Norte" },
       { property: "og:description", content: "Sem pontuações: só o que fizeste e o que deixaste." },
     ],
   }),

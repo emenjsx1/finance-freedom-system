@@ -15,9 +15,9 @@ export const Route = createFileRoute("/reset-password")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Nova palavra-passe — Finance OS" },
-      { name: "description", content: "Define uma nova palavra-passe para a tua conta Finance OS." },
-      { property: "og:title", content: "Nova palavra-passe — Finance OS" },
+      { title: "Nova palavra-passe — Norte" },
+      { name: "description", content: "Define uma nova palavra-passe para a tua conta Norte." },
+      { property: "og:title", content: "Nova palavra-passe — Norte" },
       { property: "og:description", content: "Define uma nova palavra-passe em segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

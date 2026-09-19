@@ -15,9 +15,9 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Entrar — Finan." },
-      { name: "description", content: "Entra na tua conta Finan.: Apple, Google ou email." },
-      { property: "og:title", content: "Entrar — Finan." },
+      { title: "Entrar — Norte" },
+      { name: "description", content: "Entra na tua conta Norte: Apple, Google ou email." },
+      { property: "og:title", content: "Entrar — Norte" },
       { property: "og:description", content: "O teu dinheiro, os teus planos, num só lugar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

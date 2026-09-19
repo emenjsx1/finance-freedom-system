@@ -16,9 +16,9 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/accounts/")({
   head: () => ({
     meta: [
-      { title: "Minhas contas — Finance OS" },
+      { title: "Minhas contas — Norte" },
       { name: "description", content: "Onde o teu dinheiro existe fisicamente: banco, carteira móvel e numerário." },
-      { property: "og:title", content: "Minhas contas — Finance OS" },
+      { property: "og:title", content: "Minhas contas — Norte" },
       { property: "og:description", content: "Onde o teu dinheiro existe fisicamente." },
     ],
   }),

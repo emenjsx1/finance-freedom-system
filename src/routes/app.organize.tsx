@@ -38,13 +38,13 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/app/organize")({
   head: () => ({
     meta: [
-      { title: "Ajuda-me a organizar — Finan." },
+      { title: "Ajuda-me a organizar — Norte" },
       {
         name: "description",
         content:
           "Responde a algumas perguntas e vê formas de organizar o dinheiro que já tens.",
       },
-      { property: "og:title", content: "Ajuda-me a organizar — Finan." },
+      { property: "og:title", content: "Ajuda-me a organizar — Norte" },
       {
         property: "og:description",
         content: "Opções de organização a partir do dinheiro real das tuas contas.",

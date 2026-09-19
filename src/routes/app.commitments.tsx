@@ -26,9 +26,9 @@ import {
 export const Route = createFileRoute("/app/commitments")({
   head: () => ({
     meta: [
-      { title: "Compromissos — Finan." },
+      { title: "Compromissos — Norte" },
       { name: "description", content: "O que esperas pagar: renda, internet, apoio à família." },
-      { property: "og:title", content: "Compromissos — Finan." },
+      { property: "og:title", content: "Compromissos — Norte" },
       { property: "og:description", content: "Compromissos esperados, nunca descontados antes de acontecerem." },
     ],
   }),

@@ -31,9 +31,9 @@ import type { NotificationPreferences } from "@/lib/finance/types";
 export const Route = createFileRoute("/app/settings")({
   head: () => ({
     meta: [
-      { title: "Definições — Finance OS" },
+      { title: "Definições — Norte" },
       { name: "description", content: "Perfil, contas, potes, regra financeira, moeda, notificações e segurança." },
-      { property: "og:title", content: "Definições — Finance OS" },
+      { property: "og:title", content: "Definições — Norte" },
       { property: "og:description", content: "Perfil, contas, potes, regra, moeda, notificações e segurança." },
     ],
   }),
@@ -122,7 +122,7 @@ function SettingsPage() {
         <span className="text-xs text-muted-foreground">Disponível com a ligação ativa</span>
       </div>
 
-      <p className="pb-4 text-center text-xs text-muted-foreground">Finance OS · versão {APP_VERSION}</p>
+      <p className="pb-4 text-center text-xs text-muted-foreground">Norte · versão {APP_VERSION}</p>
     </div>
   );
 }

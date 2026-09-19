@@ -8,13 +8,13 @@ import { getSignedInDestination } from "@/lib/auth/destination";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Finance OS — Organiza o teu dinheiro" },
+      { title: "Norte — Organiza o teu dinheiro" },
       {
         name: "description",
         content:
           "Sistema pessoal de finanças: separa onde o dinheiro está de para que serve, e constrói a tua liberdade.",
       },
-      { property: "og:title", content: "Finance OS — Organiza o teu dinheiro" },
+      { property: "og:title", content: "Norte — Organiza o teu dinheiro" },
       {
         property: "og:description",
         content: "Separa onde o dinheiro está de para que serve, e constrói a tua liberdade.",
@@ -58,7 +58,7 @@ function Landing() {
         </h1>
         <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
           O saldo da tua conta não é necessariamente o dinheiro que tens disponível para gastar.
-          O Finance OS separa onde o dinheiro está de para que serve.
+          O Norte separa onde o dinheiro está de para que serve.
         </p>
 
         <div className="mt-10 space-y-3">

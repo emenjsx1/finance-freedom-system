@@ -16,9 +16,9 @@ type ReportKind = "monthly" | "weekly" | "custom";
 export const Route = createFileRoute("/app/reports")({
   head: () => ({
     meta: [
-      { title: "Relatórios — Finance OS" },
+      { title: "Relatórios — Norte" },
       { name: "description", content: "Resumo mensal, semanal e por período do teu dinheiro." },
-      { property: "og:title", content: "Relatórios — Finance OS" },
+      { property: "og:title", content: "Relatórios — Norte" },
       { property: "og:description", content: "Resumo mensal, semanal e por período do teu dinheiro." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

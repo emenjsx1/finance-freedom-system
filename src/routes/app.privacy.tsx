@@ -29,9 +29,9 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/app/privacy")({
   head: () => ({
     meta: [
-      { title: "Privacidade e dados — Finance OS" },
+      { title: "Privacidade e dados — Norte" },
       { name: "description", content: "Modo privado, exportação de dados e eliminação da conta." },
-      { property: "og:title", content: "Privacidade e dados — Finance OS" },
+      { property: "og:title", content: "Privacidade e dados — Norte" },
       { property: "og:description", content: "Controla os teus dados: exporta ou elimina quando quiseres." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

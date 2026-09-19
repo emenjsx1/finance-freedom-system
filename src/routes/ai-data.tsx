@@ -5,13 +5,13 @@ import { LegalPage, Placeholder, Section } from "@/components/legal/legal-page";
 export const Route = createFileRoute("/ai-data")({
   head: () => ({
     meta: [
-      { title: "IA e os teus dados — Finan." },
+      { title: "IA e os teus dados — Norte" },
       {
         name: "description",
         content: "O que o Agente vê, o que memoriza e como apagas tudo isso quando quiseres.",
       },
-      { property: "og:title", content: "IA e os teus dados — Finan." },
-      { property: "og:description", content: "Transparência sobre o Agente da Finan." },
+      { property: "og:title", content: "IA e os teus dados — Norte" },
+      { property: "og:description", content: "Transparência sobre o Agente da Norte" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

@@ -16,9 +16,9 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/app/profile/security")({
   head: () => ({
     meta: [
-      { title: "Acesso e segurança — Finance OS" },
+      { title: "Acesso e segurança — Norte" },
       { name: "description", content: "Métodos de acesso, palavra-passe, dispositivos, bloqueio da app e atividade." },
-      { property: "og:title", content: "Acesso e segurança — Finance OS" },
+      { property: "og:title", content: "Acesso e segurança — Norte" },
       { property: "og:description", content: "Controla como entras e como proteges a aplicação." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -16,7 +16,7 @@ export function LegalPage({
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-24 pt-[max(env(safe-area-inset-top),2rem)]">
       <Link to="/" className="inline-block">
-        <img src={logoUrl} alt="Finan." className="h-7 w-auto" />
+        <img src={logoUrl} alt="Norte" className="h-7 w-auto" />
       </Link>
 
       <h1 className="type-display mt-8">{title}</h1>

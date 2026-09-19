@@ -29,9 +29,9 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/accounts/$accountId")({
   head: () => ({
     meta: [
-      { title: "Conta — Finance OS" },
+      { title: "Conta — Norte" },
       { name: "description", content: "Saldo, entradas, saídas e transferências desta conta." },
-      { property: "og:title", content: "Conta — Finance OS" },
+      { property: "og:title", content: "Conta — Norte" },
       { property: "og:description", content: "Saldo, entradas, saídas e transferências desta conta." },
     ],
   }),

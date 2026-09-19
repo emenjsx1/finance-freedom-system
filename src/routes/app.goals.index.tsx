@@ -14,9 +14,9 @@ import { symbolLabel } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/goals/")({
   head: () => ({
     meta: [
-      { title: "Os teus planos — Finan." },
+      { title: "Os teus planos — Norte" },
       { name: "description", content: "Define objetivos e acompanha quanto já construíste para cada um." },
-      { property: "og:title", content: "Os teus planos — Finan." },
+      { property: "og:title", content: "Os teus planos — Norte" },
       { property: "og:description", content: "Define objetivos e acompanha o teu progresso." },
     ],
   }),

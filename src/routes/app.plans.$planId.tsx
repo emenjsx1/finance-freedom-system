@@ -37,9 +37,9 @@ import {
 export const Route = createFileRoute("/app/plans/$planId")({
   head: () => ({
     meta: [
-      { title: "Plano — Finan." },
+      { title: "Plano — Norte" },
       { name: "description", content: "O plano, o progresso e o que falta decidir." },
-      { property: "og:title", content: "Plano — Finan." },
+      { property: "og:title", content: "Plano — Norte" },
       { property: "og:description", content: "Progresso, passos e dinheiro reservado para este plano." },
     ],
   }),

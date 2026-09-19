@@ -15,9 +15,9 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/app/profile/password")({
   head: () => ({
     meta: [
-      { title: "Palavra-passe — Finance OS" },
-      { name: "description", content: "Alterar ou definir a palavra-passe da tua conta Finance OS." },
-      { property: "og:title", content: "Palavra-passe — Finance OS" },
+      { title: "Palavra-passe — Norte" },
+      { name: "description", content: "Alterar ou definir a palavra-passe da tua conta Norte." },
+      { property: "og:title", content: "Palavra-passe — Norte" },
       { property: "og:description", content: "Gere a palavra-passe da tua conta em segurança." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

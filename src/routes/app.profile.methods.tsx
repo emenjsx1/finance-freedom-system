@@ -15,9 +15,9 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/app/profile/methods")({
   head: () => ({
     meta: [
-      { title: "Métodos de acesso — Finance OS" },
-      { name: "description", content: "Liga ou desliga Apple, Google e email na tua conta Finance OS." },
-      { property: "og:title", content: "Métodos de acesso — Finance OS" },
+      { title: "Métodos de acesso — Norte" },
+      { name: "description", content: "Liga ou desliga Apple, Google e email na tua conta Norte." },
+      { property: "og:title", content: "Métodos de acesso — Norte" },
       { property: "og:description", content: "Mais formas de entrar, mais segurança para recuperares o acesso." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

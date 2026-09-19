@@ -12,10 +12,10 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
     meta: [
-      { title: "Recuperar acesso — Finan." },
+      { title: "Recuperar acesso — Norte" },
       { name: "description", content: "Recebe instruções para definir uma nova palavra-passe." },
-      { property: "og:title", content: "Recuperar acesso — Finan." },
-      { property: "og:description", content: "Volta a entrar na tua conta Finan." },
+      { property: "og:title", content: "Recuperar acesso — Norte" },
+      { property: "og:description", content: "Volta a entrar na tua conta Norte" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

@@ -32,12 +32,12 @@ export const Route = createFileRoute("/app/networth")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Património — Finan." },
+      { title: "Património — Norte" },
       {
         name: "description",
         content: "Tudo o que tens menos o que deves: dinheiro, bens e dívidas.",
       },
-      { property: "og:title", content: "Património — Finan." },
+      { property: "og:title", content: "Património — Norte" },
       { property: "og:description", content: "Dinheiro, veículos, imóveis, investimentos e dívidas." },
     ],
   }),

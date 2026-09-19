@@ -5,9 +5,9 @@ import { LegalPage, Placeholder, Section } from "@/components/legal/legal-page";
 export const Route = createFileRoute("/terms")({
   head: () => ({
     meta: [
-      { title: "Termos de Utilização — Finan." },
-      { name: "description", content: "As condições de utilização da aplicação Finan." },
-      { property: "og:title", content: "Termos de Utilização — Finan." },
+      { title: "Termos de Utilização — Norte" },
+      { name: "description", content: "As condições de utilização da aplicação Norte" },
+      { property: "og:title", content: "Termos de Utilização — Norte" },
       { property: "og:description", content: "Condições de utilização, limites e responsabilidades." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -16,10 +16,10 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/app/profile/personal")({
   head: () => ({
     meta: [
-      { title: "Informação pessoal — Finance OS" },
+      { title: "Informação pessoal — Norte" },
       { name: "description", content: "Fotografia, nome preferido, idioma, moeda base e fuso horário." },
-      { property: "og:title", content: "Informação pessoal — Finance OS" },
-      { property: "og:description", content: "Os teus dados pessoais no Finance OS." },
+      { property: "og:title", content: "Informação pessoal — Norte" },
+      { property: "og:description", content: "Os teus dados pessoais no Norte." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

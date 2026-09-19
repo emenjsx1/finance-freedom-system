@@ -32,9 +32,9 @@ function monthLabel(key: string) {
 export const Route = createFileRoute("/app/development/evolution")({
   head: () => ({
     meta: [
-      { title: "A minha evolução — Finan." },
+      { title: "A minha evolução — Norte" },
       { name: "description", content: "O que mudou de facto, mês a mês. Nada inventado." },
-      { property: "og:title", content: "A minha evolução — Finan." },
+      { property: "og:title", content: "A minha evolução — Norte" },
       { property: "og:description", content: "Só mudanças reais que tu criaste ou confirmaste." },
     ],
   }),

@@ -33,12 +33,12 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/app/personalization")({
   head: () => ({
     meta: [
-      { title: "Personalização — Finance OS" },
+      { title: "Personalização — Norte" },
       {
         name: "description",
         content: "Tema, cor de destaque, densidade, módulos do painel e a tua própria terminologia.",
       },
-      { property: "og:title", content: "Personalização — Finance OS" },
+      { property: "og:title", content: "Personalização — Norte" },
       { property: "og:description", content: "Faz da aplicação um sistema à tua medida." },
     ],
   }),

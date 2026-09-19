@@ -14,9 +14,9 @@ import { goalPace } from "@/lib/personal/engine";
 export const Route = createFileRoute("/app/review")({
   head: () => ({
     meta: [
-      { title: "Revisão — Finan." },
+      { title: "Revisão — Norte" },
       { name: "description", content: "Um olhar calmo sobre o mês, sem notas nem pontuações." },
-      { property: "og:title", content: "Revisão — Finan." },
+      { property: "og:title", content: "Revisão — Norte" },
       { property: "og:description", content: "O que aconteceu e o que ainda faz sentido." },
     ],
   }),

@@ -15,9 +15,9 @@ const GROUPS: ProgramStatus[] = ["active", "paused", "completed", "cancelled"];
 export const Route = createFileRoute("/app/development/programs/")({
   head: () => ({
     meta: [
-      { title: "Programas — Finan." },
+      { title: "Programas — Norte" },
       { name: "description", content: "Caminhos curtos e estruturados para trabalhar uma coisa de cada vez." },
-      { property: "og:title", content: "Programas — Finan." },
+      { property: "og:title", content: "Programas — Norte" },
       { property: "og:description", content: "3, 7, 14, 30 ou 90 dias. Com início e fim." },
     ],
   }),

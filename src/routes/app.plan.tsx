@@ -22,12 +22,12 @@ import { usePrefs } from "@/hooks/use-prefs";
 export const Route = createFileRoute("/app/plan")({
   head: () => ({
     meta: [
-      { title: "Plano — Finance OS" },
+      { title: "Plano — Norte" },
       {
         name: "description",
         content: "Contas, carteiras, objetivos, pagamentos recorrentes e definições do teu sistema financeiro.",
       },
-      { property: "og:title", content: "Plano — Finance OS" },
+      { property: "og:title", content: "Plano — Norte" },
       { property: "og:description", content: "Contas, carteiras, objetivos e definições num só lugar." },
     ],
   }),

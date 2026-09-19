@@ -17,9 +17,9 @@ import type { Transaction } from "@/lib/finance/ledger-types";
 export const Route = createFileRoute("/app/goals/$goalId")({
   head: () => ({
     meta: [
-      { title: "Objetivo — Finan." },
+      { title: "Objetivo — Norte" },
       { name: "description", content: "Quanto já guardaste, quanto falta e quando queres lá chegar." },
-      { property: "og:title", content: "Objetivo — Finan." },
+      { property: "og:title", content: "Objetivo — Norte" },
       { property: "og:description", content: "Progresso e contribuições deste objetivo." },
     ],
   }),

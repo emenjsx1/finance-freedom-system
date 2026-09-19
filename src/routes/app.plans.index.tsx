@@ -15,9 +15,9 @@ const ORDER: PlanStatus[] = ["active", "idea", "paused", "completed", "archived"
 export const Route = createFileRoute("/app/plans/")({
   head: () => ({
     meta: [
-      { title: "Planos — Finan." },
+      { title: "Planos — Norte" },
       { name: "description", content: "O que estás a construir, a preparar ou apenas a pensar." },
-      { property: "og:title", content: "Planos — Finan." },
+      { property: "og:title", content: "Planos — Norte" },
       { property: "og:description", content: "Viagens, compras, mudanças e ideias, com ou sem dinheiro." },
     ],
   }),

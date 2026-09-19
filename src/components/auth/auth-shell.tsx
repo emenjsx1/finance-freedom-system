@@ -11,8 +11,8 @@ export function AuthShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col justify-center overflow-y-auto bg-background px-5 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-[max(env(safe-area-inset-top),1.5rem)] sm:px-6">
       <div className="mx-auto w-full max-w-sm">
-        <Link to="/" aria-label="Finan." className="mb-8 block">
-          <img src={logoUrl} alt="Finan." className="h-12 w-auto" />
+        <Link to="/" aria-label="Norte" className="mb-8 block">
+          <img src={logoUrl} alt="Norte" className="h-12 w-auto" />
         </Link>
         {children}
       </div>

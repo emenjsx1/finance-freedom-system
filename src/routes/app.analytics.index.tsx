@@ -45,9 +45,9 @@ import { Symbol } from "@/lib/icons/symbols";
 export const Route = createFileRoute("/app/analytics/")({
   head: () => ({
     meta: [
-      { title: "Análise — Finance OS" },
+      { title: "Análise — Norte" },
       { name: "description", content: "O que aconteceu com o teu dinheiro: entradas, gastos, construção e padrões." },
-      { property: "og:title", content: "Análise — Finance OS" },
+      { property: "og:title", content: "Análise — Norte" },
       { property: "og:description", content: "Entradas, gastos, construção e padrões do teu dinheiro." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

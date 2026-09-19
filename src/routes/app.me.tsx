@@ -15,9 +15,9 @@ import { DIRECTION_HORIZON_LABELS } from "@/lib/personal/types";
 export const Route = createFileRoute("/app/me")({
   head: () => ({
     meta: [
-      { title: "Eu — Finan." },
+      { title: "Eu — Norte" },
       { name: "description", content: "Direção, planos, estratégia e o que o Agente sabe sobre ti." },
-      { property: "og:title", content: "Eu — Finan." },
+      { property: "og:title", content: "Eu — Norte" },
       { property: "og:description", content: "O teu espaço pessoal dentro da aplicação." },
     ],
   }),

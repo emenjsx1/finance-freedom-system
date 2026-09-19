@@ -28,9 +28,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/app/activity")({
   head: () => ({
     meta: [
-      { title: "Atividade — Finance OS" },
+      { title: "Atividade — Norte" },
       { name: "description", content: "Todo o teu histórico financeiro: entradas, despesas, transferências e ajustes." },
-      { property: "og:title", content: "Atividade — Finance OS" },
+      { property: "og:title", content: "Atividade — Norte" },
       { property: "og:description", content: "Pesquisa, filtra e revê todos os teus movimentos." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

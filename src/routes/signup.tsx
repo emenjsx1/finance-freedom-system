@@ -16,9 +16,9 @@ import { notifyError } from "@/lib/ui/feedback";
 export const Route = createFileRoute("/signup")({
   head: () => ({
     meta: [
-      { title: "Criar conta — Finan." },
-      { name: "description", content: "Cria a tua conta Finan. com a Apple, a Google ou email." },
-      { property: "og:title", content: "Criar conta — Finan." },
+      { title: "Criar conta — Norte" },
+      { name: "description", content: "Cria a tua conta Norte com a Apple, a Google ou email." },
+      { property: "og:title", content: "Criar conta — Norte" },
       { property: "og:description", content: "Começa a organizar o teu dinheiro em minutos." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

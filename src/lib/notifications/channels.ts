@@ -36,7 +36,7 @@ export function previewText(
   privacy: PreviewPrivacy,
 ): { title: string; body: string } {
   if (privacy === "private") {
-    return { title: "Personal Finance OS", body: "Tens uma nova atualização financeira." };
+    return { title: "Personal Norte", body: "Tens uma nova atualização financeira." };
   }
   if (privacy === "hide_amounts") {
     return { title: stripAmounts(notification.title), body: stripAmounts(notification.body) };
