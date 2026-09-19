@@ -112,6 +112,15 @@ export function TransactionComposer({
       notifyError("Dá um nome a este propósito.");
       return null;
     }
+    // One name, one purpose. Two "Viagem" rows would split the same money in
+    // two and make the plan look half funded.
+    const existing = setup.ruleItems.find(
+      (item) => !item.archived && item.name.trim().toLowerCase() === clean.toLowerCase(),
+    );
+    if (existing) {
+      setNewPurposeName("");
+      return existing.id;
+    }
     const id = newId();
     update(
       upsertWallet(setup, {
