@@ -21,9 +21,33 @@ export const Route = createFileRoute("/app/review")({
   component: ReviewPage,
 });
 
+/** Money in and out over a window, straight from recorded movements. */
+function windowTotals(transactions: { kind: string; amountMinor: number; occurredAt: string }[], fromMs: number) {
+  let income = 0;
+  let expenses = 0;
+  for (const tx of transactions) {
+    if (new Date(tx.occurredAt).getTime() < fromMs) continue;
+    if (tx.kind === "income") income += tx.amountMinor;
+    if (tx.kind === "expense") expenses += tx.amountMinor;
+  }
+  return { income, expenses };
+}
+
 function ReviewPage() {
   const { state, updatePlan, updateContext } = usePersonal();
-  const { snapshot } = useLedger();
+  const { snapshot, ledger } = useLedger();
+  const [period, setPeriod] = useState<"week" | "month">("week");
+
+  const totals = useMemo(() => {
+    const now = new Date();
+    const from =
+      period === "week"
+        ? Date.now() - 1000 * 60 * 60 * 24 * 7
+        : new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    return windowTotals(ledger.transactions, from);
+  }, [ledger.transactions, period]);
+
+  const upcoming = state.commitments.filter((c) => c.active);
 
   const savedFor = (walletId?: string) =>
     walletId ? (snapshot.wallets.find((w) => w.id === walletId)?.balanceMinor ?? 0) : 0;
