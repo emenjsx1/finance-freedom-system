@@ -29,6 +29,7 @@ import { PreparedMovementSheet } from "@/components/notifications/prepared-movem
 import { haptic } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
+import logoUrl from "@/assets/finan-logo.png";
 
 interface NavItem {
   to: string;
@@ -124,11 +125,7 @@ export function AppShell() {
     <div className="min-h-screen bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
         <div className="mb-8 flex items-center gap-3 px-2">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-primary/15 text-primary">
-            <span aria-hidden className="text-lg leading-none">
-              ◈
-            </span>
-          </div>
+          <img src={logoUrl} alt="Finan." className="h-9 w-auto" />
           <div className="leading-tight">
             <p className="text-sm font-semibold tracking-tight">Finance OS</p>
             <p className="type-meta">Sistema pessoal</p>
