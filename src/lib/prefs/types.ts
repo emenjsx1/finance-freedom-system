@@ -137,6 +137,9 @@ export interface UserPreferences {
   agentProactiveSummaries: boolean;
   agentInsights: boolean;
   language: "pt";
+  /** Ask for the device passcode/biometrics when the app opens. */
+  appLock: boolean;
+  appLockBiometrics: boolean;
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
@@ -154,4 +157,6 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   agentProactiveSummaries: true,
   agentInsights: true,
   language: "pt",
+  appLock: false,
+  appLockBiometrics: false,
 };
