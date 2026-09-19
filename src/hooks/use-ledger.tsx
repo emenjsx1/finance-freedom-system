@@ -43,6 +43,8 @@ interface LedgerContextValue {
   integrity: IntegrityReport;
   /** Returns false when the domain guards rejected the movement. */
   addTransaction: (tx: Transaction) => boolean;
+  /** Validates and records a related group as one operation. */
+  addTransactions: (transactions: Transaction[]) => boolean;
   updateTransaction: (id: string, patch: Partial<Transaction>) => boolean;
   deleteTransaction: (id: string) => void;
   upsertCategory: (category: Category) => void;
@@ -89,12 +91,9 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
    * reconciliation). A purpose wallet can never end up below zero, so the
    * impossible "reserved = -2.000" state cannot be created at all.
    */
-  const guard = useCallback(
-    (tx: Transaction, ignoreId?: string): string | null => {
+  const guardAgainst = useCallback(
+    (tx: Transaction, transactions: Transaction[]): string | null => {
       if (tx.moneyType === "business") return null;
-      const transactions = ignoreId
-        ? ledger.transactions.filter((t) => t.id !== ignoreId)
-        : ledger.transactions;
       const base = buildSnapshot({
         openingAccounts: setup.accounts,
         ruleItems: setup.ruleItems,
@@ -128,7 +127,16 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       }
       return null;
     },
-    [ledger.transactions, setup.accounts, setup.ruleItems],
+    [setup.accounts, setup.ruleItems],
+  );
+
+  const guard = useCallback(
+    (tx: Transaction, ignoreId?: string): string | null =>
+      guardAgainst(
+        tx,
+        ignoreId ? ledger.transactions.filter((t) => t.id !== ignoreId) : ledger.transactions,
+      ),
+    [guardAgainst, ledger.transactions],
   );
 
   const addTransaction = useCallback(
@@ -156,6 +164,41 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       return true;
     },
     [commit, guard, ledger.transactions],
+  );
+
+  const addTransactions = useCallback(
+    (transactions: Transaction[]) => {
+      if (transactions.length === 0) return true;
+      const pending = [...ledger.transactions];
+      for (const tx of transactions) {
+        const error = guardAgainst(tx, pending);
+        if (error) {
+          notifyError(error);
+          return false;
+        }
+        const duplicate = pending.some(
+          (item) =>
+            item.id === tx.id ||
+            (item.kind === tx.kind &&
+              item.amountMinor === tx.amountMinor &&
+              item.occurredAt === tx.occurredAt &&
+              item.accountId === tx.accountId &&
+              item.toBucketId === tx.toBucketId &&
+              Math.abs(Date.parse(item.createdAt) - Date.parse(tx.createdAt)) < 3000),
+        );
+        if (duplicate) {
+          notifyError("Este movimento já foi registado.");
+          return false;
+        }
+        pending.push(tx);
+      }
+      commit((prev) => ({ ...prev, transactions: [...transactions].reverse().concat(prev.transactions) }));
+      for (const tx of transactions) {
+        emitNotificationEvent("transaction_created", { id: tx.id, kind: tx.kind });
+      }
+      return true;
+    },
+    [commit, guardAgainst, ledger.transactions],
   );
 
   const updateTransaction = useCallback(
@@ -260,6 +303,7 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       snapshot,
       integrity,
       addTransaction,
+      addTransactions,
       updateTransaction,
       deleteTransaction,
       upsertCategory,
@@ -273,6 +317,7 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       snapshot,
       integrity,
       addTransaction,
+      addTransactions,
       updateTransaction,
       deleteTransaction,
       upsertCategory,

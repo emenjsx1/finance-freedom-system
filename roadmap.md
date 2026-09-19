@@ -171,3 +171,4 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - [x] Teste ponta a ponta: entrada, guardar, plano, apagar plano, agente
 - [x] Apagar plano retira também o propósito ligado
 - [x] Um nome = um propósito (sem duplicados)
+- [x] Organizador guarda todos os propósitos numa única operação e atribui cada reserva à conta física

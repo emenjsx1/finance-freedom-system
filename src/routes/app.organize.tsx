@@ -20,6 +20,8 @@ import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
 import { upsertWallet } from "@/lib/finance/setup-ops";
 import type { AllocationRuleItem } from "@/lib/finance/types";
+import { buildSnapshot } from "@/lib/finance/engine";
+import type { Transaction } from "@/lib/finance/ledger-types";
 import { checkAllocation, fundingMap, generateScenarios } from "@/lib/organize/engine";
 import {
   FLEXIBILITY_HINTS,
@@ -111,7 +113,7 @@ function Choice({
 function OrganizePage() {
   const navigate = useNavigate();
   const { setup, update } = useSetup();
-  const { snapshot, addTransaction } = useLedger();
+  const { ledger, snapshot, addTransactions } = useLedger();
   const { state, createPlan, updatePlan } = usePersonal();
 
   const accounts = useMemo(
@@ -211,70 +213,72 @@ function OrganizePage() {
 
   /* ---------------- apply ---------------- */
 
-  function ensureWallet(
-    name: string,
-    kind: AllocationRuleItem["kind"],
-    icon: string,
-    existingId?: string,
-  ): { id: string; items: AllocationRuleItem[] } | null {
-    const existing = existingId
-      ? setup.ruleItems.find((item) => item.id === existingId)
-      : setup.ruleItems.find((item) => !item.archived && item.kind === kind && item.name === name);
-    if (existing) return { id: existing.id, items: setup.ruleItems };
-    const wallet: AllocationRuleItem = {
-      id: newId(),
-      name,
-      percentage: 0,
-      icon,
-      kind,
-      order: setup.ruleItems.length,
-    };
-    const patch = upsertWallet({ ...setup, ruleItems: setup.ruleItems }, wallet);
-    const items = patch.ruleItems ?? setup.ruleItems;
-    update(patch);
-    return { id: wallet.id, items };
-  }
-
   function apply() {
     if (!check.ok) return;
 
-    // 1. Resolve the purpose wallet behind each line. Purposes are never accounts.
+    // Resolve every purpose first, then save the complete list once. Updating
+    // one-by-one here used to make React keep only the final purpose.
     const targets: Array<{ walletId: string; amountMinor: number }> = [];
-    let items = setup.ruleItems;
+    let items = [...setup.ruleItems];
+
+    const ensurePurpose = (
+      name: string,
+      kind: AllocationRuleItem["kind"],
+      icon: string,
+      existingId?: string,
+    ) => {
+      const normalized = name.trim().toLocaleLowerCase("pt-PT");
+      const existing = existingId
+        ? items.find((item) => item.id === existingId)
+        : items.find(
+            (item) =>
+              !item.archived &&
+              item.name.trim().toLocaleLowerCase("pt-PT") === normalized,
+          );
+      if (existing) return existing.id;
+      const wallet: AllocationRuleItem = {
+        id: newId(),
+        name,
+        percentage: 0,
+        icon,
+        kind,
+        order: items.length,
+      };
+      items = upsertWallet({ ...setup, ruleItems: items }, wallet).ruleItems ?? items;
+      return wallet.id;
+    };
 
     for (const line of lines) {
       if (line.kind === "available" || line.amountMinor <= 0) continue;
       if (line.kind === "protected") {
-        const wallet = ensureWallet("Protegido", "protected", "protected");
-        if (!wallet) continue;
-        items = wallet.items;
-        targets.push({ walletId: wallet.id, amountMinor: line.amountMinor });
+        targets.push({
+          walletId: ensurePurpose("Protegido", "protected", "protected"),
+          amountMinor: line.amountMinor,
+        });
       } else if (line.kind === "commitments") {
-        const wallet = ensureWallet("Compromissos", "goals", "calendar");
-        if (!wallet) continue;
-        items = wallet.items;
-        targets.push({ walletId: wallet.id, amountMinor: line.amountMinor });
+        targets.push({
+          walletId: ensurePurpose("Compromissos", "goals", "calendar"),
+          amountMinor: line.amountMinor,
+        });
       } else if (line.kind === "plan") {
         const plan = line.planId ? state.plans.find((p) => p.id === line.planId) : undefined;
-        const wallet = ensureWallet(line.label, "goals", "target", plan?.walletId);
-        if (!wallet) continue;
-        items = wallet.items;
-        if (plan && plan.walletId !== wallet.id) updatePlan(plan.id, { walletId: wallet.id });
-        targets.push({ walletId: wallet.id, amountMinor: line.amountMinor });
+        const walletId = ensurePurpose(line.label, "goals", "target", plan?.walletId);
+        if (plan && plan.walletId !== walletId) updatePlan(plan.id, { walletId });
+        targets.push({ walletId, amountMinor: line.amountMinor });
       }
     }
 
-    // 2. Deltas against what each purpose already holds. Releases run first so
-    //    the money they free can fund the increases.
+    update({ ruleItems: items });
+
     const now = new Date().toISOString();
     const deltas = targets.map((target) => ({
       ...target,
       delta: target.amountMinor - (snapshot.bucketBalances[target.walletId] ?? 0),
     }));
 
-    let failures = 0;
-    for (const target of deltas.filter((d) => d.delta < 0)) {
-      const ok = addTransaction({
+    const prepared: Transaction[] = deltas
+      .filter((target) => target.delta < 0)
+      .map((target) => ({
         id: newId(),
         kind: "release",
         amountMinor: -target.delta,
@@ -285,62 +289,53 @@ function OrganizePage() {
         attachments: [],
         description: "Organização — libertado",
         fromBucketId: target.walletId,
-      });
-      if (!ok) failures += 1;
-    }
+      }));
 
-    // Money with no purpose funds the increases first; spendable purposes after.
-    const spendableSources = items
-      .filter((item) => !item.archived)
-      .filter((item) => (item.includedInAvailable ?? ["life", "family", "free"].includes(item.kind)))
-      .map((item) => ({ id: item.id, left: snapshot.bucketBalances[item.id] ?? 0 }));
-    let unassignedLeft = snapshot.unallocatedMinor;
+    // Releases are reflected before choosing the physical source. Each new
+    // reservation carries its real account id, so account and purpose screens
+    // can both show the same money correctly.
+    const afterReleases = buildSnapshot({
+      openingAccounts: setup.accounts,
+      ruleItems: items,
+      transactions: [...ledger.transactions, ...prepared],
+      baseCurrency: setup.currencyCode,
+      exchangeRates: setup.exchangeRates,
+    });
+    const sources = accounts.map((account) => ({
+      id: account.id,
+      left: afterReleases.accountAvailable[account.id] ?? 0,
+    }));
 
     for (const target of deltas.filter((d) => d.delta > 0)) {
       let left = target.delta;
-      const fromUnassigned = Math.min(left, Math.max(0, unassignedLeft));
-      if (fromUnassigned > 0) {
-        unassignedLeft -= fromUnassigned;
-        left -= fromUnassigned;
-        const ok = addTransaction({
+      for (const source of sources) {
+        if (left <= 0) break;
+        const amountMinor = Math.min(left, Math.max(0, source.left));
+        if (amountMinor <= 0) continue;
+        source.left -= amountMinor;
+        left -= amountMinor;
+        prepared.push({
           id: newId(),
           kind: "reservation",
-          amountMinor: fromUnassigned,
+          amountMinor,
           occurredAt: now,
           createdAt: now,
           moneyType: "personal",
           tags: ["organizacao"],
           attachments: [],
           description: "Organização",
+          accountId: source.id,
           toBucketId: target.walletId,
         });
-        if (!ok) failures += 1;
       }
-      for (const source of spendableSources) {
-        if (left <= 0) break;
-        if (source.left <= 0) continue;
-        const take = Math.min(source.left, left);
-        source.left -= take;
-        left -= take;
-        const ok = addTransaction({
-          id: newId(),
-          kind: "reallocation",
-          amountMinor: take,
-          occurredAt: now,
-          createdAt: now,
-          moneyType: "personal",
-          tags: ["organizacao"],
-          attachments: [],
-          description: "Organização",
-          fromBucketId: source.id,
-          toBucketId: target.walletId,
-        });
-        if (!ok) failures += 1;
+      if (left > 0) {
+        notifyError("Não há dinheiro disponível suficiente nas tuas contas para aplicar esta organização.");
+        return;
       }
     }
 
-    if (failures > 0) {
-      notifyError("Parte da organização não foi aplicada. Revê os valores.");
+    if (!addTransactions(prepared)) {
+      notifyError("A organização não foi aplicada. Nenhum valor foi alterado.");
       return;
     }
 
