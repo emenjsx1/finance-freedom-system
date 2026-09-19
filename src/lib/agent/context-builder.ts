@@ -219,6 +219,20 @@ export function getMonthSummary(d: AgentDeps) {
 }
 
 export function getPersonalContext(d: AgentDeps) {
+  // Everything the person explicitly approved in "O que o sistema sabe sobre
+  // mim". Read only with permission, and never archived items.
+  const allowed = d.personal?.permissions.personalContext ?? false;
+  const saved = allowed
+    ? (d.personal?.context ?? [])
+        .filter((item) => item.state !== "archived")
+        .slice(0, MAX_CONTEXT_ITEMS)
+        .map((item) => ({
+          categoria: CONTEXT_CATEGORY_LABELS[item.category],
+          conteudo: item.content,
+          origem: CONTEXT_SOURCE_LABELS[item.source],
+          ...(item.state === "outdated" ? { nota: "pode já não ser verdade" } : {}),
+        }))
+    : [];
   return {
     perfil: {
       nome: d.profile.preferredName || d.setup.fullName || undefined,
@@ -226,6 +240,7 @@ export function getPersonalContext(d: AgentDeps) {
       foco: d.profile.focus || undefined,
       prioridades: d.profile.priorities || undefined,
     },
+    sobre_mim: allowed ? saved : "nao_autorizado",
     memorias: d.memories.slice(0, MAX_MEMORIES).map((m) => ({ categoria: m.category, conteudo: m.content })),
   };
 }
