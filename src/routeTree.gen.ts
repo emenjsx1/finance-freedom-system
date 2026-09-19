@@ -51,6 +51,7 @@ import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$
 import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.index'
 import { Route as AppGoalsIndexRouteImport } from './routes/app.goals.index'
 import { Route as AppGoalsGoalIdRouteImport } from './routes/app.goals.$goalId'
+import { Route as AppPlansIndexRouteImport } from './routes/app.plans.index'
 import { Route as AppProfileIndexRouteImport } from './routes/app.profile.index'
 import { Route as AppProfileMethodsRouteImport } from './routes/app.profile.methods'
 import { Route as AppProfilePasswordRouteImport } from './routes/app.profile.password'
@@ -270,6 +271,11 @@ const AppGoalsGoalIdRoute = AppGoalsGoalIdRouteImport.update({
   path: '/$goalId',
   getParentRoute: () => AppGoalsRoute,
 } as any)
+const AppPlansIndexRoute = AppPlansIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppPlansRoute,
+} as any)
 const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -338,7 +344,7 @@ export interface FileRoutesByFullPath {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
-  '/app/plans': typeof AppPlansRoute
+  '/app/plans': typeof AppPlansRouteWithChildren
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
@@ -360,6 +366,7 @@ export interface FileRoutesByFullPath {
   '/app/agent/': typeof AppAgentIndexRoute
   '/app/analytics/': typeof AppAnalyticsIndexRoute
   '/app/goals/': typeof AppGoalsIndexRoute
+  '/app/plans/': typeof AppPlansIndexRoute
   '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
@@ -385,7 +392,6 @@ export interface FileRoutesByTo {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
-  '/app/plans': typeof AppPlansRoute
   '/app/privacy': typeof AppPrivacyRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -405,6 +411,7 @@ export interface FileRoutesByTo {
   '/app/agent': typeof AppAgentIndexRoute
   '/app/analytics': typeof AppAnalyticsIndexRoute
   '/app/goals': typeof AppGoalsIndexRoute
+  '/app/plans': typeof AppPlansIndexRoute
   '/app/profile': typeof AppProfileIndexRoute
   '/app/wallets': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
@@ -436,7 +443,7 @@ export interface FileRoutesById {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
-  '/app/plans': typeof AppPlansRoute
+  '/app/plans': typeof AppPlansRouteWithChildren
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
@@ -458,6 +465,7 @@ export interface FileRoutesById {
   '/app/agent/': typeof AppAgentIndexRoute
   '/app/analytics/': typeof AppAnalyticsIndexRoute
   '/app/goals/': typeof AppGoalsIndexRoute
+  '/app/plans/': typeof AppPlansIndexRoute
   '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
@@ -512,6 +520,7 @@ export interface FileRouteTypes {
     | '/app/agent/'
     | '/app/analytics/'
     | '/app/goals/'
+    | '/app/plans/'
     | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
@@ -537,7 +546,6 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
-    | '/app/plans'
     | '/app/privacy'
     | '/app/protected'
     | '/app/recurring'
@@ -557,6 +565,7 @@ export interface FileRouteTypes {
     | '/app/agent'
     | '/app/analytics'
     | '/app/goals'
+    | '/app/plans'
     | '/app/profile'
     | '/app/wallets'
     | '/app/analytics/category/$categoryId'
@@ -609,6 +618,7 @@ export interface FileRouteTypes {
     | '/app/agent/'
     | '/app/analytics/'
     | '/app/goals/'
+    | '/app/plans/'
     | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
@@ -924,6 +934,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGoalsGoalIdRouteImport
       parentRoute: typeof AppGoalsRoute
     }
+    '/app/plans/': {
+      id: '/app/plans/'
+      path: '/'
+      fullPath: '/app/plans/'
+      preLoaderRoute: typeof AppPlansIndexRouteImport
+      parentRoute: typeof AppPlansRoute
+    }
     '/app/profile/': {
       id: '/app/profile/'
       path: '/'
@@ -1039,6 +1056,18 @@ const AppGoalsRouteWithChildren = AppGoalsRoute._addFileChildren(
   AppGoalsRouteChildren,
 )
 
+interface AppPlansRouteChildren {
+  AppPlansIndexRoute: typeof AppPlansIndexRoute
+}
+
+const AppPlansRouteChildren: AppPlansRouteChildren = {
+  AppPlansIndexRoute: AppPlansIndexRoute,
+}
+
+const AppPlansRouteWithChildren = AppPlansRoute._addFileChildren(
+  AppPlansRouteChildren,
+)
+
 interface AppProfileRouteChildren {
   AppProfileMethodsRoute: typeof AppProfileMethodsRoute
   AppProfilePasswordRoute: typeof AppProfilePasswordRoute
@@ -1088,7 +1117,7 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
-  AppPlansRoute: typeof AppPlansRoute
+  AppPlansRoute: typeof AppPlansRouteWithChildren
   AppPrivacyRoute: typeof AppPrivacyRoute
   AppProfileRoute: typeof AppProfileRouteWithChildren
   AppProtectedRoute: typeof AppProtectedRoute
@@ -1115,7 +1144,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
-  AppPlansRoute: AppPlansRoute,
+  AppPlansRoute: AppPlansRouteWithChildren,
   AppPrivacyRoute: AppPrivacyRoute,
   AppProfileRoute: AppProfileRouteWithChildren,
   AppProtectedRoute: AppProtectedRoute,
