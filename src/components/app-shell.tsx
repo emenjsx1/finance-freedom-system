@@ -204,7 +204,7 @@ export function AppShell() {
               onPointerUp={endHold}
               onPointerLeave={endHold}
               onContextMenu={(e) => e.preventDefault()}
-              className="flex h-11 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform active:scale-95"
+              className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-medium)] transition-transform active:scale-95"
             >
               <Plus className="size-5" />
             </button>
