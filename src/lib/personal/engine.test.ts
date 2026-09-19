@@ -58,7 +58,7 @@ describe("goalPace", () => {
     );
     expect(pace?.remainingMinor).toBe(100_000_00);
     expect(pace?.monthsRemaining).toBe(6);
-    expect(pace?.requiredMonthlyMinor).toBe(100_000_00 / 6);
+    expect(pace?.requiredMonthlyMinor).toBe(Math.ceil(100_000_00 / 6));
   });
 
   it("never reports more than 100%", () => {
