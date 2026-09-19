@@ -49,6 +49,7 @@ export interface AgentDeps {
 const MAX_TRANSACTIONS = 12;
 const MAX_CATEGORIES = 8;
 const MAX_MEMORIES = 25;
+const MAX_CONTEXT_ITEMS = 30;
 
 /** The read tools. Each returns plain facts, never prose. */
 export const AGENT_READ_TOOLS = [
