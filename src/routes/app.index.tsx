@@ -81,13 +81,31 @@ function HomePage() {
 
   return (
     <div className="space-y-9 pb-4">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <p className="type-caption">
-            {greetingFor()}
-            {firstName ? `, ${firstName}` : ""}
-          </p>
-          <h1 className="type-title mt-1">{editing ? "Personalizar painel" : "O teu sistema"}</h1>
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+        <div className="min-w-0">
+          <span
+            aria-hidden
+            className="mb-4 grid size-8 place-items-center rounded-[var(--r-md)] bg-accent text-sm text-accent-foreground"
+          >
+            ◈
+          </span>
+          {editing ? (
+            <h1 className="type-title">Personalizar painel</h1>
+          ) : (
+            <>
+              <h1 className="type-hero">
+                {greetingFor()}
+                {firstName ? "," : "."}
+                {firstName ? (
+                  <>
+                    <br />
+                    <span className="text-primary">{firstName}.</span>
+                  </>
+                ) : null}
+              </h1>
+              <p className="type-secondary mt-3">Disciplina hoje. Liberdade amanhã.</p>
+            </>
+          )}
         </div>
         <Button
           variant={editing ? "default" : "ghost"}
