@@ -369,7 +369,14 @@ export function AgentProvider({ children }: { children: ReactNode }) {
           case "update_direction":
             addDirection({
               content: proposal.content ?? proposal.summary,
-              horizon: proposal.horizon ?? "now",
+              horizon:
+                proposal.horizon === "year"
+                  ? "next"
+                  : proposal.horizon === "exploring"
+                    ? "exploring"
+                    : proposal.horizon === "later"
+                      ? "later"
+                      : "now",
               source: "agent",
             });
             break;
@@ -384,8 +391,8 @@ export function AgentProvider({ children }: { children: ReactNode }) {
           case "save_context":
             addContext({
               content: proposal.content ?? proposal.summary,
-              category: "other",
-              source: "agent",
+              category: "important",
+              source: "agent_confirmed",
               state: "active",
             });
             break;
@@ -492,6 +499,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
 
 /** Drops nulls coming from the model's JSON schema. */
 function normalisePersonalAction(raw: Record<string, unknown>): PreparedPersonalAction {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const str = (key: string) => (typeof raw[key] === "string" && raw[key] ? (raw[key] as string) : undefined);
   const items = Array.isArray(raw['items']) ? (raw['items'] as PreparedPersonalAction["items"]) : undefined;
   return {
@@ -503,8 +511,8 @@ function normalisePersonalAction(raw: Record<string, unknown>): PreparedPersonal
     ...(items && items.length ? { items } : {}),
     ...(str("date") ? { date: str("date") as string } : {}),
     ...(str("time") ? { time: str("time") as string } : {}),
-    ...(str("priority") ? { priority: str("priority") as PreparedPersonalAction["priority"] } : {}),
-    ...(str("horizon") ? { horizon: str("horizon") as PreparedPersonalAction["horizon"] } : {}),
+    ...(str("priority") ? { priority: str("priority") as "now" | "important" | "later" } : {}),
+    ...(str("horizon") ? { horizon: str("horizon") as "now" | "year" | "later" | "exploring" } : {}),
     ...(str("content") ? { content: str("content") as string } : {}),
     ...(str("reason") ? { reason: str("reason") as string } : {}),
     ...(str("category") ? { category: str("category") as string } : {}),
