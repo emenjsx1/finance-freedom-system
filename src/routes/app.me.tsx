@@ -60,7 +60,7 @@ function MePage() {
         /* Meu momento: only what the person has written themselves. */
         const agora = state.direction.filter((d) => d.horizon === "now");
         const questoes = state.direction.filter((d) => d.horizon === "exploring");
-        const prioridades = activePlans.filter((p) => p.priority === "high");
+        const prioridades = activePlans.filter((p) => p.priority === "now");
         if (!agora.length && !questoes.length && !prioridades.length) return null;
         return (
           <section className="card-standard space-y-4">
