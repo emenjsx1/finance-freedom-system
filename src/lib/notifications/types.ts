@@ -231,6 +231,7 @@ export type NotificationPayload =
   | { kind: "unallocated_money"; amountMinor: number }
   | { kind: "protected_withdrawal"; transactionId: string; walletId: string; amountMinor: number; reason?: string }
   | { kind: "large_expense"; transactionId: string; amountMinor: number; categoryName?: string; accountName?: string; walletName?: string }
+  | { kind: "available_zero"; availableMinor: number; plannedMinor: number }
   | { kind: "low_wallet_balance"; walletId: string; name: string; balanceMinor: number; thresholdMinor: number }
   | { kind: "low_account_balance"; accountId: string; name: string; balanceMinor: number; thresholdMinor: number }
   | { kind: "insight"; insightId: string; detail?: string }
@@ -265,6 +266,7 @@ export const PAYLOAD_PREF: Record<PayloadKind, PrefKey> = {
   unallocated_money: "unallocated_money",
   protected_withdrawal: "protected_money",
   large_expense: "large_expense",
+  available_zero: "low_balance",
   low_wallet_balance: "low_balance",
   low_account_balance: "low_balance",
   insight: "category_insights",

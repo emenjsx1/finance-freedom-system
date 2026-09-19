@@ -33,6 +33,7 @@ import { Route as AppDevelopmentRouteImport } from './routes/app.development'
 import { Route as AppDirectionRouteImport } from './routes/app.direction'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppHelpRouteImport } from './routes/app.help'
+import { Route as AppHorizonRouteImport } from './routes/app.horizon'
 import { Route as AppIntegrityRouteImport } from './routes/app.integrity'
 import { Route as AppMeRouteImport } from './routes/app.me'
 import { Route as AppMoneyRouteImport } from './routes/app.money'
@@ -43,6 +44,7 @@ import { Route as AppNotificationsRouteImport } from './routes/app.notifications
 import { Route as AppOrganizeRouteImport } from './routes/app.organize'
 import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
 import { Route as AppPlanRouteImport } from './routes/app.plan'
+import { Route as AppPlanningRouteImport } from './routes/app.planning'
 import { Route as AppPlansRouteImport } from './routes/app.plans'
 import { Route as AppPrivacyRouteImport } from './routes/app.privacy'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
@@ -200,6 +202,11 @@ const AppHelpRoute = AppHelpRouteImport.update({
   path: '/help',
   getParentRoute: () => AppRoute,
 } as any)
+const AppHorizonRoute = AppHorizonRouteImport.update({
+  id: '/horizon',
+  path: '/horizon',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppIntegrityRoute = AppIntegrityRouteImport.update({
   id: '/integrity',
   path: '/integrity',
@@ -248,6 +255,11 @@ const AppPersonalizationRoute = AppPersonalizationRouteImport.update({
 const AppPlanRoute = AppPlanRouteImport.update({
   id: '/plan',
   path: '/plan',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPlanningRoute = AppPlanningRouteImport.update({
+  id: '/planning',
+  path: '/planning',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPlansRoute = AppPlansRouteImport.update({
@@ -458,6 +470,7 @@ export interface FileRoutesByFullPath {
   '/app/direction': typeof AppDirectionRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
+  '/app/horizon': typeof AppHorizonRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
@@ -468,6 +481,7 @@ export interface FileRoutesByFullPath {
   '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/planning': typeof AppPlanningRoute
   '/app/plans': typeof AppPlansRouteWithChildren
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
@@ -524,6 +538,7 @@ export interface FileRoutesByTo {
   '/app/context': typeof AppContextRoute
   '/app/direction': typeof AppDirectionRoute
   '/app/help': typeof AppHelpRoute
+  '/app/horizon': typeof AppHorizonRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
@@ -534,6 +549,7 @@ export interface FileRoutesByTo {
   '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/planning': typeof AppPlanningRoute
   '/app/privacy': typeof AppPrivacyRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -594,6 +610,7 @@ export interface FileRoutesById {
   '/app/direction': typeof AppDirectionRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
+  '/app/horizon': typeof AppHorizonRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
@@ -604,6 +621,7 @@ export interface FileRoutesById {
   '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/planning': typeof AppPlanningRoute
   '/app/plans': typeof AppPlansRouteWithChildren
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
@@ -668,6 +686,7 @@ export interface FileRouteTypes {
     | '/app/direction'
     | '/app/goals'
     | '/app/help'
+    | '/app/horizon'
     | '/app/integrity'
     | '/app/me'
     | '/app/money'
@@ -678,6 +697,7 @@ export interface FileRouteTypes {
     | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/planning'
     | '/app/plans'
     | '/app/privacy'
     | '/app/profile'
@@ -734,6 +754,7 @@ export interface FileRouteTypes {
     | '/app/context'
     | '/app/direction'
     | '/app/help'
+    | '/app/horizon'
     | '/app/integrity'
     | '/app/me'
     | '/app/money'
@@ -744,6 +765,7 @@ export interface FileRouteTypes {
     | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/planning'
     | '/app/privacy'
     | '/app/protected'
     | '/app/recurring'
@@ -803,6 +825,7 @@ export interface FileRouteTypes {
     | '/app/direction'
     | '/app/goals'
     | '/app/help'
+    | '/app/horizon'
     | '/app/integrity'
     | '/app/me'
     | '/app/money'
@@ -813,6 +836,7 @@ export interface FileRouteTypes {
     | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/planning'
     | '/app/plans'
     | '/app/privacy'
     | '/app/profile'
@@ -1037,6 +1061,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppHelpRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/horizon': {
+      id: '/app/horizon'
+      path: '/horizon'
+      fullPath: '/app/horizon'
+      preLoaderRoute: typeof AppHorizonRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/integrity': {
       id: '/app/integrity'
       path: '/integrity'
@@ -1105,6 +1136,13 @@ declare module '@tanstack/react-router' {
       path: '/plan'
       fullPath: '/app/plan'
       preLoaderRoute: typeof AppPlanRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/planning': {
+      id: '/app/planning'
+      path: '/planning'
+      fullPath: '/app/planning'
+      preLoaderRoute: typeof AppPlanningRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/plans': {
@@ -1501,6 +1539,7 @@ interface AppRouteChildren {
   AppDirectionRoute: typeof AppDirectionRoute
   AppGoalsRoute: typeof AppGoalsRouteWithChildren
   AppHelpRoute: typeof AppHelpRoute
+  AppHorizonRoute: typeof AppHorizonRoute
   AppIntegrityRoute: typeof AppIntegrityRoute
   AppMeRoute: typeof AppMeRoute
   AppMoneyRoute: typeof AppMoneyRoute
@@ -1511,6 +1550,7 @@ interface AppRouteChildren {
   AppOrganizeRoute: typeof AppOrganizeRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
+  AppPlanningRoute: typeof AppPlanningRoute
   AppPlansRoute: typeof AppPlansRouteWithChildren
   AppPrivacyRoute: typeof AppPrivacyRoute
   AppProfileRoute: typeof AppProfileRouteWithChildren
@@ -1539,6 +1579,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDirectionRoute: AppDirectionRoute,
   AppGoalsRoute: AppGoalsRouteWithChildren,
   AppHelpRoute: AppHelpRoute,
+  AppHorizonRoute: AppHorizonRoute,
   AppIntegrityRoute: AppIntegrityRoute,
   AppMeRoute: AppMeRoute,
   AppMoneyRoute: AppMoneyRoute,
@@ -1549,6 +1590,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOrganizeRoute: AppOrganizeRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
+  AppPlanningRoute: AppPlanningRoute,
   AppPlansRoute: AppPlansRouteWithChildren,
   AppPrivacyRoute: AppPrivacyRoute,
   AppProfileRoute: AppProfileRouteWithChildren,

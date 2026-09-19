@@ -223,6 +223,14 @@ function MoneyPage() {
           <span>Mapa do dinheiro</span>
           <span className="type-meta">Onde está vs. para que serve</span>
         </Link>
+        <Link to="/app/planning" className="list-row justify-between">
+          <span>Planeamento do mês</span>
+          <span className="type-meta">Custos e plano por propósito</span>
+        </Link>
+        <Link to="/app/horizon" className="list-row justify-between">
+          <span>Próximos 12 meses</span>
+          <span className="type-meta">Metas, custos e o que falta</span>
+        </Link>
         <Link to="/app/analytics" className="list-row justify-between">
           <span>Análise</span>
           <span className="type-meta">Padrões e categorias</span>

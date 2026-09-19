@@ -76,6 +76,7 @@ const ICONS: Record<string, LucideIcon> = {
   unallocated_money: Compass,
   protected_withdrawal: Lock,
   large_expense: Receipt,
+  available_zero: TriangleAlert,
   low_wallet_balance: TriangleAlert,
   low_account_balance: TriangleAlert,
   insight: Sparkles,
