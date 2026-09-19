@@ -1,3 +1,4 @@
+import { ACCOUNT_SYMBOL_KEYS, WALLET_SYMBOL_KEYS } from "@/lib/icons/symbols";
 /**
  * Purpose-wallet behaviour.
  *
@@ -42,11 +43,10 @@ export const PROTECTION_LEVEL_LABELS: Record<ProtectionLevel, string> = {
   locked_prepared: "Bloqueio preparado",
 };
 
-export const WALLET_ICONS = [
-  "🔒", "🏗️", "🎯", "🏠", "❤️", "🎁", "✈️", "🚗", "🎓", "🏥", "💼", "🐖", "⭐", "✨", "💳",
-];
+/** Icon keys from the shared symbol family (@/lib/icons/symbols). Never emoji. */
+export const WALLET_ICONS: string[] = [...WALLET_SYMBOL_KEYS];
 
-export const ACCOUNT_ICONS = ["🏦", "📱", "💵", "💳", "🐖", "📈", "🪙", "💼"];
+export const ACCOUNT_ICONS: string[] = [...ACCOUNT_SYMBOL_KEYS];
 
 export const WALLET_COLORS = [
   "#34d399", "#60a5fa", "#f59e0b", "#f472b6", "#a78bfa", "#f87171", "#22d3ee", "#a3e635",

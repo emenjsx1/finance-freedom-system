@@ -109,3 +109,15 @@
 - [ ] Parte B: migrar contas, movimentos, carteiras, objetivos, memórias e preferências para a base de dados
 - [ ] Parte C: atividade paginada no servidor
 - [ ] Parte D: foto de perfil, sessões, erros centralizados, automações no servidor
+
+## Fase 11 — parte 2 (done)
+- Ícones profissionais em toda a app; objetivos reconstruídos (cartão, detalhe, criação em 3 passos)
+- Folha rápida "Novo movimento" ao estilo iOS + comprovativos em armazenamento privado com visualizador
+- Autenticação: ecrãs dedicados /signup, /forgot-password, /reset-password + links legais antes de criar conta
+- Agente aceita imagens (recibos) e continua a usar só os factos do motor financeiro
+- Páginas públicas /privacy, /terms, /ai-data, /support + Perfil → Ajuda e legal
+- Home simplificada (sem duplicação de posição financeira)
+- Documentação: docs/app-store-checklist.md, docs/app-privacy-inventory.md
+
+### Em falta (configuração externa)
+Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de email, credenciais de push, identidade legal e contactos nas páginas legais.

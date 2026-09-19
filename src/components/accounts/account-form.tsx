@@ -1,3 +1,4 @@
+import { Symbol, symbolLabel } from "@/lib/icons/symbols";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -142,15 +143,15 @@ export function AccountForm({
                 <button
                   key={icon}
                   type="button"
-                  aria-label={`Ícone ${icon}`}
+                  aria-label={`Ícone ${symbolLabel(icon)}`}
                   aria-pressed={form.icon === icon}
                   onClick={() => setForm((f) => ({ ...f, icon }))}
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-xl border text-lg",
+                    "flex size-10 items-center justify-center rounded-xl border",
                     form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70",
                   )}
                 >
-                  {icon}
+                  <Symbol name={icon} />
                 </button>
               ))}
             </div>
@@ -232,7 +233,7 @@ function initial(account: Account | undefined, baseCurrency: string) {
       : "",
     institution: account?.institution ?? "",
     last4: account?.last4 ?? "",
-    icon: account?.icon ?? "🏦",
+    icon: account?.icon ?? "bank",
     color: account?.color ?? WALLET_COLORS[0]!,
     includeInNetWorth: account?.includeInNetWorth ?? true,
     notes: account?.notes ?? "",

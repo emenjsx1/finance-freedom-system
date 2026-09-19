@@ -1,3 +1,4 @@
+import { haptic as iosHaptic } from "@/lib/ios/haptics";
 import {
   createContext,
   useCallback,
@@ -22,16 +23,9 @@ export function newId(): string {
   return Math.random().toString(36).slice(2) + Date.now().toString(36);
 }
 
-/** Interaction hooks kept clean for a future native haptics wrapper. */
+/** Re-exported so every call site shares one haptics implementation. */
 export function haptic(kind: "success" | "warning" | "selection") {
-  if (typeof navigator !== "undefined" && "vibrate" in navigator) {
-    const pattern = kind === "success" ? 12 : kind === "warning" ? [10, 40, 10] : 6;
-    try {
-      navigator.vibrate(pattern as number | number[]);
-    } catch {
-      /* not supported */
-    }
-  }
+  iosHaptic(kind === "selection" ? "confirm" : kind);
 }
 
 /** Notification events prepared for a future delivery pipeline. */

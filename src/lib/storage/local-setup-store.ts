@@ -31,11 +31,11 @@ export interface SetupState {
 }
 
 export const DEFAULT_RULE_ITEMS: AllocationRuleItem[] = [
-  { id: "r1", name: "Construção", percentage: 40, icon: "🏗️", kind: "wealth" },
-  { id: "r2", name: "Objetivos", percentage: 20, icon: "🎯", kind: "goals" },
-  { id: "r3", name: "Vida", percentage: 20, icon: "🏠", kind: "life" },
-  { id: "r4", name: "Família", percentage: 10, icon: "❤️", kind: "family" },
-  { id: "r5", name: "Livre", percentage: 10, icon: "✨", kind: "free" },
+  { id: "r1", name: "Construção", percentage: 40, icon: "build", kind: "wealth" },
+  { id: "r2", name: "Objetivos", percentage: 20, icon: "target", kind: "goals" },
+  { id: "r3", name: "Vida", percentage: 20, icon: "home", kind: "life" },
+  { id: "r4", name: "Família", percentage: 10, icon: "family", kind: "family" },
+  { id: "r5", name: "Livre", percentage: 10, icon: "sparkle", kind: "free" },
 ];
 
 export const EMPTY_SETUP: SetupState = {

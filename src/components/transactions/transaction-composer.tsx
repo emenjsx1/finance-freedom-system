@@ -23,6 +23,7 @@ import { debitWalletError } from "@/lib/finance/integrity";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
+import { Symbol } from "@/lib/icons/symbols";
 
 export interface ComposerOptions {
   kind: TxKind;
@@ -31,6 +32,8 @@ export interface ComposerOptions {
   /** Editing or duplicating an existing transaction. */
   base?: Transaction;
   editingId?: string;
+  /** Prefill from context, e.g. saving straight into a specific goal. */
+  preset?: { toBucketId?: string; bucketId?: string; accountId?: string };
 }
 
 function localInputValue(iso: string) {
@@ -46,7 +49,7 @@ export function TransactionComposer({
   options: ComposerOptions;
   onDone: () => void;
 }) {
-  const { kind, quick, base, editingId } = options;
+  const { kind, quick, base, editingId, preset } = options;
   const { setup } = useSetup();
   const { ledger, snapshot, addTransaction, updateTransaction } = useLedger();
   const currency = setup.currencyCode;
@@ -56,6 +59,8 @@ export function TransactionComposer({
     [ledger.transactions, kind],
   );
 
+  // Stable id from the start so receipts are filed under the right movement.
+  const [txId] = useState(() => editingId ?? newId());
   const [stage, setStage] = useState<"form" | "confirm">("form");
   const [submitting, setSubmitting] = useState(false);
   const [acknowledgedLarge, setAcknowledgedLarge] = useState(false);
@@ -65,10 +70,10 @@ export function TransactionComposer({
   const [amountMinor, setAmountMinor] = useState(base?.amountMinor ?? 0);
   const [categoryId, setCategoryId] = useState<string | undefined>(base?.categoryId);
   const [accountId, setAccountId] = useState<string | undefined>(
-    base?.accountId ?? suggestions.suggestedAccountId ?? setup.accounts[0]?.id,
+    base?.accountId ?? preset?.accountId ?? suggestions.suggestedAccountId ?? setup.accounts[0]?.id,
   );
   const [bucketId, setBucketId] = useState<string | undefined>(
-    base?.bucketId ?? suggestions.suggestedBucketId ?? setup.ruleItems.find((r) => r.kind === "life")?.id,
+    base?.bucketId ?? preset?.bucketId ?? suggestions.suggestedBucketId ?? setup.ruleItems.find((r) => r.kind === "life")?.id,
   );
   const [fromAccountId, setFromAccountId] = useState<string | undefined>(
     base?.fromAccountId ?? setup.accounts[0]?.id,
@@ -80,7 +85,7 @@ export function TransactionComposer({
     base?.fromBucketId ?? setup.ruleItems.find((r) => r.kind === "free")?.id,
   );
   const [toBucketId, setToBucketId] = useState<string | undefined>(
-    base?.toBucketId ?? setup.ruleItems.find((r) => r.kind === "goals")?.id,
+    base?.toBucketId ?? preset?.toBucketId ?? setup.ruleItems.find((r) => r.kind === "goals")?.id,
   );
   const [occurredAt, setOccurredAt] = useState(localInputValue(base?.occurredAt ?? new Date().toISOString()));
   const [merchant, setMerchant] = useState(base?.merchant ?? "");
@@ -182,7 +187,7 @@ export function TransactionComposer({
     setSubmitting(true);
     try {
       const payload: Transaction = {
-        id: editingId ?? newId(),
+        id: txId,
         kind,
         amountMinor,
         occurredAt: new Date(occurredAt).toISOString(),
@@ -435,6 +440,7 @@ export function TransactionComposer({
         onChange={setAmountMinor}
         currencyCode={currency}
         label={titles[kind]}
+        autoFocus
         tone={kind === "expense" ? "expense" : kind === "income" ? "income" : "neutral"}
       />
 
@@ -454,7 +460,7 @@ export function TransactionComposer({
           <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId}
             options={setup.accounts.map((a) => ({ value: a.id, label: a.name || "Conta" }))} />
           <SelectField label="Propósito" value={bucketId ?? ""} onChange={setBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: `${r.icon} ${r.name}` }))} />
+            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
         </div>
       ) : null}
 
@@ -496,7 +502,7 @@ export function TransactionComposer({
                 return (
                   <div key={item.id} className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-2 last:border-b-0">
                     <span className="text-sm">
-                      <span aria-hidden>{item.icon}</span> {item.name}
+                      <Symbol name={item.icon} className="size-4" /> {item.name}
                     </span>
                     {manualAllocation ? (
                       <Input
@@ -550,18 +556,18 @@ export function TransactionComposer({
       {kind === "reallocation" ? (
         <div className="space-y-2">
           <SelectField label="De" value={fromBucketId ?? ""} onChange={setFromBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: `${r.icon} ${r.name}` }))} />
+            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
           <div className="flex justify-center text-muted-foreground" aria-hidden>
             <ArrowRight className="size-4 rotate-90" />
           </div>
           <SelectField label="Para" value={toBucketId ?? ""} onChange={setToBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: `${r.icon} ${r.name}` }))} />
+            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
         </div>
       ) : null}
 
       {!quick ? (
         <details className="rounded-2xl border border-border/70 bg-surface p-4">
-          <summary className="cursor-pointer text-sm font-medium">Detalhes opcionais</summary>
+          <summary className="cursor-pointer text-sm font-medium">Adicionar detalhes</summary>
           <div className="mt-4 space-y-4">
             <div className="space-y-2">
               <Label htmlFor="merchant">Comerciante</Label>
@@ -579,7 +585,7 @@ export function TransactionComposer({
               <Label htmlFor="note">Nota privada</Label>
               <Textarea id="note" value={note} maxLength={500} rows={3} onChange={(e) => setNote(e.target.value)} />
             </div>
-            <AttachmentsField value={attachments} onChange={setAttachments} />
+            <AttachmentsField value={attachments} onChange={setAttachments} transactionId={txId} />
           </div>
         </details>
       ) : (
@@ -598,7 +604,13 @@ export function TransactionComposer({
       </div>
 
       <Button className="w-full" onClick={goConfirm}>
-        Rever
+        {kind === "income"
+          ? "Adicionar entrada"
+          : kind === "expense"
+            ? "Registar despesa"
+            : kind === "transfer"
+              ? "Transferir"
+              : "Guardar dinheiro"}
       </Button>
     </div>
   );

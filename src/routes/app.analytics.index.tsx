@@ -40,6 +40,7 @@ import {
 } from "@/lib/analytics/service";
 import { formatPercent } from "@/lib/finance/currency";
 import type { AnalyticsModuleId } from "@/lib/prefs/types";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/analytics/")({
   head: () => ({
@@ -217,7 +218,7 @@ function AnalyticsPage() {
                     {data.categories.slice(0, 6).map((c) => (
                       <Button key={c.categoryId} asChild variant="ghost" size="xs">
                         <Link to="/app/analytics/category/$categoryId" params={{ categoryId: c.categoryId }}>
-                          {c.icon} {c.name}
+                          <span className="inline-flex items-center gap-1.5"><Symbol name={c.icon} className="size-3.5" /> {c.name}</span>
                         </Link>
                       </Button>
                     ))}
@@ -280,7 +281,7 @@ function AnalyticsPage() {
                 {data.income.sources.map((source) => (
                   <li key={source.name} className="flex items-center justify-between">
                     <span className="text-sm">
-                      {source.icon} {source.name}
+                      <span className="inline-flex items-center gap-1.5"><Symbol name={source.icon} className="size-4 text-muted-foreground" /> {source.name}</span>
                     </span>
                     <Money minor={source.amountMinor} className="tabular-nums text-sm" />
                   </li>
@@ -322,7 +323,7 @@ function AnalyticsPage() {
                 {data.wealth.wallets.map((wallet) => (
                   <li key={wallet.id} className="flex items-center justify-between">
                     <span className="text-sm">
-                      {wallet.icon} {wallet.name}
+                      <span className="inline-flex items-center gap-1.5"><Symbol name={wallet.icon} className="size-4 text-muted-foreground" /> {wallet.name}</span>
                     </span>
                     <Money minor={wallet.amountMinor} className="tabular-nums text-sm" />
                   </li>
@@ -354,7 +355,7 @@ function AnalyticsPage() {
                   <li key={wallet.id}>
                     <div className="flex items-center justify-between">
                       <span className="text-sm">
-                        {wallet.icon} {wallet.name}
+                        <span className="inline-flex items-center gap-1.5"><Symbol name={wallet.icon} className="size-4 text-muted-foreground" /> {wallet.name}</span>
                       </span>
                       <Money minor={wallet.balanceMinor} className="tabular-nums text-sm" />
                     </div>
@@ -392,7 +393,7 @@ function AnalyticsPage() {
                 {data.goals.goals.map((goal) => (
                   <li key={goal.id} className="flex items-center justify-between">
                     <span className="text-sm">
-                      {goal.icon} {goal.name}
+                      <span className="inline-flex items-center gap-1.5"><Symbol name={goal.icon} className="size-4 text-muted-foreground" /> {goal.name}</span>
                     </span>
                     <Money minor={goal.contributedMinor} className="tabular-nums text-sm" />
                   </li>

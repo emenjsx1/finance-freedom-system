@@ -24,6 +24,7 @@ import { useSetup } from "@/hooks/use-setup";
 import { accountMonthStats } from "@/lib/finance/engine";
 import { setAccountArchived } from "@/lib/finance/setup-ops";
 import { ACCOUNT_TYPE_LABELS } from "@/lib/finance/types";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/accounts/$accountId")({
   head: () => ({
@@ -90,7 +91,7 @@ function AccountDetailPage() {
             className="flex size-11 items-center justify-center rounded-xl text-xl"
             style={{ backgroundColor: `${account.color ?? "#34d399"}1f` }}
           >
-            {account.icon ?? "🏦"}
+            <Symbol name={account.icon ?? "bank"} />
           </span>
           <div>
             <h1 className="text-lg font-semibold">

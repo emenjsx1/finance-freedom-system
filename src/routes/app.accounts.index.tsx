@@ -11,6 +11,7 @@ import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { moveAccount } from "@/lib/finance/setup-ops";
 import { ACCOUNT_TYPE_LABELS } from "@/lib/finance/types";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/accounts/")({
   head: () => ({
@@ -70,7 +71,7 @@ function AccountsPage() {
                 className="list-row flex-1"
               >
                 <span className="icon-tile" aria-hidden>
-                  {account.icon ?? "🏦"}
+                  <Symbol name={account.icon ?? "bank"} />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[0.9375rem] font-medium">

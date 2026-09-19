@@ -1,3 +1,4 @@
+import { Symbol, symbolLabel } from "@/lib/icons/symbols";
 import { useEffect, useState } from "react";
 
 import { Field, ToggleRow } from "@/components/accounts/account-form";
@@ -121,15 +122,15 @@ export function WalletForm({
                 <button
                   key={icon}
                   type="button"
-                  aria-label={`Ícone ${icon}`}
+                  aria-label={`Ícone ${symbolLabel(icon)}`}
                   aria-pressed={form.icon === icon}
                   onClick={() => setForm((f) => ({ ...f, icon }))}
                   className={cn(
-                    "flex size-10 items-center justify-center rounded-xl border text-lg",
+                    "flex size-10 items-center justify-center rounded-xl border",
                     form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70",
                   )}
                 >
-                  {icon}
+                  <Symbol name={icon} />
                 </button>
               ))}
             </div>

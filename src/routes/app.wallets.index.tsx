@@ -10,6 +10,7 @@ import { WalletForm } from "@/components/wallets/wallet-form";
 import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { moveWallet } from "@/lib/finance/setup-ops";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/wallets/")({
   head: () => ({
@@ -67,7 +68,7 @@ function WalletsPage() {
                     className="flex size-10 items-center justify-center rounded-xl text-lg"
                     style={{ backgroundColor: `${wallet.color ?? "#34d399"}1f` }}
                   >
-                    {wallet.icon}
+                    <Symbol name={wallet.icon} />
                   </span>
                   <span>
                     <span className="flex items-center gap-1.5 text-sm font-medium">

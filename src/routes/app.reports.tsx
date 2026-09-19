@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { useAnalyticsInput } from "@/hooks/use-analytics";
 import { resolvePeriod, toISODate } from "@/lib/analytics/periods";
 import { buildReport, hasEnoughData, netWorthChange, periodSummary } from "@/lib/analytics/service";
+import { Symbol } from "@/lib/icons/symbols";
 
 type ReportKind = "monthly" | "weekly" | "custom";
 
@@ -116,7 +117,7 @@ function ReportsPage() {
                     {report.categorias.slice(0, 5).map((category) => (
                       <li key={category.categoryId} className="flex items-center justify-between">
                         <span className="text-sm">
-                          {category.icon} {category.name}
+                          <span className="inline-flex items-center gap-1.5"><Symbol name={category.icon} className="size-4 text-muted-foreground" /> {category.name}</span>
                         </span>
                         <Money minor={category.amountMinor} className="tabular-nums text-sm" />
                       </li>

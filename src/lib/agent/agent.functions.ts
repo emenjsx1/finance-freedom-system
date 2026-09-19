@@ -45,6 +45,17 @@ const RequestSchema = z.object({
   history: z
     .array(z.object({ role: z.enum(["user", "agent"]), content: z.string().max(4000) }))
     .max(10),
+  /** Receipts or screenshots the person attached to this message. */
+  images: z
+    .array(
+      z.object({
+        mime: z.string().max(80),
+        /** data: URL, read on the device and never stored by the agent. */
+        dataUrl: z.string().max(8_000_000),
+      }),
+    )
+    .max(3)
+    .optional(),
 });
 
 const STYLE_HINT: Record<string, string> = {
@@ -67,6 +78,7 @@ function systemPrompt(agentName: string, style: string) {
     "Nunca digas que a ação já foi feita — ela só existe depois de o utilizador confirmar.",
     "Preenche `memorySuggestion` apenas quando o utilizador partilhar algo pessoal e duradouro que valha a pena recordar. Caso contrário, deixa a null.",
     "Para cenários hipotéticos, começa a resposta com 'Simulação:'.",
+    "Se receberes uma imagem (recibo, fatura, captura de ecrã), lê o que conseguires e apresenta os valores como SUGESTÃO a confirmar. Preenche `action` com o total e o comerciante que leste, e diz claramente que o utilizador deve confirmar antes de registares.",
     STYLE_HINT[style] ?? STYLE_HINT['balanced'],
   ].join("\n");
 }
@@ -94,10 +106,21 @@ export const askAgent = createServerFn({ method: "POST" })
     ].join("\n");
 
     try {
+      const images = data.images ?? [];
+      const messages = [
+        {
+          role: "user" as const,
+          content: [
+            { type: "text" as const, text: prompt },
+            ...images.map((image) => ({ type: "image" as const, image: image.dataUrl })),
+          ],
+        },
+      ];
+
       const result = streamText({
         model: lovable.responses("openai/gpt-6-astra"),
         system: systemPrompt(data.agentName || "Agente", data.style),
-        prompt,
+        ...(images.length ? { messages } : { prompt }),
         output: Output.object({ schema: ReplySchema }),
         providerOptions: {
           openai: {

@@ -8,7 +8,9 @@ export interface Attachment {
   name: string;
   size: number;
   mime: string;
-  /** Data URL preview. Replaced by secure storage paths once data lives in the backend. */
+  /** Path inside the private receipts bucket. Read only via signed URLs. */
+  storagePath?: string | undefined;
+  /** Local-only preview used when the person is not signed in. */
   dataUrl?: string | undefined;
 }
 

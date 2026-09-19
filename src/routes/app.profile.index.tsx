@@ -23,6 +23,7 @@ import {
   EyeOff,
 } from "lucide-react";
 import { toast } from "sonner";
+import { APP_VERSION } from "@/lib/app-info";
 
 import { SettingsGroup, SettingsRow } from "@/components/design/settings-list";
 import { UserAvatar } from "@/components/design/user-avatar";
@@ -128,10 +129,10 @@ function ProfilePage() {
         <SettingsRow icon={Download} label="Exportar dados" to="/app/privacy" />
       </SettingsGroup>
 
-      <SettingsGroup title="Suporte">
-        <SettingsRow icon={CircleHelp} label="Ajuda" onSelect={() => toast.info("A central de ajuda chega em breve.")} />
-        <SettingsRow icon={LifeBuoy} label="Enviar feedback" onSelect={() => toast.info("Obrigado. O envio de feedback chega em breve.")} />
-        <SettingsRow icon={Info} label="Sobre" value="Finance OS 0.9" />
+      <SettingsGroup title="Ajuda e legal">
+        <SettingsRow icon={CircleHelp} label="Ajuda e legal" to="/app/help" />
+        <SettingsRow icon={LifeBuoy} label="Falar com o apoio" onSelect={() => window.open("/support", "_blank")} />
+        <SettingsRow icon={Info} label="Sobre" value={`Finan. ${APP_VERSION}`} />
       </SettingsGroup>
 
       {user ? (

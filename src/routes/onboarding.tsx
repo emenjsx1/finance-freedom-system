@@ -1,3 +1,4 @@
+import { symbolLabel } from "@/lib/icons/symbols";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, Search, Sparkles, Trash2, Wallet } from "lucide-react";
@@ -38,7 +39,7 @@ const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
   { value: "other", label: "Outro" },
 ];
 
-const ICONS = ["🏗️", "🎯", "🏠", "❤️", "✨", "🛡️", "📚", "🚗", "🍽️", "🎁"];
+const ICONS = ["build", "target", "home", "family", "sparkle", "protected", "education", "car", "food", "gift"];
 
 function uid() {
   return Math.random().toString(36).slice(2, 10);
@@ -180,11 +181,11 @@ function Onboarding() {
                             prev.map((it, i) => (i === index ? { ...it, icon: e.target.value } : it)),
                           )
                         }
-                        className="h-10 w-14 rounded-lg border border-input bg-background text-center"
+                        className="h-10 w-28 rounded-lg border border-input bg-background px-2 text-sm"
                       >
                         {ICONS.map((icon) => (
                           <option key={icon} value={icon}>
-                            {icon}
+                            {symbolLabel(icon)}
                           </option>
                         ))}
                       </select>

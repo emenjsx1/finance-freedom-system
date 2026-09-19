@@ -8,6 +8,7 @@ import { useAnalyticsInput } from "@/hooks/use-analytics";
 import { PERIOD_OPTIONS, resolvePeriod, type PeriodKey } from "@/lib/analytics/periods";
 import { categoryDetail } from "@/lib/analytics/service";
 import { formatPercent } from "@/lib/finance/currency";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/analytics/category/$categoryId")({
   head: () => ({
@@ -32,7 +33,7 @@ function CategoryDetailPage() {
 
   return (
     <div className="space-y-6">
-      <PageHeader title={`${detail.icon} ${detail.name}`} subtitle={period.label} />
+      <PageHeader title={detail.name} subtitle={period.label} />
 
       <div className="flex flex-wrap gap-2">
         {PERIOD_OPTIONS.filter((option) => option.key !== "custom").map((option) => (
