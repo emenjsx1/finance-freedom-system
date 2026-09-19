@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ArrowLeft, Check, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Check, ChevronDown, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 import { ProgressIndicator } from "@/components/design/progress-indicator";
+import { PlanFundingSheet } from "@/components/personal/plan-funding-sheet";
 import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
-import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,10 +18,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { newId, useLedger } from "@/hooks/use-ledger";
+import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
-import { upsertWallet } from "@/lib/finance/setup-ops";
 import { Symbol } from "@/lib/icons/symbols";
 import { goalPace } from "@/lib/personal/engine";
 import {
@@ -52,9 +51,11 @@ function PlanDetailPage() {
   const navigate = useNavigate();
   const { state, updatePlan, removePlan, addMilestone, toggleMilestone } = usePersonal();
   const { snapshot } = useLedger();
-  const { setup, update } = useSetup();
-  const { openComposer } = useTransactionLauncher();
+  const { setup } = useSetup();
   const [milestone, setMilestone] = useState("");
+  const [funding, setFunding] = useState(false);
+  const [showSteps, setShowSteps] = useState(false);
+  const [showDetails, setShowDetails] = useState(false);
 
   const plan = state.plans.find((p) => p.id === planId);
 
@@ -75,25 +76,6 @@ function PlanDetailPage() {
   }
 
   const pace = goalPace(plan, savedMinor);
-
-  /** Creates the purpose wallet that will physically hold this plan's money. */
-  function connectMoney() {
-    if (!plan) return;
-    const walletId = newId();
-    update(
-      upsertWallet(setup, {
-        id: walletId,
-        name: plan.name,
-        percentage: 0,
-        icon: plan.symbol ?? PLAN_TYPE_SYMBOL[plan.type],
-        kind: "goals",
-        ...(plan.targetMinor ? { targetMinor: plan.targetMinor } : {}),
-        ...(plan.targetDate ? { targetDate: plan.targetDate } : {}),
-      }),
-    );
-    updatePlan(plan.id, { walletId, financial: true });
-    toast.success("Plano ligado ao teu dinheiro.");
-  }
 
   return (
     <div className="space-y-8">
