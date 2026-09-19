@@ -146,7 +146,7 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       (profile.data?.["full_name"] as string | null) ??
       base.fullName,
     currencyCode: (profile.data?.["base_currency"] as string | null) ?? base.currencyCode,
-    accounts: unionById(
+    accounts: mergeById("accounts", 
       (accounts ?? []).map(
       (row): Account => ({
         id: row["id"] as string,
@@ -172,7 +172,7 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       ),
       base.accounts,
     ),
-    ruleItems: unionById(
+    ruleItems: mergeById("purposes", 
       (purposes ?? []).map(
       (row): AllocationRuleItem => ({
         id: row["id"] as string,
@@ -202,7 +202,7 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       ),
       base.ruleItems,
     ),
-    exchangeRates: unionById(
+    exchangeRates: mergeById("rates", 
       (rates.data ?? []).map(
       (row): ExchangeRate => ({
         id: row["id"] as string,
@@ -317,11 +317,11 @@ export async function loadCloudLedger(base: LedgerState): Promise<LedgerState | 
   ]);
   if (!transactions.length && !categories.length && !recurring.length) return null;
   return {
-    transactions: unionById(transactions, base.transactions).sort((a, b) =>
+    transactions: mergeById("transactions", transactions, base.transactions).sort((a, b) =>
       b.occurredAt.localeCompare(a.occurredAt),
     ),
-    categories: categories.length ? unionById(categories, base.categories) : base.categories,
-    recurring: unionById(recurring, base.recurring),
+    categories: categories.length ? mergeById("categories", categories, base.categories) : base.categories,
+    recurring: mergeById("recurring", recurring, base.recurring),
   };
 }
 
