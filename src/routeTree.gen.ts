@@ -33,6 +33,7 @@ import { Route as AppDevelopmentRouteImport } from './routes/app.development'
 import { Route as AppDirectionRouteImport } from './routes/app.direction'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppHelpRouteImport } from './routes/app.help'
+import { Route as AppHorizonRouteImport } from './routes/app.horizon'
 import { Route as AppIntegrityRouteImport } from './routes/app.integrity'
 import { Route as AppMeRouteImport } from './routes/app.me'
 import { Route as AppMoneyRouteImport } from './routes/app.money'
@@ -199,6 +200,11 @@ const AppGoalsRoute = AppGoalsRouteImport.update({
 const AppHelpRoute = AppHelpRouteImport.update({
   id: '/help',
   path: '/help',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppHorizonRoute = AppHorizonRouteImport.update({
+  id: '/horizon',
+  path: '/horizon',
   getParentRoute: () => AppRoute,
 } as any)
 const AppIntegrityRoute = AppIntegrityRouteImport.update({
@@ -464,6 +470,7 @@ export interface FileRoutesByFullPath {
   '/app/direction': typeof AppDirectionRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
+  '/app/horizon': typeof AppHorizonRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
@@ -531,6 +538,7 @@ export interface FileRoutesByTo {
   '/app/context': typeof AppContextRoute
   '/app/direction': typeof AppDirectionRoute
   '/app/help': typeof AppHelpRoute
+  '/app/horizon': typeof AppHorizonRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
@@ -602,6 +610,7 @@ export interface FileRoutesById {
   '/app/direction': typeof AppDirectionRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
+  '/app/horizon': typeof AppHorizonRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/me': typeof AppMeRoute
   '/app/money': typeof AppMoneyRoute
@@ -677,6 +686,7 @@ export interface FileRouteTypes {
     | '/app/direction'
     | '/app/goals'
     | '/app/help'
+    | '/app/horizon'
     | '/app/integrity'
     | '/app/me'
     | '/app/money'
@@ -744,6 +754,7 @@ export interface FileRouteTypes {
     | '/app/context'
     | '/app/direction'
     | '/app/help'
+    | '/app/horizon'
     | '/app/integrity'
     | '/app/me'
     | '/app/money'
@@ -814,6 +825,7 @@ export interface FileRouteTypes {
     | '/app/direction'
     | '/app/goals'
     | '/app/help'
+    | '/app/horizon'
     | '/app/integrity'
     | '/app/me'
     | '/app/money'
@@ -1047,6 +1059,13 @@ declare module '@tanstack/react-router' {
       path: '/help'
       fullPath: '/app/help'
       preLoaderRoute: typeof AppHelpRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/horizon': {
+      id: '/app/horizon'
+      path: '/horizon'
+      fullPath: '/app/horizon'
+      preLoaderRoute: typeof AppHorizonRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/integrity': {
@@ -1520,6 +1539,7 @@ interface AppRouteChildren {
   AppDirectionRoute: typeof AppDirectionRoute
   AppGoalsRoute: typeof AppGoalsRouteWithChildren
   AppHelpRoute: typeof AppHelpRoute
+  AppHorizonRoute: typeof AppHorizonRoute
   AppIntegrityRoute: typeof AppIntegrityRoute
   AppMeRoute: typeof AppMeRoute
   AppMoneyRoute: typeof AppMoneyRoute
@@ -1559,6 +1579,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppDirectionRoute: AppDirectionRoute,
   AppGoalsRoute: AppGoalsRouteWithChildren,
   AppHelpRoute: AppHelpRoute,
+  AppHorizonRoute: AppHorizonRoute,
   AppIntegrityRoute: AppIntegrityRoute,
   AppMeRoute: AppMeRoute,
   AppMoneyRoute: AppMoneyRoute,
