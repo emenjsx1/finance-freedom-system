@@ -148,7 +148,13 @@ function MoneyPage() {
             <div className="list-group">
               <div className="list-row justify-between">
                 <span>Protegido</span>
-                <Money minor={snapshot.protectedMinor} options={{ compactDecimals: true }} />
+                <Money
+                  minor={
+                    snapshot.protectedMinor -
+                    planWallets.reduce((sum, wallet) => sum + wallet.balanceMinor, 0)
+                  }
+                  options={{ compactDecimals: true }}
+                />
               </div>
               {planWallets.map((wallet) => (
                 <div key={wallet.id} className="list-row justify-between">
