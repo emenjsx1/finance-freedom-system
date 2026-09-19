@@ -114,3 +114,18 @@ describe("financial integrity", () => {
     expect(report.issues.some((i) => i.code === "missing_wallet")).toBe(true);
   });
 });
+
+describe("deleted purposes", () => {
+  it("reports one issue per missing purpose, not one per movement", () => {
+    const base = input([
+      tx({ id: "t1", kind: "income", amountMinor: 1_000_000, accountId: "a1" }),
+      tx({ id: "t2", kind: "expense", amountMinor: 100_000, accountId: "a1", bucketId: "ghost" }),
+      tx({ id: "t3", kind: "expense", amountMinor: 200_000, accountId: "a1", bucketId: "ghost" }),
+    ]);
+    const report = checkIntegrity(base, buildSnapshot(base));
+    const orphans = report.issues.filter((i) => i.code === "missing_wallet");
+    expect(orphans).toHaveLength(1);
+    expect(orphans[0]?.walletId).toBe("ghost");
+    expect(orphans[0]?.detail).toContain("2 movimentos");
+  });
+});
