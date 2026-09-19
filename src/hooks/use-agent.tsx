@@ -35,7 +35,11 @@ interface AgentContextValue {
   createConversation: () => string;
   renameConversation: (id: string, title: string) => void;
   deleteConversation: (id: string) => void;
-  send: (conversationId: string, question: string) => Promise<void>;
+  send: (
+    conversationId: string,
+    question: string,
+    images?: { mime: string; dataUrl: string }[],
+  ) => Promise<void>;
   resolveAction: (conversationId: string, messageId: string, confirm: boolean) => void;
   addMemory: (memory: Omit<Memory, "id" | "createdAt">) => void;
   updateMemory: (id: string, patch: Partial<Memory>) => void;
@@ -137,9 +141,9 @@ export function AgentProvider({ children }: { children: ReactNode }) {
   );
 
   const send = useCallback(
-    async (conversationId: string, question: string) => {
+    async (conversationId: string, question: string, images?: { mime: string; dataUrl: string }[]) => {
       const trimmed = question.trim();
-      if (!trimmed || sending) return;
+      if ((!trimmed && !images?.length) || sending) return;
 
       const conversation = state.conversations.find((c) => c.id === conversationId);
       const history = (conversation?.messages ?? []).slice(-8).map((m) => ({
@@ -149,8 +153,13 @@ export function AgentProvider({ children }: { children: ReactNode }) {
 
       appendMessage(
         conversationId,
-        { id: newId(), role: "user", content: trimmed, createdAt: new Date().toISOString() },
-        trimmed,
+        {
+          id: newId(),
+          role: "user",
+          content: trimmed || "Enviei uma imagem.",
+          createdAt: new Date().toISOString(),
+        },
+        trimmed || "Imagem",
       );
       setSending(true);
       setUnavailable(false);
@@ -158,11 +167,12 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       try {
         const result = await askAgent({
           data: {
-            question: trimmed,
+            question: trimmed || "Analisa esta imagem e diz-me o que encontraste.",
             agentName: prefs.agentName,
             style: prefs.agentStyle,
             context: buildAgentContext(trimmed, deps),
             history,
+            ...(images?.length ? { images } : {}),
           },
         });
 
