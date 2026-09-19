@@ -38,6 +38,7 @@ import { Route as AppMoneyRouteImport } from './routes/app.money'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
 import { Route as AppNotificationSettingsRouteImport } from './routes/app.notification-settings'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
+import { Route as AppOrganizeRouteImport } from './routes/app.organize'
 import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
 import { Route as AppPlanRouteImport } from './routes/app.plan'
 import { Route as AppPlansRouteImport } from './routes/app.plans'
@@ -212,6 +213,11 @@ const AppNotificationSettingsRoute = AppNotificationSettingsRouteImport.update({
 const AppNotificationsRoute = AppNotificationsRouteImport.update({
   id: '/notifications',
   path: '/notifications',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppOrganizeRoute = AppOrganizeRouteImport.update({
+  id: '/organize',
+  path: '/organize',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPersonalizationRoute = AppPersonalizationRouteImport.update({
@@ -395,6 +401,7 @@ export interface FileRoutesByFullPath {
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/plans': typeof AppPlansRouteWithChildren
@@ -451,6 +458,7 @@ export interface FileRoutesByTo {
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/privacy': typeof AppPrivacyRoute
@@ -510,6 +518,7 @@ export interface FileRoutesById {
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
+  '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/plans': typeof AppPlansRouteWithChildren
@@ -573,6 +582,7 @@ export interface FileRouteTypes {
     | '/app/money-map'
     | '/app/notification-settings'
     | '/app/notifications'
+    | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
     | '/app/plans'
@@ -629,6 +639,7 @@ export interface FileRouteTypes {
     | '/app/money-map'
     | '/app/notification-settings'
     | '/app/notifications'
+    | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
     | '/app/privacy'
@@ -687,6 +698,7 @@ export interface FileRouteTypes {
     | '/app/money-map'
     | '/app/notification-settings'
     | '/app/notifications'
+    | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
     | '/app/plans'
@@ -937,6 +949,13 @@ declare module '@tanstack/react-router' {
       path: '/notifications'
       fullPath: '/app/notifications'
       preLoaderRoute: typeof AppNotificationsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/organize': {
+      id: '/app/organize'
+      path: '/organize'
+      fullPath: '/app/organize'
+      preLoaderRoute: typeof AppOrganizeRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/personalization': {
@@ -1274,6 +1293,7 @@ interface AppRouteChildren {
   AppMoneyMapRoute: typeof AppMoneyMapRoute
   AppNotificationSettingsRoute: typeof AppNotificationSettingsRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
+  AppOrganizeRoute: typeof AppOrganizeRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
   AppPlansRoute: typeof AppPlansRouteWithChildren
@@ -1308,6 +1328,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMoneyMapRoute: AppMoneyMapRoute,
   AppNotificationSettingsRoute: AppNotificationSettingsRoute,
   AppNotificationsRoute: AppNotificationsRoute,
+  AppOrganizeRoute: AppOrganizeRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
   AppPlansRoute: AppPlansRouteWithChildren,
