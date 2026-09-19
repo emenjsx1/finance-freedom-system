@@ -30,6 +30,7 @@ import { MoneyHero } from "@/components/design/money-hero";
 import { QuickActions } from "@/components/design/quick-actions";
 import { GoalCard } from "@/components/design/goal-card";
 import { PlanCard } from "@/components/personal/plan-card";
+import { usePersonal } from "@/hooks/use-personal";
 import { InsightTile } from "@/components/design/insight-card";
 import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
@@ -309,6 +310,7 @@ function EditPanel({
 
 function ModuleView({ id }: { id: HomeModuleId }) {
   const { setup } = useSetup();
+  const { state: personal } = usePersonal();
   const { ledger, snapshot } = useLedger();
   const { term } = usePrefs();
   const { openComposer, openQuickActions } = useTransactionLauncher();
