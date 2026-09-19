@@ -9,11 +9,8 @@
 - [x] Routes: /app, /app/transactions, /app/wallets, /app/goals, /app/reports, /app/settings
 - [x] Home foundation: greeting, wealth vs spendable, buckets, month summary, empty states
 - [x] Settings/More sections + notification preference toggles
-- [ ] BLOCKED (no workspace credits): enable Lovable Cloud — auth (sign up/in/out, forgot/reset password,
-      session persistence), schema with RLS (profiles, accounts, buckets, allocation_rules,
-      allocation_rule_items, transactions, transaction_allocations, goals, goal_contributions,
-      notification_preferences), route protection, and replacing `src/lib/storage/local-setup-store.ts`
-      with backend reads/writes.
+- [x] Lovable Cloud: criação de conta, entrada/saída, recuperação de palavra-passe, sessão persistente,
+      dados privados por utilizador e sincronização dos domínios da aplicação.
 
 ## Phase 03 — Transactions experience (done, on-device data)
 - [x] Central "+" launcher sheet: Entrada / Despesa / Transferência / Redistribuição + registo rápido
@@ -25,8 +22,8 @@
 - [x] Recurring rules + Próximos + Subscrições (default mode = lembrete)
 - [x] Attachments (local, 2 MB, images/PDF), tags, notes, large-expense awareness, protected-bucket warnings
 - [x] Engine (`src/lib/finance/engine.ts`) is the single source of truth for every balance
-- [ ] Backend: schema + RLS + auth still pending; ledger lives in `pfos.ledger.v1` (localStorage)
-- [ ] Attachments must move to authenticated storage (currently data URLs on device)
+- [x] Movimentos sincronizados com a conta autenticada; a cópia local funciona apenas como estado do aparelho.
+- [x] Comprovativos guardados em armazenamento privado autenticado.
 
 ## Phase 04 — Accounts, wallets & money architecture (done, on-device data)
 - [x] Physical accounts vs purpose wallets: same money, two views (never summed twice)
@@ -46,7 +43,7 @@
 - [x] Browser QA: net worth not double-counted, transfer/reallocation invariants, reconciliation +1.500,
       protected withdrawal reason + history, privacy mode, no console errors
 - [ ] Cross-currency transfers intentionally unavailable (would require FX accounting in the engine)
-- [ ] Backend (schema, RLS, auth, secure attachment storage) still pending — data is device-local
+- [x] Base de dados, acesso privado, autenticação e armazenamento seguro ligados.
 
 ## Phase 06 — Premium redesign, personalization & personal agent (done, on-device data)
 - [x] Design foundation: spacing/radius/shadow tokens, typography scale with tabular numerals,
@@ -106,9 +103,18 @@
 - [x] Ecrã "Verificação financeira" (/app/integrity) com correção auditável por redistribuição
       e diagnóstico técnico só em desenvolvimento
 - [x] Home: aviso calmo quando as contas não fecham (nunca números inventados) + esqueleto de carregamento
-- [ ] Parte B: migrar contas, movimentos, carteiras, objetivos, memórias e preferências para a base de dados
+- [x] Parte B: contas, movimentos, propósitos, planos, memórias e preferências sincronizados com a base de dados
 - [ ] Parte C: atividade paginada no servidor
-- [ ] Parte D: foto de perfil, sessões, erros centralizados, automações no servidor
+- [ ] Parte D: automações agendadas no servidor; sessões e dados principais já estão ligados
+
+## Backend de produção e autenticação obrigatória — concluído
+- [x] Criação de conta e entrada com email, Google e Apple.
+- [x] Recuperação e alteração de palavra-passe.
+- [x] `/app` e todos os seus ecrãs exigem sessão válida antes de mostrar dados.
+- [x] Configuração inicial exige sessão; contas novas seguem para a configuração e contas configuradas para a app.
+- [x] Dados financeiros, pessoais, conversas e preferências sincronizados por utilizador.
+- [x] Saída limpa os dados privados guardados no aparelho.
+- [x] Experiência móvel revista para safe areas, teclado, scroll e navegação inferior.
 
 ## Fase 11 — parte 2 (done)
 - Ícones profissionais em toda a app; objetivos reconstruídos (cartão, detalhe, criação em 3 passos)

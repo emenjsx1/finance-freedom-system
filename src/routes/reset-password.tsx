@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { getSignedInDestination } from "@/lib/auth/destination";
 import { authErrorMessage } from "@/lib/auth/errors";
 
 export const Route = createFileRoute("/reset-password")({
@@ -59,7 +60,8 @@ function ResetPasswordPage() {
       if (error) throw error;
       setDone(true);
       toast.success("A palavra-passe foi atualizada.");
-      setTimeout(() => void navigate({ to: "/app", replace: true }), 1200);
+      const to = await getSignedInDestination();
+      setTimeout(() => void navigate({ to, replace: true }), 1200);
     } catch (error) {
       toast.error(authErrorMessage(error));
     } finally {
@@ -68,7 +70,7 @@ function ResetPasswordPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-background px-6 py-10">
+    <div className="flex min-h-dvh flex-col justify-center overflow-y-auto bg-background px-5 pb-[max(env(safe-area-inset-bottom),2rem)] pt-[max(env(safe-area-inset-top),2rem)] sm:px-6">
       <div className="mx-auto w-full max-w-sm">
         <span
           aria-hidden
