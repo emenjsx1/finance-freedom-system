@@ -35,10 +35,18 @@ function PlansPage() {
     [snapshot.wallets],
   );
 
-  const groups = ORDER.map((status) => ({
-    status,
-    plans: state.plans.filter((p) => p.status === status),
-  })).filter((group) => group.plans.length > 0);
+  const [tab, setTab] = useState<"active" | "idea" | "completed">("active");
+
+  const TABS: { id: typeof tab; label: string; statuses: PlanStatus[] }[] = [
+    { id: "active", label: "Ativos", statuses: ["active", "paused"] },
+    { id: "idea", label: "Ideias", statuses: ["idea"] },
+    { id: "completed", label: "Concluídos", statuses: ["completed", "archived"] },
+  ];
+
+  const current = TABS.find((t) => t.id === tab)!;
+  const groups = ORDER.filter((status) => current.statuses.includes(status))
+    .map((status) => ({ status, plans: state.plans.filter((p) => p.status === status) }))
+    .filter((group) => group.plans.length > 0);
 
   return (
     <div>
@@ -68,6 +76,31 @@ function PlansPage() {
         </section>
       ) : (
         <div className="space-y-8">
+          <div className="flex gap-2" role="tablist" aria-label="Filtrar planos">
+            {TABS.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                role="tab"
+                aria-selected={tab === item.id}
+                onClick={() => setTab(item.id)}
+                className={
+                  tab === item.id
+                    ? "rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                    : "rounded-full bg-subtle px-4 py-2 text-sm font-medium text-muted-foreground"
+                }
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {groups.length === 0 ? (
+            <p className="card-standard type-secondary text-center">
+              Nada nesta lista por agora.
+            </p>
+          ) : null}
+
           {groups.map((group) => (
             <section key={group.status}>
               <h2 className="type-section mb-3">{PLAN_STATUS_LABELS[group.status]}</h2>
