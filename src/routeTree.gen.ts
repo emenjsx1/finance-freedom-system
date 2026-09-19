@@ -35,6 +35,7 @@ import { Route as AppNotificationSettingsRouteImport } from './routes/app.notifi
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
 import { Route as AppPlanRouteImport } from './routes/app.plan'
+import { Route as AppPlansRouteImport } from './routes/app.plans'
 import { Route as AppPrivacyRouteImport } from './routes/app.privacy'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppProtectedRouteImport } from './routes/app.protected'
@@ -189,6 +190,11 @@ const AppPlanRoute = AppPlanRouteImport.update({
   path: '/plan',
   getParentRoute: () => AppRoute,
 } as any)
+const AppPlansRoute = AppPlansRouteImport.update({
+  id: '/plans',
+  path: '/plans',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppPrivacyRoute = AppPrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
@@ -332,6 +338,7 @@ export interface FileRoutesByFullPath {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/plans': typeof AppPlansRoute
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
@@ -378,6 +385,7 @@ export interface FileRoutesByTo {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/plans': typeof AppPlansRoute
   '/app/privacy': typeof AppPrivacyRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -428,6 +436,7 @@ export interface FileRoutesById {
   '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/plans': typeof AppPlansRoute
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
@@ -481,6 +490,7 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/plans'
     | '/app/privacy'
     | '/app/profile'
     | '/app/protected'
@@ -527,6 +537,7 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/plans'
     | '/app/privacy'
     | '/app/protected'
     | '/app/recurring'
@@ -576,6 +587,7 @@ export interface FileRouteTypes {
     | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/plans'
     | '/app/privacy'
     | '/app/profile'
     | '/app/protected'
@@ -798,6 +810,13 @@ declare module '@tanstack/react-router' {
       path: '/plan'
       fullPath: '/app/plan'
       preLoaderRoute: typeof AppPlanRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/plans': {
+      id: '/app/plans'
+      path: '/plans'
+      fullPath: '/app/plans'
+      preLoaderRoute: typeof AppPlansRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/privacy': {
@@ -1069,6 +1088,7 @@ interface AppRouteChildren {
   AppNotificationsRoute: typeof AppNotificationsRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
+  AppPlansRoute: typeof AppPlansRoute
   AppPrivacyRoute: typeof AppPrivacyRoute
   AppProfileRoute: typeof AppProfileRouteWithChildren
   AppProtectedRoute: typeof AppProtectedRoute
@@ -1095,6 +1115,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppNotificationsRoute: AppNotificationsRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
+  AppPlansRoute: AppPlansRoute,
   AppPrivacyRoute: AppPrivacyRoute,
   AppProfileRoute: AppProfileRouteWithChildren,
   AppProtectedRoute: AppProtectedRoute,
