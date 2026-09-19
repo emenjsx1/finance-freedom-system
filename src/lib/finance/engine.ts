@@ -33,6 +33,15 @@ export interface CurrencyTotal {
 
 export interface LedgerSnapshot {
   accountBalances: Record<string, number>;
+  /** Money reserved for some purpose, per physical account. */
+  accountReserved: Record<string, number>;
+  /** Physical balance minus what is reserved inside that same account. */
+  accountAvailable: Record<string, number>;
+  /**
+   * purposeId → accountId → amount. Answers "the 50.000 for Turquia are in BIM"
+   * without ever inventing an account named Turquia.
+   */
+  purposeByAccount: Record<string, Record<string, number>>;
   bucketBalances: Record<string, number>;
   buckets: BucketView[];
   wallets: WalletView[];
