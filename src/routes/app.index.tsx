@@ -492,7 +492,7 @@ function Figure({ label, minor }: { label: string; minor: number }) {
   return (
     <div className="card-standard">
       <p className="type-meta">{label}</p>
-      <Money minor={minor} className="mt-1.5 block text-xl font-semibold" />
+      <Money minor={minor} className="mt-1.5 block text-xl font-semibold" options={{ withSymbol: false, compactDecimals: true }} />
     </div>
   );
 }
@@ -513,7 +513,7 @@ function SummaryTile({
     <div className="card-compact">
       <Icon className={cn("size-4", toneClass)} />
       <p className="type-meta mt-2">{label}</p>
-      <Money minor={minor} className="mt-0.5 block text-sm font-medium" options={{ compactDecimals: true }} />
+      <Money minor={minor} className="mt-0.5 block text-[0.9375rem] font-semibold" options={{ withSymbol: false, compactDecimals: true }} />
     </div>
   );
 }
