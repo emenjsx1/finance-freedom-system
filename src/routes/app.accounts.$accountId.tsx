@@ -78,10 +78,11 @@ function AccountDetailPage() {
     .sort((a, b) => b.amountMinor - a.amountMinor);
   const now = new Date();
   const stats = accountMonthStats(ledger.transactions, account.id, now.getFullYear(), now.getMonth());
-  const activity = ledger.transactions
+  const history = ledger.transactions
     .filter((tx) => tx.accountId === account.id || tx.fromAccountId === account.id || tx.toAccountId === account.id)
-    .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
-    .slice(0, 12);
+    .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
+  const [showAllHistory, setShowAllHistory] = useState(false);
+  const activity = showAllHistory ? history : history.slice(0, 10);
 
   function archive() {
     update(setAccountArchived(setup, accountId, true));
@@ -202,25 +203,36 @@ function AccountDetailPage() {
       </section>
 
       <section className="mt-6">
-        <h2 className="mb-3 text-sm font-semibold">Transações recentes</h2>
+        <div className="mb-3">
+          <h2 className="text-sm font-semibold">Histórico de movimentos</h2>
+          <p className="type-meta mt-0.5">Tudo o que entrou e saiu desta conta, com data e destino.</p>
+        </div>
         {activity.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-center text-sm text-muted-foreground">
             Ainda não há movimentos nesta conta.
           </p>
         ) : (
-          <div className="space-y-2">
-            {activity.map((tx) => (
-              <TransactionRow
-                key={tx.id}
-                tx={tx}
-                categories={ledger.categories}
-                accounts={setup.accounts}
-                buckets={setup.ruleItems}
-                currencyCode={setup.currencyCode}
-                onOpen={() => navigate({ to: "/app/activity" })}
-              />
-            ))}
-          </div>
+          <>
+            <div className="space-y-2">
+              {activity.map((tx) => (
+                <TransactionRow
+                  key={tx.id}
+                  tx={tx}
+                  categories={ledger.categories}
+                  accounts={setup.accounts}
+                  buckets={setup.ruleItems}
+                  currencyCode={setup.currencyCode}
+                  onOpen={() => navigate({ to: "/app/activity" })}
+                  showDate
+                />
+              ))}
+            </div>
+            {!showAllHistory && history.length > 10 ? (
+              <Button variant="outline" className="mt-3 w-full" onClick={() => setShowAllHistory(true)}>
+                Ver todos os {history.length} movimentos
+              </Button>
+            ) : null}
+          </>
         )}
       </section>
 

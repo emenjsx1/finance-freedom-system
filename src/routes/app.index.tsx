@@ -34,7 +34,7 @@ import { usePersonal } from "@/hooks/use-personal";
 import { toDateKey, todayFeed } from "@/lib/development/engine";
 import { InsightTile } from "@/components/design/insight-card";
 import { SectionHeader } from "@/components/design/section-header";
-import { APP_QUOTE } from "@/lib/brand";
+import { BrandQuote } from "@/components/brand-quote";
 import { Money } from "@/components/money";
 import { Button } from "@/components/ui/button";
 import { TransactionRow } from "@/components/transactions/transaction-row";
@@ -167,9 +167,7 @@ function HomePage() {
       </header>
 
       {!editing ? (
-        <p className="type-meta leading-relaxed text-muted-foreground/90">
-          {APP_QUOTE}
-        </p>
+        <BrandQuote className="type-meta min-h-12 leading-relaxed text-muted-foreground/90" />
       ) : null}
 
       {/* A calm warning instead of impossible numbers — nothing is ever fabricated to balance. */}

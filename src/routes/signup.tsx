@@ -10,7 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
-import { APP_QUOTE } from "@/lib/brand";
+import { BrandQuote } from "@/components/brand-quote";
 import { getSignedInDestination } from "@/lib/auth/destination";
 import { notifyError } from "@/lib/ui/feedback";
 
@@ -130,8 +130,7 @@ function SignupPage() {
   return (
     <AuthShell>
       <h1 className="type-title">Cria a tua conta.</h1>
-      <p className="type-secondary mt-3">{APP_QUOTE}</p>
-      <p className="type-secondary mt-3">Organiza o teu dinheiro com calma e clareza.</p>
+      <BrandQuote className="type-secondary mt-3 min-h-16" />
 
       <div className="mt-9">
         <ProviderButtons busy={busy} onProvider={(provider) => void withOAuth(provider)} />
