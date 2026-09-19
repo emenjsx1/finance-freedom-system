@@ -12,7 +12,7 @@ import { useSetup } from "@/hooks/use-setup";
 import { moveAccount } from "@/lib/finance/setup-ops";
 import { ACCOUNT_TYPE_LABELS } from "@/lib/finance/types";
 
-export const Route = createFileRoute("/app/accounts")({
+export const Route = createFileRoute("/app/accounts/")({
   head: () => ({
     meta: [
       { title: "Minhas contas — Finance OS" },
