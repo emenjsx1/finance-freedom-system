@@ -18,6 +18,7 @@ import {
   type PrefKey,
 } from "./types";
 import type { CooldownState } from "./rules";
+import type { Reminder } from "@/lib/reminders/types";
 import type { AutomationRule, AutomationRun } from "@/lib/automations/types";
 import { isWithinQuietHours, localDateKey, quietHoursEnd } from "./time";
 
@@ -27,6 +28,8 @@ export interface NotificationsState {
   automations: AutomationRule[];
   runs: AutomationRun[];
   devices: DeviceRegistration[];
+  /** User reminders. A reminder exists even when push is off. */
+  reminders: Reminder[];
   cooldowns: CooldownState;
   interactions: InteractionStats;
   lastRunAt: string | null;
@@ -40,6 +43,7 @@ export const EMPTY_NOTIFICATIONS_STATE: NotificationsState = {
   automations: [],
   runs: [],
   devices: [],
+  reminders: [],
   cooldowns: {},
   interactions: { opened: 0, dismissed: 0, acted: 0 },
   lastRunAt: null,
