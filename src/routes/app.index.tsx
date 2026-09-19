@@ -165,6 +165,12 @@ function HomePage() {
         </div>
       </header>
 
+      {!editing ? (
+        <p className="type-meta leading-relaxed text-muted-foreground/90">
+          {APP_QUOTE}
+        </p>
+      ) : null}
+
       {/* A calm warning instead of impossible numbers — nothing is ever fabricated to balance. */}
       {hydrated && !integrity.ok ? (
         <Link to="/app/integrity" className="card-interactive flex items-start gap-3">

@@ -129,6 +129,7 @@ function SignupPage() {
   return (
     <AuthShell>
       <h1 className="type-title">Cria a tua conta.</h1>
+      <p className="type-secondary mt-3">{APP_QUOTE}</p>
       <p className="type-secondary mt-3">Organiza o teu dinheiro com calma e clareza.</p>
 
       <div className="mt-9">
