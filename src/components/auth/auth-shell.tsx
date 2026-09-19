@@ -9,7 +9,7 @@ import logoUrl from "@/assets/finan-logo.png";
 
 export function AuthShell({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen flex-col justify-center bg-background px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-[max(env(safe-area-inset-top),2rem)]">
+    <div className="flex min-h-dvh flex-col justify-center overflow-y-auto bg-background px-5 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-[max(env(safe-area-inset-top),1.5rem)] sm:px-6">
       <div className="mx-auto w-full max-w-sm">
         <Link to="/" aria-label="Finan." className="mb-8 block">
           <img src={logoUrl} alt="Finan." className="h-12 w-auto" />

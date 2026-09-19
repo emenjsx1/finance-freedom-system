@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { getSignedInDestination } from "@/lib/auth/destination";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -37,7 +38,9 @@ function SignupPage() {
   const [verifyFor, setVerifyFor] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!loading && session) void navigate({ to: "/app", replace: true });
+    if (!loading && session) {
+      void getSignedInDestination().then((to) => navigate({ to, replace: true }));
+    }
   }, [loading, session, navigate]);
 
   async function withOAuth(provider: "apple" | "google") {
@@ -51,7 +54,8 @@ function SignupPage() {
         return;
       }
       if (result.redirected) return;
-      void navigate({ to: "/app", replace: true });
+      const to = await getSignedInDestination();
+      void navigate({ to, replace: true });
     } catch (error) {
       toast.error(authErrorMessage(error));
     } finally {

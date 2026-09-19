@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, redirect, useNavigate } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Check, Search, Sparkles, Trash2, Wallet } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -10,15 +10,23 @@ import { cn } from "@/lib/utils";
 import { searchCurrencies, toMinorUnits, fromMinorUnits, getCurrency } from "@/lib/finance/currency";
 import { pt } from "@/lib/i18n/pt";
 import type { Account, AccountType, AllocationRuleItem } from "@/lib/finance/types";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/onboarding")({
   ssr: false,
+  beforeLoad: async () => {
+    const { data, error } = await supabase.auth.getUser();
+    if (error || !data.user) throw redirect({ to: "/auth" });
+    return { user: data.user };
+  },
   head: () => ({
     meta: [
       { title: "Configuração inicial — Finance OS" },
       { name: "description", content: "Sete passos para montares o teu sistema financeiro pessoal." },
       { property: "og:title", content: "Configuração inicial — Finance OS" },
       { property: "og:description", content: "Sete passos para montares o teu sistema financeiro pessoal." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Onboarding,
@@ -42,7 +50,7 @@ function uid() {
 
 function Onboarding() {
   const navigate = useNavigate();
-  const { setup, update } = useSetup();
+  const { setup, hydrated, update } = useSetup();
   const [step, setStep] = useState(1);
 
   const [name, setName] = useState(setup.fullName);
@@ -54,6 +62,12 @@ function Onboarding() {
   const [accounts, setAccounts] = useState<Account[]>(setup.accounts);
 
   const currency = getCurrency(currencyCode);
+
+  useEffect(() => {
+    if (hydrated && setup.onboardingCompleted) {
+      void navigate({ to: "/app", replace: true });
+    }
+  }, [hydrated, navigate, setup.onboardingCompleted]);
 
   function next() {
     setStep((s) => Math.min(s + 1, TOTAL_STEPS));
@@ -74,9 +88,9 @@ function Onboarding() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-background px-6 pb-10 pt-8">
+    <div className="flex min-h-dvh flex-col bg-background px-5 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-[max(env(safe-area-inset-top),1.5rem)] sm:px-6">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col">
-        <div className="mb-8 flex gap-1.5">
+        <div className="mb-6 flex gap-1.5 sm:mb-8">
           {Array.from({ length: TOTAL_STEPS }, (_, i) => (
             <span
               key={i}
@@ -88,7 +102,7 @@ function Onboarding() {
           ))}
         </div>
 
-        <div className="flex-1">
+        <div className="min-h-0 flex-1">
           {step === 1 ? (
             <StepShell
               title={pt.onboarding.welcomeTitle}
@@ -170,7 +184,7 @@ function Onboarding() {
             >
               <div className="space-y-2">
                 {accounts.map((account, index) => (
-                  <div key={account.id} className="flex items-center gap-2 rounded-xl border border-border/70 bg-surface p-3">
+                  <div key={account.id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 rounded-xl border border-border/70 bg-surface p-3">
                     <Input
                       value={account.name}
                       placeholder="Nome da conta"
@@ -278,7 +292,7 @@ function Onboarding() {
           ) : null}
         </div>
 
-        <div className="mt-8 flex gap-3">
+        <div className="sticky bottom-0 mt-6 flex shrink-0 gap-3 bg-background/95 py-2 backdrop-blur sm:mt-8">
           {step > 1 ? (
             <Button variant="outline" onClick={back} className="flex-1">
               {pt.common.back}
@@ -312,7 +326,7 @@ function StepShell({
     <div>
       <h1 className="text-2xl font-semibold leading-snug tracking-tight">{title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{subtitle}</p>
-      <div className="mt-8">{children}</div>
+      <div className="mt-6 sm:mt-8">{children}</div>
     </div>
   );
 }

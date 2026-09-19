@@ -138,7 +138,7 @@ export function AppShell() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <aside className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-sidebar-border bg-sidebar px-4 py-6 lg:flex">
         <div className="mb-8 flex items-center gap-3 px-2">
           <img src={logoUrl} alt="Finan." className="h-9 w-auto" />
@@ -189,8 +189,8 @@ export function AppShell() {
         </button>
       </aside>
 
-      <main className="pb-28 lg:ml-64 lg:pb-12">
-        <div className="mx-auto w-full max-w-2xl px-5 pt-4 lg:max-w-4xl lg:px-10 lg:pt-6">
+      <main className="pb-[calc(6.75rem+env(safe-area-inset-bottom))] lg:ml-64 lg:pb-12">
+        <div className="mx-auto w-full max-w-2xl px-4 pt-[max(env(safe-area-inset-top),0.75rem)] sm:px-5 lg:max-w-4xl lg:px-10 lg:pt-6">
           <div className="mb-1 flex justify-end">
             <NotificationBell />
           </div>
@@ -201,7 +201,7 @@ export function AppShell() {
       <PreparedMovementSheet />
 
       {/* The action lives inside the bar, not floating above it. */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-elevated/92 backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-elevated/92 backdrop-blur-xl lg:hidden" aria-label="Navegação principal">
         <div className="mx-auto grid max-w-md grid-cols-5 items-center px-2 pb-[max(env(safe-area-inset-bottom),0.4rem)] pt-1.5">
           {mobileLeft.map((item) => (
             <BottomLink
@@ -240,12 +240,12 @@ function BottomLink({ item, active }: { item: NavItem; active: boolean }) {
     <Link
       to={item.to}
       className={cn(
-        "flex flex-col items-center gap-1 rounded-lg py-1.5 transition-colors",
+        "flex min-w-0 flex-col items-center gap-1 rounded-lg py-1.5 transition-colors",
         active ? "text-foreground" : "text-muted-foreground",
       )}
     >
       <item.icon className={cn("size-5", active && "text-primary")} />
-      <span className="text-[10.5px] font-medium tracking-tight">{item.label}</span>
+      <span className="w-full truncate text-center text-[10.5px] font-medium">{item.label}</span>
     </Link>
   );
 }

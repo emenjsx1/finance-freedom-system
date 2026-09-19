@@ -1,5 +1,9 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ShieldCheck, Sparkles, Wallet } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { useAuth } from "@/hooks/use-auth";
+import { getSignedInDestination } from "@/lib/auth/destination";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -15,14 +19,34 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Separa onde o dinheiro está de para que serve, e constrói a tua liberdade.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Landing,
 });
 
 function Landing() {
+  const navigate = useNavigate();
+  const { session, loading } = useAuth();
+  const [redirecting, setRedirecting] = useState(false);
+
+  useEffect(() => {
+    if (loading || !session) return;
+    setRedirecting(true);
+    void getSignedInDestination().then((to) => navigate({ to, replace: true }));
+  }, [loading, navigate, session]);
+
+  if (loading || redirecting) {
+    return (
+      <div className="grid min-h-dvh place-items-center bg-background px-6">
+        <div className="size-8 animate-pulse rounded-full bg-primary" aria-label="A abrir a tua conta" />
+      </div>
+    );
+  }
+
   return (
-    <div className="flex min-h-screen flex-col bg-background px-6 py-10">
+    <div className="flex min-h-dvh flex-col bg-background px-6 pb-[max(env(safe-area-inset-bottom),2rem)] pt-[max(env(safe-area-inset-top),2rem)]">
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center">
         <div className="mb-8 flex size-12 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
           <Wallet className="size-6" />
@@ -39,10 +63,10 @@ function Landing() {
 
         <div className="mt-10 space-y-3">
           <Link
-            to="/onboarding"
+            to="/signup"
             className="flex w-full items-center justify-center rounded-2xl bg-primary px-5 py-3.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
           >
-            Começar
+            Criar conta
           </Link>
           <Link
             to="/auth"

@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { getSignedInDestination } from "@/lib/auth/destination";
 
 export const Route = createFileRoute("/auth")({
   head: () => ({
@@ -34,7 +35,9 @@ function AuthPage() {
   const [busy, setBusy] = useState<null | "email" | "google" | "apple">(null);
 
   useEffect(() => {
-    if (!loading && session) void navigate({ to: "/app", replace: true });
+    if (!loading && session) {
+      void getSignedInDestination().then((to) => navigate({ to, replace: true }));
+    }
   }, [loading, session, navigate]);
 
   async function withOAuth(provider: "apple" | "google") {
@@ -48,7 +51,8 @@ function AuthPage() {
         return;
       }
       if (result.redirected) return;
-      void navigate({ to: "/app", replace: true });
+      const to = await getSignedInDestination();
+      void navigate({ to, replace: true });
     } catch (error) {
       toast.error(authErrorMessage(error));
     } finally {
@@ -62,7 +66,8 @@ function AuthPage() {
     try {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
-      void navigate({ to: "/app", replace: true });
+      const to = await getSignedInDestination();
+      void navigate({ to, replace: true });
     } catch (error) {
       toast.error(authErrorMessage(error));
     } finally {
