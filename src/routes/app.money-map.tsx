@@ -1,4 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { newId } from "@/hooks/use-ledger";
+import { findRate } from "@/lib/finance/engine";
 
 import { Money } from "@/components/money";
 import { PageHeader } from "@/components/page-header";
@@ -171,6 +177,49 @@ function MoneyMapPage() {
 
         </section>
       ) : null}
+    </div>
+  );
+}
+
+/** Manual exchange rate entry. Rates are never invented — the user provides them. */
+function RateRow({ currencyCode }: { currencyCode: string }) {
+  const { setup, update } = useSetup();
+  const existing = findRate(setup.exchangeRates, currencyCode, setup.currencyCode);
+  const [value, setValue] = useState(existing === null ? "" : String(existing));
+
+  function save() {
+    const rate = Number(value.replace(",", "."));
+    if (!Number.isFinite(rate) || rate <= 0) return;
+    update({
+      exchangeRates: [
+        ...setup.exchangeRates,
+        {
+          id: newId(),
+          baseCurrency: currencyCode,
+          quoteCurrency: setup.currencyCode,
+          rate,
+          source: "manual",
+          effectiveAt: new Date().toISOString(),
+        },
+      ],
+    });
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <label htmlFor={`rate-${currencyCode}`} className="w-28 shrink-0 text-xs text-muted-foreground">
+        1 {currencyCode} =
+      </label>
+      <Input
+        id={`rate-${currencyCode}`}
+        inputMode="decimal"
+        value={value}
+        placeholder={setup.currencyCode}
+        onChange={(e) => setValue(e.target.value.replace(/[^\d.,]/g, ""))}
+      />
+      <Button variant="outline" size="sm" onClick={save}>
+        Guardar
+      </Button>
     </div>
   );
 }
