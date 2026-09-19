@@ -133,6 +133,22 @@ function HomePage() {
           onMove={move}
           onReset={() => update({ homeModules: DEFAULT_HOME_MODULES })}
         />
+      ) : setup.accounts.length === 0 ? (
+        /* Beautiful empty home: the real zero, never fake balances. */
+        <div className="space-y-6">
+          <ModuleView id="available" />
+          <div>
+            <p className="type-body">Começa por adicionar onde guardas o teu dinheiro.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button asChild>
+                <Link to="/app/accounts">Adicionar conta</Link>
+              </Button>
+              <Button variant="secondary" onClick={() => openQuickActions()}>
+                Registar entrada
+              </Button>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="space-y-9">
           {modules.map((id) => (
@@ -148,19 +164,6 @@ function HomePage() {
           ) : null}
         </div>
       )}
-
-      {!editing && setup.accounts.length === 0 ? (
-        <EmptyState
-          icon={Receipt}
-          title="Adiciona onde guardas o teu dinheiro."
-          description="Banco, carteira móvel, numerário — cada lugar onde o dinheiro existe."
-          action={
-            <Button asChild variant="secondary">
-              <Link to="/app/accounts">Adicionar conta</Link>
-            </Button>
-          }
-        />
-      ) : null}
 
       {!editing && setup.accounts.length > 0 && ledger.transactions.length === 0 ? (
         <EmptyState
