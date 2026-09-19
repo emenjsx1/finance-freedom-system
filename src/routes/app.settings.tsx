@@ -10,6 +10,7 @@ import {
   ListTree,
   LogOut,
   Palette,
+  Repeat,
   Scale,
   ShieldCheck,
   User,
@@ -59,6 +60,7 @@ function SettingsPage() {
         <Row icon={Layers} label="Potes" value={`${setup.ruleItems.length}`} />
         <Row icon={Scale} label="Regra financeira" value="100% distribuído" />
         <Row icon={ListTree} label="Categorias" value="Padrão" />
+        <Row icon={Repeat} label="Pagamentos recorrentes" to="/app/recurring" />
         <Row icon={Coins} label="Moeda" value={`${currency.code} · ${currency.symbol}`} />
       </Section>
 
@@ -122,7 +124,7 @@ function Row({
   icon: ComponentType<{ className?: string }>;
   label: string;
   value?: string;
-  to?: "/app/wallets";
+  to?: "/app/wallets" | "/app/recurring";
 }) {
   const content = (
     <>

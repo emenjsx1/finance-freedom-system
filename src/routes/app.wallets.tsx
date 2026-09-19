@@ -4,6 +4,7 @@ import { Wallet } from "lucide-react";
 import { EmptyState } from "@/components/empty-state";
 import { PageHeader } from "@/components/page-header";
 import { useSetup } from "@/hooks/use-setup";
+import { useLedger } from "@/hooks/use-ledger";
 import { formatMoney } from "@/lib/finance/currency";
 
 export const Route = createFileRoute("/app/wallets")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/app/wallets")({
 
 function WalletsPage() {
   const { setup } = useSetup();
+  const { snapshot } = useLedger();
 
   return (
     <div>
@@ -42,7 +44,7 @@ function WalletsPage() {
                 <p className="text-xs text-muted-foreground">{labelForType(account.type)}</p>
               </div>
               <span className="numeric text-sm font-semibold">
-                {formatMoney(account.balanceMinor, setup.currencyCode)}
+                {formatMoney(snapshot.accountBalances[account.id] ?? 0, setup.currencyCode)}
               </span>
             </li>
           ))}
