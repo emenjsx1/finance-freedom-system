@@ -12,6 +12,7 @@ import { monthTotals, nextOccurrence, type LedgerSnapshot } from "@/lib/finance/
 import type { RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import type { SetupState } from "@/lib/storage/local-setup-store";
 import type { Memory, AgentProfile } from "@/lib/agent/types";
+import { generateScenarios } from "@/lib/organize/engine";
 import { goalPace } from "@/lib/personal/engine";
 import {
   PLAN_PRIORITY_LABELS,
@@ -55,6 +56,7 @@ export const AGENT_READ_TOOLS = [
   "get_plans",
   "get_direction",
   "get_strategy",
+  "simulate_organization",
 ] as const;
 
 export type AgentReadTool = (typeof AGENT_READ_TOOLS)[number];
@@ -347,6 +349,8 @@ export function selectTools(question: string): AgentReadTool[] {
   if (has("direção", "direcao", "futuro", "quero", "sonho", "vida")) tools.add("get_direction");
   if (has("estratégia", "estrategia", "organizar", "distribuir", "guardar sempre"))
     tools.add("get_strategy");
+  if (has("organizar", "não sei como", "nao sei como", "reservar", "proteger", "dividir"))
+    tools.add("simulate_organization");
   if (has("regra", "distribui", "percentagem", "%")) tools.add("get_financial_rule");
   if (has("mês", "mes", "mensal", "este mês", "fecho", "resumo")) tools.add("get_month_summary");
 
@@ -388,6 +392,8 @@ export function runTool(tool: AgentReadTool, d: AgentDeps): unknown {
       return getDirection(d);
     case "get_strategy":
       return getStrategy(d);
+    case "simulate_organization":
+      return simulateOrganization(d);
   }
 }
 
