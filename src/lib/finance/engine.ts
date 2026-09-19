@@ -257,8 +257,28 @@ export function buildSnapshot({
   const purposeTotalMinor = Object.values(bucketBalances).reduce((a, b) => a + b, 0);
   const unallocatedMinor = wealthMinor - purposeTotalMinor;
 
+  // Reserved money per account: the same money already counted in the account
+  // balance, only classified. Nothing here adds to the total.
+  const accountReserved: Record<string, number> = {};
+  for (const row of Object.values(purposeByAccount)) {
+    for (const [accountId, value] of Object.entries(row)) {
+      if (accountId === UNKNOWN_ACCOUNT) continue;
+      accountReserved[accountId] = (accountReserved[accountId] ?? 0) + value;
+    }
+  }
+  const accountAvailable: Record<string, number> = {};
+  for (const account of openingAccounts) {
+    accountAvailable[account.id] = Math.max(
+      0,
+      (accountBalances[account.id] ?? 0) - (accountReserved[account.id] ?? 0),
+    );
+  }
+
   return {
     accountBalances,
+    accountReserved,
+    accountAvailable,
+    purposeByAccount,
     bucketBalances,
     buckets,
     wallets,
