@@ -55,10 +55,7 @@ function ProgramDetail() {
         <ChevronLeft className="size-3.5" aria-hidden /> Programas
       </Link>
 
-      <PageHeader
-        title={program.title}
-        subtitle={program.purpose ?? undefined}
-      />
+      <PageHeader title={program.title} {...(program.purpose ? { subtitle: program.purpose } : {})} />
 
       <section className="card-standard">
         <p className="type-meta">{PROGRAM_STATUS_LABELS[program.status]}</p>

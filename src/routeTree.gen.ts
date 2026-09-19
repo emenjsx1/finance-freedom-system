@@ -60,6 +60,8 @@ import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
 import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$conversationId'
 import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.index'
 import { Route as AppDevelopmentIndexRouteImport } from './routes/app.development.index'
+import { Route as AppDevelopmentDecisionsRouteImport } from './routes/app.development.decisions'
+import { Route as AppDevelopmentEvolutionRouteImport } from './routes/app.development.evolution'
 import { Route as AppDevelopmentTodayRouteImport } from './routes/app.development.today'
 import { Route as AppGoalsIndexRouteImport } from './routes/app.goals.index'
 import { Route as AppGoalsGoalIdRouteImport } from './routes/app.goals.$goalId'
@@ -73,6 +75,8 @@ import { Route as AppProfileSecurityRouteImport } from './routes/app.profile.sec
 import { Route as AppWalletsIndexRouteImport } from './routes/app.wallets.index'
 import { Route as AppWalletsWalletIdRouteImport } from './routes/app.wallets.$walletId'
 import { Route as AppAnalyticsCategoryCategoryIdRouteImport } from './routes/app.analytics.category.$categoryId'
+import { Route as AppDevelopmentProgramsIndexRouteImport } from './routes/app.development.programs.index'
+import { Route as AppDevelopmentProgramsProgramIdRouteImport } from './routes/app.development.programs.$programId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -329,6 +333,16 @@ const AppDevelopmentIndexRoute = AppDevelopmentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppDevelopmentRoute,
 } as any)
+const AppDevelopmentDecisionsRoute = AppDevelopmentDecisionsRouteImport.update({
+  id: '/decisions',
+  path: '/decisions',
+  getParentRoute: () => AppDevelopmentRoute,
+} as any)
+const AppDevelopmentEvolutionRoute = AppDevelopmentEvolutionRouteImport.update({
+  id: '/evolution',
+  path: '/evolution',
+  getParentRoute: () => AppDevelopmentRoute,
+} as any)
 const AppDevelopmentTodayRoute = AppDevelopmentTodayRouteImport.update({
   id: '/today',
   path: '/today',
@@ -395,6 +409,18 @@ const AppAnalyticsCategoryCategoryIdRoute =
     path: '/category/$categoryId',
     getParentRoute: () => AppAnalyticsRoute,
   } as any)
+const AppDevelopmentProgramsIndexRoute =
+  AppDevelopmentProgramsIndexRouteImport.update({
+    id: '/programs/',
+    path: '/programs/',
+    getParentRoute: () => AppDevelopmentRoute,
+  } as any)
+const AppDevelopmentProgramsProgramIdRoute =
+  AppDevelopmentProgramsProgramIdRouteImport.update({
+    id: '/programs/$programId',
+    path: '/programs/$programId',
+    getParentRoute: () => AppDevelopmentRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -444,6 +470,8 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/development/decisions': typeof AppDevelopmentDecisionsRoute
+  '/app/development/evolution': typeof AppDevelopmentEvolutionRoute
   '/app/development/today': typeof AppDevelopmentTodayRoute
   '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
   '/app/plans/$planId': typeof AppPlansPlanIdRoute
@@ -461,6 +489,8 @@ export interface FileRoutesByFullPath {
   '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
+  '/app/development/programs/$programId': typeof AppDevelopmentProgramsProgramIdRoute
+  '/app/development/programs/': typeof AppDevelopmentProgramsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -501,6 +531,8 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/development/decisions': typeof AppDevelopmentDecisionsRoute
+  '/app/development/evolution': typeof AppDevelopmentEvolutionRoute
   '/app/development/today': typeof AppDevelopmentTodayRoute
   '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
   '/app/plans/$planId': typeof AppPlansPlanIdRoute
@@ -518,6 +550,8 @@ export interface FileRoutesByTo {
   '/app/profile': typeof AppProfileIndexRoute
   '/app/wallets': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
+  '/app/development/programs/$programId': typeof AppDevelopmentProgramsProgramIdRoute
+  '/app/development/programs': typeof AppDevelopmentProgramsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -568,6 +602,8 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/development/decisions': typeof AppDevelopmentDecisionsRoute
+  '/app/development/evolution': typeof AppDevelopmentEvolutionRoute
   '/app/development/today': typeof AppDevelopmentTodayRoute
   '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
   '/app/plans/$planId': typeof AppPlansPlanIdRoute
@@ -585,6 +621,8 @@ export interface FileRoutesById {
   '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
+  '/app/development/programs/$programId': typeof AppDevelopmentProgramsProgramIdRoute
+  '/app/development/programs/': typeof AppDevelopmentProgramsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -636,6 +674,8 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/development/decisions'
+    | '/app/development/evolution'
     | '/app/development/today'
     | '/app/goals/$goalId'
     | '/app/plans/$planId'
@@ -653,6 +693,8 @@ export interface FileRouteTypes {
     | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
+    | '/app/development/programs/$programId'
+    | '/app/development/programs/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -693,6 +735,8 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/development/decisions'
+    | '/app/development/evolution'
     | '/app/development/today'
     | '/app/goals/$goalId'
     | '/app/plans/$planId'
@@ -710,6 +754,8 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/wallets'
     | '/app/analytics/category/$categoryId'
+    | '/app/development/programs/$programId'
+    | '/app/development/programs'
   id:
     | '__root__'
     | '/'
@@ -759,6 +805,8 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/development/decisions'
+    | '/app/development/evolution'
     | '/app/development/today'
     | '/app/goals/$goalId'
     | '/app/plans/$planId'
@@ -776,6 +824,8 @@ export interface FileRouteTypes {
     | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
+    | '/app/development/programs/$programId'
+    | '/app/development/programs/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1151,6 +1201,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDevelopmentIndexRouteImport
       parentRoute: typeof AppDevelopmentRoute
     }
+    '/app/development/decisions': {
+      id: '/app/development/decisions'
+      path: '/decisions'
+      fullPath: '/app/development/decisions'
+      preLoaderRoute: typeof AppDevelopmentDecisionsRouteImport
+      parentRoute: typeof AppDevelopmentRoute
+    }
+    '/app/development/evolution': {
+      id: '/app/development/evolution'
+      path: '/evolution'
+      fullPath: '/app/development/evolution'
+      preLoaderRoute: typeof AppDevelopmentEvolutionRouteImport
+      parentRoute: typeof AppDevelopmentRoute
+    }
     '/app/development/today': {
       id: '/app/development/today'
       path: '/today'
@@ -1242,6 +1306,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAnalyticsCategoryCategoryIdRouteImport
       parentRoute: typeof AppAnalyticsRoute
     }
+    '/app/development/programs/': {
+      id: '/app/development/programs/'
+      path: '/programs'
+      fullPath: '/app/development/programs/'
+      preLoaderRoute: typeof AppDevelopmentProgramsIndexRouteImport
+      parentRoute: typeof AppDevelopmentRoute
+    }
+    '/app/development/programs/$programId': {
+      id: '/app/development/programs/$programId'
+      path: '/programs/$programId'
+      fullPath: '/app/development/programs/$programId'
+      preLoaderRoute: typeof AppDevelopmentProgramsProgramIdRouteImport
+      parentRoute: typeof AppDevelopmentRoute
+    }
   }
 }
 
@@ -1288,13 +1366,21 @@ const AppAnalyticsRouteWithChildren = AppAnalyticsRoute._addFileChildren(
 )
 
 interface AppDevelopmentRouteChildren {
+  AppDevelopmentDecisionsRoute: typeof AppDevelopmentDecisionsRoute
+  AppDevelopmentEvolutionRoute: typeof AppDevelopmentEvolutionRoute
   AppDevelopmentTodayRoute: typeof AppDevelopmentTodayRoute
   AppDevelopmentIndexRoute: typeof AppDevelopmentIndexRoute
+  AppDevelopmentProgramsProgramIdRoute: typeof AppDevelopmentProgramsProgramIdRoute
+  AppDevelopmentProgramsIndexRoute: typeof AppDevelopmentProgramsIndexRoute
 }
 
 const AppDevelopmentRouteChildren: AppDevelopmentRouteChildren = {
+  AppDevelopmentDecisionsRoute: AppDevelopmentDecisionsRoute,
+  AppDevelopmentEvolutionRoute: AppDevelopmentEvolutionRoute,
   AppDevelopmentTodayRoute: AppDevelopmentTodayRoute,
   AppDevelopmentIndexRoute: AppDevelopmentIndexRoute,
+  AppDevelopmentProgramsProgramIdRoute: AppDevelopmentProgramsProgramIdRoute,
+  AppDevelopmentProgramsIndexRoute: AppDevelopmentProgramsIndexRoute,
 }
 
 const AppDevelopmentRouteWithChildren = AppDevelopmentRoute._addFileChildren(
