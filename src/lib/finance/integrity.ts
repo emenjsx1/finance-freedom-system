@@ -151,29 +151,12 @@ export function checkIntegrity(input: LedgerInput, snapshot: LedgerSnapshot): In
 
     const walletRefs: Array<string | undefined> = [tx.bucketId, tx.fromBucketId, tx.toBucketId];
     for (const ref of walletRefs) {
-      if (ref && !walletById.has(ref)) {
-        issues.push({
-          code: "missing_wallet",
-          severity: "error",
-          title: "Movimento sem propósito válido",
-          detail: "Este movimento aponta para um propósito que já não existe.",
-          transactionId: tx.id,
-          walletId: ref,
-        });
-      }
+      if (ref && !walletById.has(ref)) noteOrphan(ref, Math.abs(tx.amountMinor));
     }
 
     for (const allocation of tx.allocations ?? []) {
       if (!walletById.has(allocation.bucketId)) {
-        issues.push({
-          code: "orphan_allocation",
-          severity: "error",
-          title: "Distribuição órfã",
-          detail: "Parte deste movimento foi atribuída a um propósito que já não existe.",
-          transactionId: tx.id,
-          walletId: allocation.bucketId,
-          amountMinor: Math.abs(allocation.amountMinor),
-        });
+        noteOrphan(allocation.bucketId, Math.abs(allocation.amountMinor));
       }
     }
 
