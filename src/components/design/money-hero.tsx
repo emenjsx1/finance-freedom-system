@@ -64,7 +64,7 @@ export function MoneyHero({
         <Money
           minor={totalMinor}
           className="type-display"
-          options={{ withSymbol: false, decimals: 0 }}
+          options={{ withSymbol: false, compactDecimals: true }}
         />
         <span className="text-base font-medium text-muted-foreground">
           {prefs.showCurrencyCode ? setup.currencyCode : ""}
@@ -87,7 +87,7 @@ export function MoneyHero({
           <Money
             minor={availableMinor}
             className="mt-1 block text-xl font-semibold"
-            options={{ withSymbol: false, decimals: 0 }}
+            options={{ withSymbol: false, compactDecimals: true }}
           />
         </div>
         <div className="min-w-0 text-right">
@@ -98,7 +98,7 @@ export function MoneyHero({
           <Money
             minor={reservedMinor}
             className="mt-1 block text-xl font-semibold"
-            options={{ withSymbol: false, decimals: 0 }}
+            options={{ withSymbol: false, compactDecimals: true }}
           />
         </div>
       </div>
