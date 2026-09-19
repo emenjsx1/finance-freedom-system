@@ -84,11 +84,22 @@ function MePage() {
                 ))}
               </div>
             ) : null}
-            {prioridades.length ? (
+            {prioridades.length || ctxPrioridades.length ? (
               <div>
                 <p className="type-meta">Prioridades atuais</p>
                 {prioridades.slice(0, 3).map((plan) => (
                   <p key={plan.id} className="type-secondary mt-1">{plan.name}</p>
+                ))}
+                {ctxPrioridades.slice(0, 2).map((item) => (
+                  <p key={item.id} className="type-secondary mt-1">{item.content}</p>
+                ))}
+              </div>
+            ) : null}
+            {ctxSobre.length ? (
+              <div>
+                <p className="type-meta">Sobre mim</p>
+                {ctxSobre.slice(0, 2).map((item) => (
+                  <p key={item.id} className="type-secondary mt-1">{item.content}</p>
                 ))}
               </div>
             ) : null}
