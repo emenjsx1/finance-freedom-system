@@ -18,8 +18,11 @@ import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppAgentRouteImport } from './routes/app.agent'
 import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-settings'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
+import { Route as AppAutomationsRouteImport } from './routes/app.automations'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
+import { Route as AppNotificationSettingsRouteImport } from './routes/app.notification-settings'
+import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
 import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
 import { Route as AppPlanRouteImport } from './routes/app.plan'
 import { Route as AppProtectedRouteImport } from './routes/app.protected'
@@ -82,6 +85,11 @@ const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => AppRoute,
 } as any)
+const AppAutomationsRoute = AppAutomationsRouteImport.update({
+  id: '/automations',
+  path: '/automations',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
   id: '/goals',
   path: '/goals',
@@ -90,6 +98,16 @@ const AppGoalsRoute = AppGoalsRouteImport.update({
 const AppMoneyMapRoute = AppMoneyMapRouteImport.update({
   id: '/money-map',
   path: '/money-map',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationSettingsRoute = AppNotificationSettingsRouteImport.update({
+  id: '/notification-settings',
+  path: '/notification-settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppNotificationsRoute = AppNotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPersonalizationRoute = AppPersonalizationRouteImport.update({
@@ -183,8 +201,11 @@ export interface FileRoutesByFullPath {
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
+  '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/notification-settings': typeof AppNotificationSettingsRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
@@ -208,8 +229,11 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
+  '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/notification-settings': typeof AppNotificationSettingsRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
@@ -237,8 +261,11 @@ export interface FileRoutesById {
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
+  '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
+  '/app/notification-settings': typeof AppNotificationSettingsRoute
+  '/app/notifications': typeof AppNotificationsRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
   '/app/protected': typeof AppProtectedRoute
@@ -268,8 +295,11 @@ export interface FileRouteTypes {
     | '/app/agent'
     | '/app/agent-settings'
     | '/app/analytics'
+    | '/app/automations'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/notification-settings'
+    | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
     | '/app/protected'
@@ -293,8 +323,11 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/agent-settings'
+    | '/app/automations'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/notification-settings'
+    | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
     | '/app/protected'
@@ -321,8 +354,11 @@ export interface FileRouteTypes {
     | '/app/agent'
     | '/app/agent-settings'
     | '/app/analytics'
+    | '/app/automations'
     | '/app/goals'
     | '/app/money-map'
+    | '/app/notification-settings'
+    | '/app/notifications'
     | '/app/personalization'
     | '/app/plan'
     | '/app/protected'
@@ -414,6 +450,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAnalyticsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/automations': {
+      id: '/app/automations'
+      path: '/automations'
+      fullPath: '/app/automations'
+      preLoaderRoute: typeof AppAutomationsRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/goals': {
       id: '/app/goals'
       path: '/goals'
@@ -426,6 +469,20 @@ declare module '@tanstack/react-router' {
       path: '/money-map'
       fullPath: '/app/money-map'
       preLoaderRoute: typeof AppMoneyMapRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/notification-settings': {
+      id: '/app/notification-settings'
+      path: '/notification-settings'
+      fullPath: '/app/notification-settings'
+      preLoaderRoute: typeof AppNotificationSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/notifications': {
+      id: '/app/notifications'
+      path: '/notifications'
+      fullPath: '/app/notifications'
+      preLoaderRoute: typeof AppNotificationsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/personalization': {
@@ -604,8 +661,11 @@ interface AppRouteChildren {
   AppAgentRoute: typeof AppAgentRouteWithChildren
   AppAgentSettingsRoute: typeof AppAgentSettingsRoute
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
+  AppAutomationsRoute: typeof AppAutomationsRoute
   AppGoalsRoute: typeof AppGoalsRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
+  AppNotificationSettingsRoute: typeof AppNotificationSettingsRoute
+  AppNotificationsRoute: typeof AppNotificationsRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
   AppProtectedRoute: typeof AppProtectedRoute
@@ -622,8 +682,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppAgentRoute: AppAgentRouteWithChildren,
   AppAgentSettingsRoute: AppAgentSettingsRoute,
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
+  AppAutomationsRoute: AppAutomationsRoute,
   AppGoalsRoute: AppGoalsRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
+  AppNotificationSettingsRoute: AppNotificationSettingsRoute,
+  AppNotificationsRoute: AppNotificationsRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
   AppProtectedRoute: AppProtectedRoute,

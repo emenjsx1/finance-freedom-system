@@ -78,3 +78,10 @@
 - [x] Deterministic insights engine with data-sufficiency thresholds and ranked insights
 - [x] Agent analytics tools + "Pergunta ao teu dinheiro" + structured response blocks
 - [x] Reports (monthly, weekly, custom period) with clean serialisation for future export
+
+## Special Phase — Complete visual system migration (requested, not started)
+- [ ] Extract design tokens from the attached iOS reference (warm ivory light mode, forest green accent, editorial typography)
+- [ ] Rebuild shared primitives: MoneyHero, FinancialAmount, QuickAction, GoalCard, TransactionRow, InsightCard, NativeSheet, SectionHeader, ProgressIndicator, AccountRow, AgentActionCard, MetricCard, PrivacyAmount, BottomNavigation
+- [ ] Migrate Home first as the quality benchmark, then every remaining screen
+- [ ] Remove old visual language; light mode primary, intentional dark mode
+- [ ] Preserve all engine, agent, analytics, notification and security behaviour

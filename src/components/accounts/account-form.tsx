@@ -48,6 +48,7 @@ export function AccountForm({
       order: account?.order,
       isDefaultSpending: form.isDefaultSpending,
       isDefaultIncome: form.isDefaultIncome,
+      ...(form.threshold ? { lowBalanceThresholdMinor: toMinorUnits(form.threshold, form.currencyCode) } : {}),
     };
     update(upsertAccount(setup, next));
     onOpenChange(false);
@@ -191,6 +192,18 @@ export function AccountForm({
             onChange={(v) => setForm((f) => ({ ...f, isDefaultIncome: v }))}
           />
 
+          <Field label="Avisar-me abaixo de" htmlFor="acc-threshold">
+            <Input
+              id="acc-threshold"
+              inputMode="decimal"
+              value={form.threshold}
+              onChange={(e) => setForm((f) => ({ ...f, threshold: e.target.value.replace(/[^\d.,]/g, "") }))}
+            />
+            <p className="mt-1 text-xs text-muted-foreground">
+              Deixa vazio para não receber avisos desta conta.
+            </p>
+          </Field>
+
           <Field label="Notas (opcional)" htmlFor="acc-notes">
             <Textarea
               id="acc-notes"
@@ -225,6 +238,9 @@ function initial(account: Account | undefined, baseCurrency: string) {
     notes: account?.notes ?? "",
     isDefaultSpending: Boolean(account?.isDefaultSpending),
     isDefaultIncome: Boolean(account?.isDefaultIncome),
+    threshold: account?.lowBalanceThresholdMinor
+      ? String(fromMinorUnits(account.lowBalanceThresholdMinor, account.currencyCode ?? baseCurrency))
+      : "",
   };
 }
 

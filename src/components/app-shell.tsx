@@ -16,11 +16,15 @@ import {
   Target,
   Lock,
   Sliders,
+  Bell,
+  Zap,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
+import { NotificationBell } from "@/components/notifications/notification-bell";
+import { PreparedMovementSheet } from "@/components/notifications/prepared-movement";
 import { haptic } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
@@ -71,6 +75,8 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
   {
     title: "Sistema",
     items: [
+      { to: "/app/notifications", label: "Notificações", icon: Bell },
+      { to: "/app/automations", label: "Automações", icon: Zap },
       { to: "/app/personalization", label: "Personalização", icon: Sliders },
       { to: "/app/settings", label: "Definições", icon: Settings },
     ],
@@ -169,10 +175,15 @@ export function AppShell() {
       </aside>
 
       <main className="pb-28 lg:ml-64 lg:pb-12">
-        <div className="mx-auto w-full max-w-2xl px-5 pt-7 lg:max-w-4xl lg:px-10 lg:pt-12">
+        <div className="mx-auto w-full max-w-2xl px-5 pt-4 lg:max-w-4xl lg:px-10 lg:pt-6">
+          <div className="mb-1 flex justify-end">
+            <NotificationBell />
+          </div>
           <Outlet />
         </div>
       </main>
+
+      <PreparedMovementSheet />
 
       {/* The action lives inside the bar, not floating above it. */}
       <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/90 backdrop-blur-xl lg:hidden">

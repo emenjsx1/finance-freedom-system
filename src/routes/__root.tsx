@@ -14,6 +14,7 @@ import { SetupProvider } from "@/hooks/use-setup";
 import { LedgerProvider } from "@/hooks/use-ledger";
 import { PrefsProvider } from "@/hooks/use-prefs";
 import { AgentProvider } from "@/hooks/use-agent";
+import { NotificationsProvider } from "@/hooks/use-notifications";
 import { Toaster } from "@/components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -127,9 +128,11 @@ function RootComponent() {
         <PrefsProvider>
           <LedgerProvider>
             <AgentProvider>
-              {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-              <Outlet />
-              <Toaster position="top-center" />
+              <NotificationsProvider>
+                {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+                <Outlet />
+                <Toaster position="top-center" />
+              </NotificationsProvider>
             </AgentProvider>
           </LedgerProvider>
         </PrefsProvider>
