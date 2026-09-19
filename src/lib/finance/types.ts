@@ -95,6 +95,8 @@ export interface AllocationRuleItem {
   monthlyPlanMinor?: number | undefined;
   /** User-defined low-balance threshold. The app never invents one. */
   lowBalanceThresholdMinor?: number | undefined;
+  /** Optional contextual cover image for goal wallets (preset, user or generated). */
+  coverImageUrl?: string | undefined;
 }
 
 export interface AllocationRule {
