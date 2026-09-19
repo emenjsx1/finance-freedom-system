@@ -329,15 +329,26 @@ function ModuleView({ id }: { id: HomeModuleId }) {
           <MoneyHero
             title="O teu dinheiro"
             totalMinor={snapshot.wealthMinor}
-            availableMinor={snapshot.spendableMinor}
-            reservedMinor={snapshot.wealthMinor - snapshot.spendableMinor}
+            availableMinor={snapshot.spendableMinor + snapshot.unallocatedMinor}
+            reservedMinor={snapshot.wealthMinor - snapshot.spendableMinor - snapshot.unallocatedMinor}
             availableLabel="Disponível"
             reservedLabel="Reservado"
             to="/app/money"
             {...(snapshot.unallocatedMinor > 0
-              ? { note: "Tens dinheiro sem propósito. Toca em Guardar para o distribuir." }
+              ? { note: "Tens dinheiro sem propósito." }
               : {})}
           />
+          {snapshot.unallocatedMinor > 0 ? (
+            <Link
+              to="/app/organize"
+              className="block rounded-2xl border border-border/70 bg-surface px-5 py-4"
+            >
+              <span className="block text-base font-medium">Ajuda-me a organizar</span>
+              <span className="mt-1 block text-sm text-muted-foreground">
+                Responde a algumas perguntas e vê formas de organizar o teu dinheiro.
+              </span>
+            </Link>
+          ) : null}
           <QuickActions
             items={[
               { label: "Adicionar", icon: Plus, primary: true, onSelect: () => openComposer({ kind: "income" }) },
