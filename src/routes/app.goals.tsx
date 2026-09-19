@@ -64,11 +64,19 @@ function GoalsPage() {
           <section className="card-hero">
             <p className="type-caption">Objetivo em destaque</p>
             <h2 className="type-heading mt-2">{featured.wallet.name}</h2>
-            <Money minor={featured.wallet.balanceMinor} className="type-display mt-3 block" />
+            <p className="mt-3 flex items-baseline gap-2">
+              <Money
+                minor={featured.wallet.balanceMinor}
+                options={{ withSymbol: false, compactDecimals: true }}
+                className="type-display"
+              />
+              <span className="type-caption">{setup.currencyCode}</span>
+            </p>
             {featured.targetMinor ? (
               <>
                 <p className="type-secondary mt-1">
-                  de <Money minor={featured.targetMinor} />
+                  de <Money minor={featured.targetMinor} options={{ withSymbol: false, compactDecimals: true }} />{" "}
+                  {setup.currencyCode}
                   {featured.targetDate
                     ? ` · até ${new Date(featured.targetDate).toLocaleDateString("pt-PT")}`
                     : ""}
