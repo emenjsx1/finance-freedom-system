@@ -1,4 +1,3 @@
-import { symbolLabel } from "@/lib/icons/symbols";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Check, Search, Sparkles, Trash2, Wallet } from "lucide-react";
@@ -36,8 +35,6 @@ const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
   { value: "investment", label: "Investimento" },
   { value: "other", label: "Outro" },
 ];
-
-const ICONS = ["build", "target", "home", "family", "sparkle", "protected", "education", "car", "food", "gift"];
 
 function uid() {
   return Math.random().toString(36).slice(2, 10);
