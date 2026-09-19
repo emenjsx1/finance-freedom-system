@@ -69,6 +69,9 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
     title: "Pessoal",
     items: [
       { to: "/app/me", label: "Eu", icon: User },
+      { to: "/app/development", label: "Desenvolvimento", icon: Compass },
+      { to: "/app/development/today", label: "Hoje", icon: Sun },
+      { to: "/app/development/programs", label: "Programas", icon: ListChecks },
       { to: "/app/plans", label: "Planos", icon: Target },
       { to: "/app/strategy", label: "Estratégia", icon: Sliders },
       { to: "/app/direction", label: "Direção", icon: Map },
