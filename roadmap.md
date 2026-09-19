@@ -164,3 +164,8 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - [ ] Banner de confirmação no topo da Home sobrepõe a barra de estado e corta "Organizar esta entrada".
 - [ ] Linha de "Atividade recente": texto da categoria ("business") sai por cima do ícone.
 - [ ] Rever todas as secções com um valor de teste real.
+
+## Money model QA (Sep 19)
+- [x] Guardar: criar propósito ali mesmo; despesa sem propósito permitida
+- [x] Eliminações deixam de voltar da cloud (adoção única por aparelho)
+- [ ] Teste ponta a ponta: entrada, guardar, plano, apagar plano, agente
