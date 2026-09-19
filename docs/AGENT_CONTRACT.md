@@ -56,3 +56,27 @@ owner-scoped access.
 
 If the model is unavailable, the Agent says "O Agente está temporariamente indisponível."
 and the rest of the product keeps working. Provider errors are never shown raw.
+
+## Organisation tools
+
+Read: `getFinancialSnapshot`, `getAccounts`, `getAvailableMoney`, `getReservedMoney`,
+`getPlans`, `getPlanProgress`, `getCommitments`, `getStrategy`.
+
+Simulate (read-only, deterministic, identical to the guided screen):
+`simulateOrganization`, `simulatePlanFunding`.
+
+Prepare (confirmation required, executed by the engine):
+`prepareOrganization`, `prepareReservation`, `preparePlan`, `prepareStrategy`,
+`executeConfirmedPreparedAction`.
+
+Rules:
+- The Agent presents organisation options as scenario cards with the engine's numbers.
+  It never calculates an amount itself and never calls an option the best one.
+- "Gostei, faz assim" is not execution. The Agent shows the final organisation and waits
+  for an explicit confirmation.
+- Tap or talk reach the same domain operations. There is no chat-only financial state.
+- Mentioning a future purchase may lead to "Queres criar isto como um plano?" — the plan
+  stays a draft until confirmed.
+- A repeated preference ("quero sempre 100.000 disponíveis") is only stored after the
+  person says yes.
+- The Agent has no direct database access; it only calls the tools above.

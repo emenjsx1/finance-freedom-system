@@ -12,6 +12,7 @@ import { monthTotals, nextOccurrence, type LedgerSnapshot } from "@/lib/finance/
 import type { RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import type { SetupState } from "@/lib/storage/local-setup-store";
 import type { Memory, AgentProfile } from "@/lib/agent/types";
+import { generateScenarios } from "@/lib/organize/engine";
 import { goalPace } from "@/lib/personal/engine";
 import {
   PLAN_PRIORITY_LABELS,
@@ -55,6 +56,7 @@ export const AGENT_READ_TOOLS = [
   "get_plans",
   "get_direction",
   "get_strategy",
+  "simulate_organization",
 ] as const;
 
 export type AgentReadTool = (typeof AGENT_READ_TOOLS)[number];
@@ -271,6 +273,56 @@ export function getStrategy(d: AgentDeps) {
   };
 }
 
+/**
+ * Organisation options for the money that already exists.
+ *
+ * The Agent explains these options; it never produces the numbers itself. The
+ * same deterministic engine powers the "Ajuda-me a organizar" screen, so tapping
+ * and talking always give the same figures. Nothing here changes money.
+ */
+export function simulateOrganization(d: AgentDeps) {
+  const c = d.setup.currencyCode;
+  const monthlyCommitments = (d.personal?.commitments ?? [])
+    .filter((item) => item.active && item.cadence === "monthly")
+    .reduce((sum, item) => sum + item.amountMinor, 0);
+
+  const scenarios = generateScenarios({
+    totalMinor: d.snapshot.wealthMinor,
+    currencyCode: c,
+    protection: d.snapshot.protectedMinor > 0 ? "amount" : "unsure",
+    protectionMinor: d.snapshot.protectedMinor || undefined,
+    plans: (d.personal?.plans ?? [])
+      .filter((plan) => plan.status === "active" && plan.financial)
+      .map((plan) => ({
+        planId: plan.id,
+        name: plan.name,
+        priority: plan.priority,
+        targetMinor: plan.targetMinor,
+        targetDate: plan.targetDate,
+        reservedMinor: plan.walletId ? (d.snapshot.bucketBalances[plan.walletId] ?? 0) : 0,
+        include: true,
+      })),
+    commitmentsMonthlyMinor: monthlyCommitments,
+    reserveCommitments: false,
+    income: "unsure",
+    ownership: "personal",
+    flexibility: "balanced",
+    minAvailableMinor: 0,
+    updatedAt: new Date().toISOString(),
+  });
+
+  return {
+    total: money(d.snapshot.wealthMinor, c),
+    nota: "Opções para organizar dinheiro que já existe. Nada é aplicado sem confirmação no ecrã \"Ajuda-me a organizar\".",
+    opcoes: scenarios.map((scenario) => ({
+      titulo: scenario.title,
+      descricao: scenario.subtitle,
+      linhas: scenario.lines.map((line) => ({ proposito: line.label, valor: money(line.amountMinor, c) })),
+      consequencias: scenario.notes,
+    })),
+  };
+}
+
 /** Keyword routing — only the relevant tools run, so context stays small. */
 export function selectTools(question: string): AgentReadTool[] {
   const q = question.toLowerCase();
@@ -297,6 +349,8 @@ export function selectTools(question: string): AgentReadTool[] {
   if (has("direção", "direcao", "futuro", "quero", "sonho", "vida")) tools.add("get_direction");
   if (has("estratégia", "estrategia", "organizar", "distribuir", "guardar sempre"))
     tools.add("get_strategy");
+  if (has("organizar", "não sei como", "nao sei como", "reservar", "proteger", "dividir"))
+    tools.add("simulate_organization");
   if (has("regra", "distribui", "percentagem", "%")) tools.add("get_financial_rule");
   if (has("mês", "mes", "mensal", "este mês", "fecho", "resumo")) tools.add("get_month_summary");
 
@@ -338,6 +392,8 @@ export function runTool(tool: AgentReadTool, d: AgentDeps): unknown {
       return getDirection(d);
     case "get_strategy":
       return getStrategy(d);
+    case "simulate_organization":
+      return simulateOrganization(d);
   }
 }
 

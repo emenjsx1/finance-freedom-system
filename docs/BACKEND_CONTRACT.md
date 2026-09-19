@@ -48,3 +48,30 @@ specification for the next phase. No backend work is implemented yet.
 ## Non-goals for the backend phase
 
 Monetization, subscriptions, App Store packaging, multi-user sharing.
+
+## Organisation ("Ajuda-me a organizar")
+
+Organising existing money is a classification change, never a transfer. The backend
+must guarantee that account balances are untouched by any organisation.
+
+| Entity | Key fields | Notes |
+| --- | --- | --- |
+| `organization_drafts` | answers (protection, plans, commitments, income, ownership, flexibility), constraints, status, updated_at | resumable; a person may leave and come back |
+| `organization_scenarios` | draft_id, variant, lines[{kind,label,amount_minor,plan_id}], notes | generated deterministically server-side from the same engine the UI uses |
+| `organization_funding_map` | scenario_id, line_key, account_id, amount_minor | a reading of where the reserved money physically sits |
+| `reservations` | purpose, plan_id?, commitment_id?, amount_minor, source_account_id?, created_at, released_at | every reservation tracks its source |
+| `organization_applications` | draft_id, scenario_id, request_id, applied_at, resulting_totals | idempotent; one row per applied organisation |
+| `organization_history` | application_id, event (applied/adjusted/released/moved/undone), payload, actor (user/agent) | auditable |
+
+Server operations:
+- `simulateOrganization(draft)` — deterministic, read-only, returns 2–3 scenarios.
+- `applyOrganization({ scenarioId, requestId })` — revalidates ownership, live balances,
+  existing reservations, eligible available money, plan existence, currency and version;
+  then creates/updates reservations atomically.
+- `releaseReservation`, `moveReservationPurpose` — classification only.
+- `convertOrganizationToStrategy({ applicationId })` — only on explicit confirmation.
+  Accepting one organisation never creates a strategy by itself.
+
+Invariants revalidated server-side on every apply: `total = available + reserved`,
+`reserved >= 0`, allocations never exceed eligible money, business money excluded unless
+explicitly classified as personal, and future income never counted as current money.

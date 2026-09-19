@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
+import { financialPosition } from "@/lib/finance/position";
 import { ACCOUNT_TYPE_LABELS } from "@/lib/finance/types";
 import { Symbol } from "@/lib/icons/symbols";
 import { COMMITMENT_CADENCE_LABELS } from "@/lib/personal/types";
@@ -36,7 +37,7 @@ function MoneyPage() {
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
 
   const planWallets = snapshot.wallets.filter((w) => !w.archived && w.kind === "goals");
-  const reservedMinor = snapshot.wealthMinor - snapshot.spendableMinor;
+  const position = financialPosition(snapshot);
   const monthlyCommitments = state.commitments
     .filter((c) => c.active && c.cadence === "monthly")
     .reduce((sum, c) => sum + c.amountMinor, 0);
@@ -74,16 +75,26 @@ function MoneyPage() {
               <div>
                 <p className="type-meta">Disponível</p>
                 <p className="type-section mt-1">
-                  <Money minor={snapshot.spendableMinor} options={{ compactDecimals: true }} />
+                  <Money minor={position.availableMinor} options={{ compactDecimals: true }} />
                 </p>
               </div>
               <div>
                 <p className="type-meta">Reservado</p>
                 <p className="type-section mt-1">
-                  <Money minor={reservedMinor} options={{ compactDecimals: true }} />
+                  <Money minor={position.reservedMinor} options={{ compactDecimals: true }} />
                 </p>
               </div>
             </div>
+          </section>
+
+          <section className="card-standard">
+            <h2 className="text-base font-semibold">Ajuda-me a organizar</h2>
+            <p className="mt-1 type-secondary">
+              Responde a algumas perguntas e vê formas de organizar o teu dinheiro.
+            </p>
+            <Button className="mt-4" asChild>
+              <Link to="/app/organize">Começar</Link>
+            </Button>
           </section>
 
           <section>
