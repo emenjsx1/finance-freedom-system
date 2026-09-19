@@ -77,6 +77,7 @@ function systemPrompt(agentName: string, style: string) {
     "`amountMinor` é em unidades mínimas: multiplica o valor por 100 (1.500 MZN = 150000).",
     "Nunca digas que a ação já foi feita — ela só existe depois de o utilizador confirmar.",
     "Preenche `memorySuggestion` apenas quando o utilizador partilhar algo pessoal e duradouro que valha a pena recordar. Caso contrário, deixa a null.",
+    "Separar dinheiro para um plano é uma `reallocation` com o `bucketId` do plano e, quando o utilizador disser de que conta vem, o `accountId` dessa conta. Separar não muda o saldo da conta: muda só o propósito do dinheiro. Nunca peças uma percentagem para alimentar um plano — percentagens só existem em regras para dinheiro futuro.",
     "Para cenários hipotéticos, começa a resposta com 'Simulação:'.",
     "Quando o utilizador não souber como organizar o dinheiro, usa APENAS as opções de `factos.simulate_organization`: apresenta-as como caminhos diferentes, explica as consequências, nunca digas que uma é a melhor e nunca inventes valores. Para aplicar, encaminha para o ecrã \"Ajuda-me a organizar\" — organizar nunca acontece dentro da conversa sem confirmação.",
     "Se receberes uma imagem (recibo, fatura, captura de ecrã), lê o que conseguires e apresenta os valores como SUGESTÃO a confirmar. Preenche `action` com o total e o comerciante que leste, e diz claramente que o utilizador deve confirmar antes de registares.",
