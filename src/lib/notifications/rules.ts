@@ -263,6 +263,21 @@ export function eventDrafts(signals: Signals, cooldowns: CooldownState, now = ne
     });
   }
 
+  /* Available money reached zero — a fact, never a judgement. */
+  if (signals.unallocatedMinor <= 0 && signals.monthSummary.expensesMinor > 0) {
+    out.push({
+      dedupeKey: `available_zero:${localDateKey(now)}`,
+      category: "organization",
+      prefKey: "low_balance",
+      priority: "high",
+      title: "O teu disponível chegou a zero.",
+      body: "Todo o dinheiro que tens já está reservado para algum propósito.",
+      payload: { kind: "available_zero", availableMinor: 0, plannedMinor: 0 },
+      to: "/app/planning",
+      actions: ["view"],
+    });
+  }
+
   /* Deterministic insights from the Phase 07 engine. */
   for (const insight of signals.insights) {
     out.push({
