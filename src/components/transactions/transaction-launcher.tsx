@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowLeftRight, ArrowUp, Diamond, Plus } from "lucide-react";
 
@@ -74,13 +75,26 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
             </button>
           ))}
         </div>
-        <div className="pb-2 pt-3">
+        <div className="list-group mt-4">
+          <Link to="/app/plans" onClick={() => setQuickOpen(false)} className="list-row justify-between">
+            <span>Criar plano</span>
+            <span className="type-meta">Algo que queres construir</span>
+          </Link>
+          <Link
+            to="/app/commitments"
+            onClick={() => setQuickOpen(false)}
+            className="list-row justify-between"
+          >
+            <span>Adicionar compromisso</span>
+            <span className="type-meta">Renda, internet, propinas</span>
+          </Link>
           <button
             type="button"
             onClick={() => openComposer({ kind: "adjustment" })}
-            className="w-full rounded-[var(--r-lg)] bg-subtle px-4 py-3 text-sm font-medium"
+            className="list-row w-full justify-between text-left"
           >
-            Ajustar saldo de uma conta
+            <span>Ajustar saldo de uma conta</span>
+            <span className="type-meta">Conferir com a realidade</span>
           </button>
         </div>
       </NativeSheet>

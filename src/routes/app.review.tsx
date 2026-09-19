@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
@@ -21,9 +21,33 @@ export const Route = createFileRoute("/app/review")({
   component: ReviewPage,
 });
 
+/** Money in and out over a window, straight from recorded movements. */
+function windowTotals(transactions: { kind: string; amountMinor: number; occurredAt: string }[], fromMs: number) {
+  let income = 0;
+  let expenses = 0;
+  for (const tx of transactions) {
+    if (new Date(tx.occurredAt).getTime() < fromMs) continue;
+    if (tx.kind === "income") income += tx.amountMinor;
+    if (tx.kind === "expense") expenses += tx.amountMinor;
+  }
+  return { income, expenses };
+}
+
 function ReviewPage() {
   const { state, updatePlan, updateContext } = usePersonal();
-  const { snapshot } = useLedger();
+  const { snapshot, ledger } = useLedger();
+  const [period, setPeriod] = useState<"week" | "month">("week");
+
+  const totals = useMemo(() => {
+    const now = new Date();
+    const from =
+      period === "week"
+        ? Date.now() - 1000 * 60 * 60 * 24 * 7
+        : new Date(now.getFullYear(), now.getMonth(), 1).getTime();
+    return windowTotals(ledger.transactions, from);
+  }, [ledger.transactions, period]);
+
+  const upcoming = state.commitments.filter((c) => c.active);
 
   const savedFor = (walletId?: string) =>
     walletId ? (snapshot.wallets.find((w) => w.id === walletId)?.balanceMinor ?? 0) : 0;
@@ -55,6 +79,53 @@ function ReviewPage() {
         title="Revisão"
         subtitle="Sem notas, sem pontuações, sem julgamento. Só o que aconteceu."
       />
+
+      <div className="flex gap-2" role="tablist" aria-label="Período da revisão">
+        {(["week", "month"] as const).map((id) => (
+          <button
+            key={id}
+            type="button"
+            role="tab"
+            aria-selected={period === id}
+            onClick={() => setPeriod(id)}
+            className={
+              period === id
+                ? "rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+                : "rounded-full bg-subtle px-4 py-2 text-sm font-medium text-muted-foreground"
+            }
+          >
+            {id === "week" ? "Semana" : "Mês"}
+          </button>
+        ))}
+      </div>
+
+      <section className="card-standard grid grid-cols-2 gap-5">
+        <div>
+          <p className="type-meta">Entrou</p>
+          <p className="type-section mt-1">
+            <Money minor={totals.income} options={{ compactDecimals: true }} />
+          </p>
+        </div>
+        <div>
+          <p className="type-meta">Saiu</p>
+          <p className="type-section mt-1">
+            <Money minor={totals.expenses} options={{ compactDecimals: true }} />
+          </p>
+        </div>
+        <div>
+          <p className="type-meta">Reservado hoje</p>
+          <p className="type-section mt-1">
+            <Money
+              minor={snapshot.wealthMinor - snapshot.spendableMinor}
+              options={{ compactDecimals: true }}
+            />
+          </p>
+        </div>
+        <div>
+          <p className="type-meta">Compromissos ativos</p>
+          <p className="type-section mt-1">{upcoming.length}</p>
+        </div>
+      </section>
 
       {progressing.length ? (
         <section>

@@ -131,3 +131,14 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - Revisão calma, sem pontuações; conflitos de planos mostrados, nunca corrigidos sozinhos.
 - Agente ganhou get_plans, get_direction, get_strategy (respeitam permissões; valores vêm do motor).
 - Navegação: Início, Planos, +, Agente, Eu. Docs: docs/personal-os-architecture.md.
+
+## Fase P12A.2 — consolidação (done)
+- /app/money: total/disponível/reservado, ONDE (contas), PARA QUE SERVE (protegido, planos, sem propósito), compromissos, atalhos para movimentos/mapa/análise.
+- Money Hero da Home passa a abrir /app/money.
+- /app/commitments: compromissos esperados (nunca descontados), criação em sheet.
+- Sheet do + com secção secundária: criar plano, adicionar compromisso, ajustar saldo.
+- Planos com separadores Ativos / Ideias / Concluídos.
+- Revisão com período Semana/Mês e resumo real (entrou, saiu, reservado, compromissos).
+- Eu: área pessoal + definições silenciosas abaixo de uma separação.
+- Documentos finais: PRODUCT_MAP, BACKEND_CONTRACT, AGENT_CONTRACT, IOS_NATIVE_REQUIREMENTS, MIGRATION_PLAN.
+- Arquitetura declarada CONGELADA para a fase de backend.

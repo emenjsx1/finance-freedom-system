@@ -333,7 +333,7 @@ function ModuleView({ id }: { id: HomeModuleId }) {
             reservedMinor={snapshot.wealthMinor - snapshot.spendableMinor}
             availableLabel="Disponível"
             reservedLabel="Reservado"
-            to="/app/money-map"
+            to="/app/money"
             {...(snapshot.unallocatedMinor > 0
               ? { note: "Tens dinheiro sem propósito. Toca em Guardar para o distribuir." }
               : {})}
