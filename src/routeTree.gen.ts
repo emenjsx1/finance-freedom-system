@@ -52,6 +52,7 @@ import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.in
 import { Route as AppGoalsIndexRouteImport } from './routes/app.goals.index'
 import { Route as AppGoalsGoalIdRouteImport } from './routes/app.goals.$goalId'
 import { Route as AppPlansIndexRouteImport } from './routes/app.plans.index'
+import { Route as AppPlansPlanIdRouteImport } from './routes/app.plans.$planId'
 import { Route as AppProfileIndexRouteImport } from './routes/app.profile.index'
 import { Route as AppProfileMethodsRouteImport } from './routes/app.profile.methods'
 import { Route as AppProfilePasswordRouteImport } from './routes/app.profile.password'
@@ -276,6 +277,11 @@ const AppPlansIndexRoute = AppPlansIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppPlansRoute,
 } as any)
+const AppPlansPlanIdRoute = AppPlansPlanIdRouteImport.update({
+  id: '/$planId',
+  path: '/$planId',
+  getParentRoute: () => AppPlansRoute,
+} as any)
 const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -357,6 +363,7 @@ export interface FileRoutesByFullPath {
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
+  '/app/plans/$planId': typeof AppPlansPlanIdRoute
   '/app/profile/methods': typeof AppProfileMethodsRoute
   '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
@@ -402,6 +409,7 @@ export interface FileRoutesByTo {
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
+  '/app/plans/$planId': typeof AppPlansPlanIdRoute
   '/app/profile/methods': typeof AppProfileMethodsRoute
   '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
@@ -456,6 +464,7 @@ export interface FileRoutesById {
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
+  '/app/plans/$planId': typeof AppPlansPlanIdRoute
   '/app/profile/methods': typeof AppProfileMethodsRoute
   '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
@@ -511,6 +520,7 @@ export interface FileRouteTypes {
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
     | '/app/goals/$goalId'
+    | '/app/plans/$planId'
     | '/app/profile/methods'
     | '/app/profile/password'
     | '/app/profile/personal'
@@ -556,6 +566,7 @@ export interface FileRouteTypes {
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
     | '/app/goals/$goalId'
+    | '/app/plans/$planId'
     | '/app/profile/methods'
     | '/app/profile/password'
     | '/app/profile/personal'
@@ -609,6 +620,7 @@ export interface FileRouteTypes {
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
     | '/app/goals/$goalId'
+    | '/app/plans/$planId'
     | '/app/profile/methods'
     | '/app/profile/password'
     | '/app/profile/personal'
@@ -941,6 +953,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppPlansIndexRouteImport
       parentRoute: typeof AppPlansRoute
     }
+    '/app/plans/$planId': {
+      id: '/app/plans/$planId'
+      path: '/$planId'
+      fullPath: '/app/plans/$planId'
+      preLoaderRoute: typeof AppPlansPlanIdRouteImport
+      parentRoute: typeof AppPlansRoute
+    }
     '/app/profile/': {
       id: '/app/profile/'
       path: '/'
@@ -1057,10 +1076,12 @@ const AppGoalsRouteWithChildren = AppGoalsRoute._addFileChildren(
 )
 
 interface AppPlansRouteChildren {
+  AppPlansPlanIdRoute: typeof AppPlansPlanIdRoute
   AppPlansIndexRoute: typeof AppPlansIndexRoute
 }
 
 const AppPlansRouteChildren: AppPlansRouteChildren = {
+  AppPlansPlanIdRoute: AppPlansPlanIdRoute,
   AppPlansIndexRoute: AppPlansIndexRoute,
 }
 
