@@ -8,8 +8,11 @@ import {
   type ReactNode,
 } from "react";
 
+import { toast } from "sonner";
+
 import { useSetup } from "@/hooks/use-setup";
 import { buildSnapshot, type LedgerSnapshot } from "@/lib/finance/engine";
+import { checkIntegrity, debitWalletError, type IntegrityReport } from "@/lib/finance/integrity";
 import type { Category } from "@/lib/finance/categories";
 import type { NotificationEvent, RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import { EMPTY_LEDGER, loadLedger, saveLedger, type LedgerState } from "@/lib/storage/ledger-store";
