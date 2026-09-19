@@ -166,6 +166,65 @@ function PersonalInfoPage() {
           </p>
         </div>
 
+        <div className="space-y-2">
+          <Label className="type-meta" htmlFor="birth-date">
+            Data de nascimento
+          </Label>
+          <Input
+            id="birth-date"
+            type="date"
+            value={birthDate}
+            max={new Date().toISOString().slice(0, 10)}
+            onChange={(e) => setBirthDate(e.target.value)}
+          />
+          <p className="type-meta">{age === null ? "Opcional." : `Tens ${age} anos.`}</p>
+        </div>
+
+        <div className="space-y-2">
+          <Label className="type-meta" htmlFor="phone">
+            Telefone
+          </Label>
+          <Input
+            id="phone"
+            type="tel"
+            inputMode="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="+258 84 000 0000"
+          />
+        </div>
+
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label className="type-meta" htmlFor="city">
+              Cidade
+            </Label>
+            <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Maputo" />
+          </div>
+          <div className="space-y-2">
+            <Label className="type-meta" htmlFor="country">
+              País
+            </Label>
+            <Input
+              id="country"
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              placeholder="Moçambique"
+            />
+          </div>
+        </div>
+
+        <Link
+          to="/app/profile/password"
+          className="list-row items-center justify-between text-[0.9375rem] text-foreground"
+        >
+          Alterar palavra-passe
+          <span aria-hidden="true" className="type-meta">
+            ›
+          </span>
+        </Link>
+
+
         <NativeSelect label="Idioma" value={language} onChange={setLanguage} options={[["pt", "Português"]]} />
         <NativeSelect
           label="Moeda base"
