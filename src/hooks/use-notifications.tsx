@@ -12,6 +12,7 @@ import {
 import { useAnalyticsInput } from "@/hooks/use-analytics";
 import { newId, useLedger } from "@/hooks/use-ledger";
 import { buildDrafts } from "@/lib/notifications/rules";
+import { personalDrafts } from "@/lib/notifications/personal-rules";
 import {
   EMPTY_NOTIFICATIONS_STATE,
   dismiss as dismissNotification,
@@ -78,6 +79,7 @@ const Ctx = createContext<NotificationsContextValue | null>(null);
 
 export function NotificationsProvider({ children }: { children: ReactNode }) {
   const input = useAnalyticsInput();
+  const { state: personal } = usePersonal();
   const { addTransaction, upsertRecurring, ledger } = useLedger();
   const [state, setState] = useState<NotificationsState>(EMPTY_NOTIFICATIONS_STATE);
   const [hydrated, setHydrated] = useState(false);
@@ -85,6 +87,8 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const [tick, setTick] = useState(0);
   const inputRef = useRef(input);
   inputRef.current = input;
+  const developmentRef = useRef(personal.development);
+  developmentRef.current = personal.development;
 
   useEffect(() => {
     setState(loadNotifications());
@@ -106,7 +110,8 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(() => {
     const now = new Date();
     commit((prev) => {
-      const { drafts, signals } = buildDrafts(inputRef.current, prev.prefs, prev.cooldowns, now);
+      const { drafts: financial, signals } = buildDrafts(inputRef.current, prev.prefs, prev.cooldowns, now);
+      const drafts = [...financial, ...personalDrafts(developmentRef.current, now)];
       const result = runAutomations({ automations: prev.automations, drafts, signals, now });
       const ingested = ingest({ ...prev, automations: result.automations }, result.drafts, now);
       const runs = result.runs.length ? [...result.runs, ...ingested.state.runs].slice(0, 100) : ingested.state.runs;
@@ -118,7 +123,7 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!hydrated) return;
     refresh();
-  }, [hydrated, refresh, ledger.transactions, ledger.recurring, tick]);
+  }, [hydrated, refresh, ledger.transactions, ledger.recurring, personal.development, tick]);
 
   useEffect(() => {
     const timer = setInterval(() => setTick((t) => t + 1), 60_000);
