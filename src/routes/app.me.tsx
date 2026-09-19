@@ -134,7 +134,7 @@ function MePage() {
         </Link>
         <Link to="/app/reminders" className="list-row justify-between">
           <span>Os meus lembretes</span>
-          <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+          <span className="type-meta">O que pediste para lembrar</span>
         </Link>
         <Link to="/app/review" className="list-row justify-between">
           <span>Revisão</span>
