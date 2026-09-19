@@ -107,7 +107,7 @@ function RecurringPage() {
               const overdue = date.getTime() < Date.now();
               if (overdue) emitNotificationEvent("recurring_transaction_overdue", { id: rule.id });
               return (
-                <div key={rule.id} className="rounded-2xl border border-border bg-surface p-4">
+                <div key={rule.id} className="rounded-2xl border border-border/70 bg-surface p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="text-sm font-semibold">{rule.name}</p>
@@ -148,7 +148,7 @@ function RecurringPage() {
               key={rule.id}
               type="button"
               onClick={() => setEditing(rule)}
-              className="flex w-full items-center justify-between rounded-xl border border-border bg-surface px-4 py-3 text-left"
+              className="flex w-full items-center justify-between rounded-xl border border-border/70 bg-surface px-4 py-3 text-left"
             >
               <span>
                 <span className="block text-sm font-medium">{rule.name}</span>
@@ -173,7 +173,7 @@ function RecurringPage() {
             subscriptions.map((rule) => {
               const next = nextOccurrence(rule);
               return (
-                <div key={rule.id} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                <div key={rule.id} className="flex items-center justify-between rounded-xl border border-border/70 bg-surface px-4 py-3">
                   <div>
                     <p className="text-sm font-medium">{rule.name}</p>
                     <p className="text-xs text-muted-foreground">
@@ -306,7 +306,7 @@ function RuleForm({
         </div>
       </div>
 
-      <div className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+      <div className="flex items-center justify-between rounded-xl border border-border/70 bg-surface px-4 py-3">
         <span className="text-sm">
           Registar automaticamente
           <span className="block text-xs text-muted-foreground">Por omissão apenas recebes um lembrete.</span>
@@ -314,7 +314,7 @@ function RuleForm({
         <Switch checked={draft.mode === "auto"} onCheckedChange={(checked) => set({ mode: checked ? "auto" : "reminder" })} />
       </div>
 
-      <div className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+      <div className="flex items-center justify-between rounded-xl border border-border/70 bg-surface px-4 py-3">
         <span className="text-sm">É uma subscrição</span>
         <Switch checked={Boolean(draft.isSubscription)} onCheckedChange={(checked) => set({ isSubscription: checked })} />
       </div>

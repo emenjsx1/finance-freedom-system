@@ -32,7 +32,7 @@ function ProtectedMoneyPage() {
         subtitle="Dinheiro que decidiste não utilizar no dia a dia. Continua acessível."
       />
 
-      <section className="mb-5 rounded-2xl border border-border bg-surface p-5">
+      <section className="mb-5 rounded-2xl border border-border/70 bg-surface p-5">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total protegido</p>
         <Money minor={snapshot.protectedMinor} className="mt-1 block text-2xl font-semibold" />
       </section>
@@ -51,7 +51,7 @@ function ProtectedMoneyPage() {
             return (
               <li
                 key={`${row.tx.id}-${row.walletId}-${index}`}
-                className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3"
+                className="flex items-center justify-between rounded-xl border border-border/70 bg-surface px-4 py-3"
               >
                 <div>
                   <p className="text-sm font-medium">

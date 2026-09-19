@@ -38,7 +38,7 @@ function AccountsPage() {
     <div>
       <PageHeader title="Minhas contas" subtitle="Onde o teu dinheiro existe fisicamente." />
 
-      <div className="mb-4 rounded-2xl border border-border bg-surface p-5">
+      <div className="mb-4 rounded-2xl border border-border/70 bg-surface p-5">
         <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Total nas contas</p>
         <Money minor={snapshot.wealthMinor} className="mt-1 block text-2xl font-semibold" />
         {snapshot.totalsByCurrency.length > 1 ? (
@@ -67,7 +67,7 @@ function AccountsPage() {
               <Link
                 to="/app/accounts/$accountId"
                 params={{ accountId: account.id }}
-                className="flex flex-1 items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3.5 transition-colors hover:border-muted-foreground/40"
+                className="flex flex-1 items-center justify-between rounded-2xl border border-border/70 bg-surface px-4 py-3.5 transition-colors hover:border-muted-foreground/40"
               >
                 <span className="flex items-center gap-3">
                   <span
@@ -130,7 +130,7 @@ function AccountsPage() {
                 <Link
                   to="/app/accounts/$accountId"
                   params={{ accountId: account.id }}
-                  className="flex items-center justify-between rounded-2xl border border-dashed border-border px-4 py-3 text-sm text-muted-foreground"
+                  className="flex items-center justify-between rounded-2xl border border-dashed border-border/70 px-4 py-3 text-sm text-muted-foreground"
                 >
                   {account.name}
                   <Money minor={snapshot.accountBalances[account.id] ?? 0} currency={account.currencyCode} />

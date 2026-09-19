@@ -526,7 +526,7 @@ function Row({ label, minor }: { label: string; minor: number }) {
 
 function FlowRow({ label, minor }: { label: string; minor: number }) {
   return (
-    <div className="flex items-center justify-between border-b border-border/40 py-2 last:border-0">
+    <div className="flex items-center justify-between border-b border-border/70/40 py-2 last:border-0">
       <span className="text-sm">{label}</span>
       <Money minor={minor} className="tabular-nums text-sm" />
     </div>

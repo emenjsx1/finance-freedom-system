@@ -231,7 +231,7 @@ function Chip({
       onClick={onClick}
       className={cn(
         "rounded-xl border px-3 py-1.5 text-sm transition-colors",
-        active ? "border-primary bg-primary-soft text-primary" : "border-border bg-surface",
+        active ? "border-primary bg-primary-soft text-primary" : "border-border/70 bg-surface",
       )}
     >
       {children}

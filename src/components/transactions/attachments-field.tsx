@@ -54,14 +54,14 @@ export function AttachmentsField({
         <button
           type="button"
           onClick={() => cameraRef.current?.click()}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border/70 bg-surface px-3 py-2.5 text-sm"
         >
           <Camera className="size-4" /> Tirar foto
         </button>
         <button
           type="button"
           onClick={() => fileRef.current?.click()}
-          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-sm"
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl border border-border/70 bg-surface px-3 py-2.5 text-sm"
         >
           <Upload className="size-4" /> Carregar
         </button>
@@ -90,7 +90,7 @@ export function AttachmentsField({
           {value.map((attachment) => (
             <li
               key={attachment.id}
-              className="flex items-center gap-3 rounded-xl border border-border bg-surface p-2"
+              className="flex items-center gap-3 rounded-xl border border-border/70 bg-surface p-2"
             >
               {attachment.mime.startsWith("image/") && attachment.dataUrl ? (
                 <img src={attachment.dataUrl} alt={attachment.name} className="size-10 rounded-lg object-cover" />

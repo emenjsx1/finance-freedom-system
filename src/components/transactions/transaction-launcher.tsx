@@ -90,7 +90,7 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
       <Sheet open={composer !== null} onOpenChange={(open) => !open && setComposer(null)}>
         <SheetContent
           side={isMobile ? "bottom" : "right"}
-          className="overflow-y-auto rounded-t-3xl border-border bg-background sm:max-w-lg"
+          className="overflow-y-auto rounded-t-3xl border-border/70 bg-background sm:max-w-lg"
         >
           <SheetHeader className="px-4">
             <SheetTitle>{composer ? titles[composer.kind] : ""}</SheetTitle>

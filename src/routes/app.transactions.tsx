@@ -124,7 +124,7 @@ function TransactionsPage() {
         </Button>
       </header>
 
-      <div className="flex items-center justify-between rounded-2xl border border-border bg-surface px-3 py-2">
+      <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-surface px-3 py-2">
         <button
           type="button"
           aria-label="Mês anterior"

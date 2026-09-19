@@ -90,7 +90,7 @@ export function WalletForm({
           <Field label="Tipo de propósito" htmlFor="w-kind">
             <select
               id="w-kind"
-              className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+              className="h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm"
               value={form.kind}
               onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value as BucketKind }))}
             >
@@ -126,7 +126,7 @@ export function WalletForm({
                   onClick={() => setForm((f) => ({ ...f, icon }))}
                   className={cn(
                     "flex size-10 items-center justify-center rounded-xl border text-lg",
-                    form.icon === icon ? "border-primary bg-primary-soft" : "border-border",
+                    form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70",
                   )}
                 >
                   {icon}
@@ -157,7 +157,7 @@ export function WalletForm({
           <Field label="Nível de proteção" htmlFor="w-prot">
             <select
               id="w-prot"
-              className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+              className="h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm"
               value={form.protectionLevel}
               onChange={(e) => setForm((f) => ({ ...f, protectionLevel: e.target.value as ProtectionLevel }))}
             >

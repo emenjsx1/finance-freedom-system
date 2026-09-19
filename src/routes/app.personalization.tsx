@@ -88,7 +88,7 @@ function PersonalizationPage() {
                 "flex flex-col items-center gap-2 rounded-xl border px-3 py-4 text-sm transition-colors",
                 prefs.theme === theme.key
                   ? "border-primary bg-primary-soft text-foreground"
-                  : "border-border text-muted-foreground hover:border-foreground/25",
+                  : "border-border/70 text-muted-foreground hover:border-foreground/25",
               )}
             >
               <theme.icon className="size-4" />

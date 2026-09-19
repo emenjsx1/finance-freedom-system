@@ -51,7 +51,7 @@ function MoneyMapPage() {
       </section>
 
       <div className="mt-4 grid gap-4 lg:grid-cols-2">
-        <section className="rounded-2xl border border-border bg-surface p-5">
+        <section className="rounded-2xl border border-border/70 bg-surface p-5">
           <h2 className="text-sm font-semibold">Onde está</h2>
           <p className="mb-3 text-xs text-muted-foreground">Contas físicas</p>
           <ul className="space-y-2">
@@ -85,7 +85,7 @@ function MoneyMapPage() {
           </ul>
         </section>
 
-        <section className="rounded-2xl border border-border bg-surface p-5">
+        <section className="rounded-2xl border border-border/70 bg-surface p-5">
           <h2 className="text-sm font-semibold">Para que serve</h2>
           <p className="mb-3 text-xs text-muted-foreground">Carteiras de propósito</p>
           <ul className="space-y-2">
@@ -105,7 +105,7 @@ function MoneyMapPage() {
               </li>
             ))}
             {snapshot.unallocatedMinor !== 0 ? (
-              <li className="flex items-center justify-between rounded-xl border border-dashed border-border px-2 py-2 text-sm">
+              <li className="flex items-center justify-between rounded-xl border border-dashed border-border/70 px-2 py-2 text-sm">
                 <span className="text-muted-foreground">Por distribuir</span>
                 <Money minor={snapshot.unallocatedMinor} className="font-medium text-warning" />
               </li>
@@ -114,7 +114,7 @@ function MoneyMapPage() {
         </section>
       </div>
 
-      <section className="mt-4 rounded-2xl border border-border bg-surface p-5">
+      <section className="mt-4 rounded-2xl border border-border/70 bg-surface p-5">
         <div className="flex items-baseline justify-between">
           <h2 className="text-sm font-semibold">Organização</h2>
           <span className="text-sm text-muted-foreground">
@@ -135,7 +135,7 @@ function MoneyMapPage() {
         {snapshot.unallocatedMinor > 0 ? (
           <Link
             to="/app/wallets"
-            className="mt-4 inline-flex rounded-xl border border-border px-4 py-2 text-sm font-semibold"
+            className="mt-4 inline-flex rounded-xl border border-border/70 px-4 py-2 text-sm font-semibold"
           >
             Organizar restante
           </Link>
@@ -145,7 +145,7 @@ function MoneyMapPage() {
       </section>
 
       {snapshot.totalsByCurrency.length > 1 ? (
-        <section className="mt-4 rounded-2xl border border-border bg-surface p-5">
+        <section className="mt-4 rounded-2xl border border-border/70 bg-surface p-5">
           <h2 className="text-sm font-semibold">Moedas</h2>
           <ul className="mt-2 space-y-1 text-sm">
             {snapshot.totalsByCurrency.map((total) => (

@@ -241,7 +241,7 @@ export function TransactionComposer({
           </p>
         </div>
 
-        <dl className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface text-sm">
+        <dl className="divide-y divide-border overflow-hidden rounded-2xl border border-border/70 bg-surface text-sm">
           {kind === "expense" ? (
             <>
               <Line label="Categoria" value={findCategory(ledger.categories, categoryId)?.name ?? "—"} />
@@ -273,8 +273,8 @@ export function TransactionComposer({
         </dl>
 
         {kind === "income" && moneyType === "personal" ? (
-          <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-            <p className="border-b border-border px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
+            <p className="border-b border-border/70 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               Distribuição
             </p>
             {allocations.map((a) => (
@@ -359,7 +359,7 @@ export function TransactionComposer({
             </Label>
             <select
               id="protected-reason"
-              className="mt-1 h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+              className="mt-1 h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm"
               value={protectedReason}
               onChange={(e) => setProtectedReason(e.target.value)}
             >
@@ -448,7 +448,7 @@ export function TransactionComposer({
                 onClick={() => setMoneyType(type)}
                 className={cn(
                   "flex-1 rounded-xl border px-3 py-2.5 text-sm",
-                  moneyType === type ? "border-primary bg-primary-soft text-primary" : "border-border bg-surface",
+                  moneyType === type ? "border-primary bg-primary-soft text-primary" : "border-border/70 bg-surface",
                 )}
               >
                 {type === "personal" ? "Pessoal" : "Negócio"}
@@ -457,8 +457,8 @@ export function TransactionComposer({
           </div>
 
           {moneyType === "personal" ? (
-            <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-              <div className="flex items-center justify-between border-b border-border px-4 py-2">
+            <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
+              <div className="flex items-center justify-between border-b border-border/70 px-4 py-2">
                 <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Distribuição</p>
                 <button
                   type="button"
@@ -471,7 +471,7 @@ export function TransactionComposer({
               {setup.ruleItems.map((item) => {
                 const current = allocations.find((a) => a.bucketId === item.id)?.amountMinor ?? 0;
                 return (
-                  <div key={item.id} className="flex items-center justify-between gap-3 border-b border-border px-4 py-2 last:border-b-0">
+                  <div key={item.id} className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-2 last:border-b-0">
                     <span className="text-sm">
                       <span aria-hidden>{item.icon}</span> {item.name}
                     </span>
@@ -537,7 +537,7 @@ export function TransactionComposer({
       ) : null}
 
       {!quick ? (
-        <details className="rounded-2xl border border-border bg-surface p-4">
+        <details className="rounded-2xl border border-border/70 bg-surface p-4">
           <summary className="cursor-pointer text-sm font-medium">Detalhes opcionais</summary>
           <div className="mt-4 space-y-4">
             <div className="space-y-2">

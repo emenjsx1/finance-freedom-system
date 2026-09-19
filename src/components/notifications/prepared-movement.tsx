@@ -32,7 +32,7 @@ export function PreparedMovementSheet() {
                 <Money minor={prepared.amountMinor} />
               </p>
             </div>
-            <dl className="space-y-1.5 rounded-xl border border-border bg-surface p-4 text-sm">
+            <dl className="space-y-1.5 rounded-xl border border-border/70 bg-surface p-4 text-sm">
               {account ? (
                 <Row label="Conta" value={account.name} />
               ) : null}

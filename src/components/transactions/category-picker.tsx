@@ -84,7 +84,7 @@ function Group({
               "flex items-center gap-2 rounded-xl border px-3 py-2 text-sm transition-colors",
               value === category.id
                 ? "border-primary bg-primary-soft text-primary"
-                : "border-border bg-surface text-foreground hover:border-muted-foreground/40",
+                : "border-border/70 bg-surface text-foreground hover:border-muted-foreground/40",
             )}
           >
             <span aria-hidden>{category.icon}</span>

@@ -39,7 +39,7 @@ export function AmountInput({
     tone === "income" ? "text-income" : tone === "expense" ? "text-expense" : "text-foreground";
 
   return (
-    <div className="rounded-2xl border border-border bg-surface px-5 py-6 text-center">
+    <div className="rounded-2xl border border-border/70 bg-surface px-5 py-6 text-center">
       <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">{label}</p>
       <div className="mt-2 flex items-baseline justify-center gap-2">
         <input
