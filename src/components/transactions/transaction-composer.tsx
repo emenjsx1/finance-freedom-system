@@ -15,11 +15,11 @@ import { findCategory } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
 import {
   allocationsTotal,
-  isProtectedBucketKind,
   largeExpenseRatio,
   previewAllocation,
   suggestFromHistory,
 } from "@/lib/finance/engine";
+import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +58,8 @@ export function TransactionComposer({
   const [stage, setStage] = useState<"form" | "confirm">("form");
   const [submitting, setSubmitting] = useState(false);
   const [acknowledgedLarge, setAcknowledgedLarge] = useState(false);
+  const [protectedReason, setProtectedReason] = useState("");
+  const [protectedAck, setProtectedAck] = useState(false);
 
   const [amountMinor, setAmountMinor] = useState(base?.amountMinor ?? 0);
   const [categoryId, setCategoryId] = useState<string | undefined>(base?.categoryId);
@@ -174,6 +176,7 @@ export function TransactionComposer({
         ...(kind === "income" ? { allocations } : {}),
         ...(kind === "transfer" ? { fromAccountId, toAccountId } : {}),
         ...(kind === "reallocation" ? { fromBucketId, toBucketId } : {}),
+        ...(protectedWarning && protectedReason.trim() ? { protectedReason: protectedReason.trim() } : {}),
       };
 
       if (editingId) {
