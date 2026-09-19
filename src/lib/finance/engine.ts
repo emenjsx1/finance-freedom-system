@@ -75,6 +75,9 @@ export function findRate(rates: ExchangeRate[], from: string, to: string): numbe
   return null;
 }
 
+/** Attribution bucket for reserved money whose source account is unknown. */
+export const UNKNOWN_ACCOUNT = "__sem_conta__";
+
 export function buildSnapshot({
   openingAccounts,
   ruleItems,
