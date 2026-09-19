@@ -292,6 +292,15 @@ export function TransactionComposer({
               value={`${setup.accounts.find((a) => a.id === fromAccountId)?.name} → ${setup.accounts.find((a) => a.id === toAccountId)?.name}`}
             />
           ) : null}
+          {kind === "reservation" ? (
+            <>
+              <Line label="De onde" value={setup.accounts.find((a) => a.id === accountId)?.name ?? "—"} />
+              <Line label="Para quê" value={setup.ruleItems.find((r) => r.id === toBucketId)?.name ?? "—"} />
+            </>
+          ) : null}
+          {kind === "release" ? (
+            <Line label="Libertar de" value={setup.ruleItems.find((r) => r.id === fromBucketId)?.name ?? "—"} />
+          ) : null}
           {kind === "reallocation" ? (
             <Line
               label="Propósito"
@@ -302,18 +311,55 @@ export function TransactionComposer({
           <Line label="Data" value={new Date(occurredAt).toLocaleString("pt-PT")} />
         </dl>
 
-        {kind === "income" && moneyType === "personal" ? (
-          <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
-            <p className="border-b border-border/70 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Distribuição
+        {kind === "reservation" && accountId && toBucketId ? (
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+            <BeforeAfter
+              label={`${setup.accounts.find((a) => a.id === accountId)?.name ?? "Conta"} — saldo`}
+              before={snapshot.accountBalances[accountId] ?? 0}
+              after={snapshot.accountBalances[accountId] ?? 0}
+              currency={currency}
+            />
+            <BeforeAfter
+              label="Disponível"
+              before={position.availableMinor}
+              after={position.availableMinor - amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label={setup.ruleItems.find((r) => r.id === toBucketId)?.name ?? "Propósito"}
+              before={snapshot.bucketBalances[toBucketId] ?? 0}
+              after={(snapshot.bucketBalances[toBucketId] ?? 0) + amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label="Total"
+              before={snapshot.wealthMinor}
+              after={snapshot.wealthMinor}
+              currency={currency}
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              O dinheiro continua em {setup.accounts.find((a) => a.id === accountId)?.name ?? "—"}.
             </p>
-            {allocations.map((a) => (
-              <Line
-                key={a.bucketId}
-                label={setup.ruleItems.find((r) => r.id === a.bucketId)?.name ?? ""}
-                value={formatMoney(a.amountMinor, currency)}
-              />
-            ))}
+          </div>
+        ) : null}
+
+        {kind === "release" && fromBucketId ? (
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+            <BeforeAfter
+              label={setup.ruleItems.find((r) => r.id === fromBucketId)?.name ?? "Propósito"}
+              before={snapshot.bucketBalances[fromBucketId] ?? 0}
+              after={(snapshot.bucketBalances[fromBucketId] ?? 0) - amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label="Disponível"
+              before={position.availableMinor}
+              after={position.availableMinor + amountMinor}
+              currency={currency}
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Nenhuma conta muda de saldo. O dinheiro deixa de estar reservado.
+            </p>
           </div>
         ) : null}
 
