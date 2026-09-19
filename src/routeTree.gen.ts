@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
+import { Route as AppRecurringRouteImport } from './routes/app.recurring'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
@@ -50,6 +51,11 @@ const AppGoalsRoute = AppGoalsRouteImport.update({
   path: '/goals',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRecurringRoute = AppRecurringRouteImport.update({
+  id: '/recurring',
+  path: '/recurring',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -77,6 +83,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/goals': typeof AppGoalsRoute
+  '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/goals': typeof AppGoalsRoute
+  '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/app/goals': typeof AppGoalsRoute
+  '/app/recurring': typeof AppRecurringRoute
   '/app/reports': typeof AppReportsRoute
   '/app/settings': typeof AppSettingsRoute
   '/app/transactions': typeof AppTransactionsRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/goals'
+    | '/app/recurring'
     | '/app/reports'
     | '/app/settings'
     | '/app/transactions'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/goals'
+    | '/app/recurring'
     | '/app/reports'
     | '/app/settings'
     | '/app/transactions'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/app/goals'
+    | '/app/recurring'
     | '/app/reports'
     | '/app/settings'
     | '/app/transactions'
@@ -196,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppGoalsRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/recurring': {
+      id: '/app/recurring'
+      path: '/recurring'
+      fullPath: '/app/recurring'
+      preLoaderRoute: typeof AppRecurringRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/reports': {
       id: '/app/reports'
       path: '/reports'
@@ -229,6 +248,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppGoalsRoute: typeof AppGoalsRoute
+  AppRecurringRoute: typeof AppRecurringRoute
   AppReportsRoute: typeof AppReportsRoute
   AppSettingsRoute: typeof AppSettingsRoute
   AppTransactionsRoute: typeof AppTransactionsRoute
@@ -238,6 +258,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppGoalsRoute: AppGoalsRoute,
+  AppRecurringRoute: AppRecurringRoute,
   AppReportsRoute: AppReportsRoute,
   AppSettingsRoute: AppSettingsRoute,
   AppTransactionsRoute: AppTransactionsRoute,

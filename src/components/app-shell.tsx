@@ -1,4 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
+import { useRef } from "react";
 import {
   Home,
   ArrowLeftRight,
@@ -7,12 +8,15 @@ import {
   MoreHorizontal,
   Wallet,
   PieChart,
+  Repeat,
   Settings,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
 import { pt } from "@/lib/i18n/pt";
+import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
+import { haptic } from "@/hooks/use-ledger";
 
 interface NavItem {
   to: string;
@@ -29,18 +33,39 @@ const primaryNav: NavItem[] = [
 const desktopNav: NavItem[] = [
   { to: "/app", label: pt.nav.home, icon: Home },
   { to: "/app/transactions", label: pt.nav.transactions, icon: ArrowLeftRight },
+  { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
   { to: "/app/wallets", label: pt.nav.wallets, icon: Wallet },
   { to: "/app/goals", label: pt.nav.goals, icon: Target },
   { to: "/app/reports", label: pt.nav.reports, icon: PieChart },
   { to: "/app/settings", label: pt.nav.settings, icon: Settings },
 ];
 
-function useActivePath() {
-  return useRouterState({ select: (s) => s.location.pathname });
-}
-
 export function AppShell() {
-  const pathname = useActivePath();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { openQuickActions, openComposer } = useTransactionLauncher();
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const heldRef = useRef(false);
+
+  function startHold() {
+    heldRef.current = false;
+    holdTimer.current = setTimeout(() => {
+      heldRef.current = true;
+      haptic("selection");
+      openComposer({ kind: "expense", quick: true });
+    }, 500);
+  }
+
+  function endHold() {
+    if (holdTimer.current) clearTimeout(holdTimer.current);
+  }
+
+  function handleAddClick() {
+    if (heldRef.current) {
+      heldRef.current = false;
+      return;
+    }
+    openQuickActions();
+  }
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -74,13 +99,14 @@ export function AppShell() {
             );
           })}
         </nav>
-        <Link
-          to="/app/transactions"
+        <button
+          type="button"
+          onClick={openQuickActions}
           className="mt-4 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-90"
         >
           <Plus className="size-4" />
           {pt.nav.add}
-        </Link>
+        </button>
       </aside>
 
       <main className="pb-28 lg:ml-64 lg:pb-10">
@@ -89,19 +115,24 @@ export function AppShell() {
         </div>
       </main>
 
-      <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-border bg-surface/95 backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/95 backdrop-blur lg:hidden">
         <div className="mx-auto grid max-w-md grid-cols-5 items-end px-2 pb-[max(env(safe-area-inset-bottom),0.5rem)] pt-2">
           {primaryNav.slice(0, 2).map((item) => (
             <BottomLink key={item.to} item={item} active={pathname === item.to} />
           ))}
           <div className="flex justify-center">
-            <Link
-              to="/app/transactions"
-              aria-label={pt.nav.add}
+            <button
+              type="button"
+              aria-label={`${pt.nav.add} transação`}
+              onClick={handleAddClick}
+              onPointerDown={startHold}
+              onPointerUp={endHold}
+              onPointerLeave={endHold}
+              onContextMenu={(e) => e.preventDefault()}
               className="-mt-7 flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-lg shadow-primary/20 transition-transform active:scale-95"
             >
               <Plus className="size-6" />
-            </Link>
+            </button>
           </div>
           {primaryNav.slice(2).map((item) => (
             <BottomLink key={item.to} item={item} active={pathname === item.to} />
