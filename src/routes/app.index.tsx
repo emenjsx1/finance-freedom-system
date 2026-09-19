@@ -257,22 +257,27 @@ function ModuleView({ id }: { id: HomeModuleId }) {
   switch (id) {
     case "available":
       return (
-        <section className="card-hero rise-in">
-          <p className="type-section">{term("available")}</p>
-          <Money minor={snapshot.spendableMinor} className="type-display mt-2 block" />
-          <p className="type-caption mt-2">
-            Só as carteiras que marcaste como disponíveis. O saldo das contas não é o que podes gastar.
-          </p>
-          {snapshot.unallocatedMinor > 0 ? (
-            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border/70 pt-4">
-              <p className="type-caption flex-1">
-                <Money minor={snapshot.unallocatedMinor} /> ainda não têm propósito.
-              </p>
-              <Button size="sm" variant="secondary" onClick={() => openComposer({ kind: "reallocation" })}>
-                Distribuir agora
-              </Button>
-            </div>
-          ) : null}
+        <section className="space-y-5">
+          <MoneyHero
+            title="O teu dinheiro"
+            totalMinor={snapshot.wealthMinor}
+            availableMinor={snapshot.spendableMinor}
+            reservedMinor={snapshot.wealthMinor - snapshot.spendableMinor}
+            availableLabel="Disponível"
+            reservedLabel="Reservado"
+            to="/app/money-map"
+            {...(snapshot.unallocatedMinor > 0
+              ? { note: "Tens dinheiro sem propósito. Toca em Guardar para o distribuir." }
+              : {})}
+          />
+          <QuickActions
+            items={[
+              { label: "Adicionar", icon: Plus, primary: true, onSelect: () => openComposer({ kind: "income" }) },
+              { label: "Transferir", icon: ArrowLeftRight, onSelect: () => openComposer({ kind: "transfer" }) },
+              { label: "Guardar", icon: PiggyBank, onSelect: () => openComposer({ kind: "reallocation" }) },
+              { label: "Mais", icon: MoreHorizontal, onSelect: openQuickActions },
+            ]}
+          />
         </section>
       );
 
