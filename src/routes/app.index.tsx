@@ -360,6 +360,36 @@ function ModuleView({ id }: { id: HomeModuleId }) {
         </section>
       );
 
+    case "focus": {
+      // Only appears when the person actually wrote something. Never seeded.
+      const dev = personal.development;
+      const todayKey = toDateKey(new Date());
+      const feed = todayFeed({ actions: dev.actions, programs: dev.programs }, todayKey, 2);
+      const now = personal.direction.find((d) => d.horizon === "now");
+      const activeProgram = dev.programs.find((p) => p.status === "active");
+      if (!now && feed.empty && !activeProgram) return null;
+      return (
+        <section>
+          <SectionHeader title="Agora" actionLabel="Ver" to="/app/development" />
+          <div className="card-standard space-y-3">
+            {now ? <p className="type-heading">{now.content}</p> : null}
+            {activeProgram ? (
+              <p className="type-meta">{activeProgram.title}</p>
+            ) : null}
+            {feed.entries.map((entry) => (
+              <p key={entry.id} className="type-secondary">
+                {entry.state === "overdue" ? "Atrasada: " : "A seguir: "}
+                {entry.title}
+              </p>
+            ))}
+            <Button variant="secondary" size="sm" asChild>
+              <Link to="/app/development/today">Continuar</Link>
+            </Button>
+          </div>
+        </section>
+      );
+    }
+
     case "position":
       return (
         <section>
