@@ -48,7 +48,7 @@
 - [ ] Cross-currency transfers intentionally unavailable (would require FX accounting in the engine)
 - [ ] Backend (schema, RLS, auth, secure attachment storage) still pending — data is device-local
 
-## Phase 06 — Premium redesign, personalization & personal agent (in progress)
+## Phase 06 — Premium redesign, personalization & personal agent (done, on-device data)
 - [x] Design foundation: spacing/radius/shadow tokens, typography scale with tabular numerals,
       card system (hero/standard/compact/interactive/quiet), reduced-motion support
 - [x] Purpose-built light theme (not inverted) + curated accents (emerald, blue, violet, amber, neutral)
@@ -66,7 +66,10 @@
 - [x] PREPARE → user CONFIRM → engine EXECUTE for agent financial actions, with audit trail
 - [x] Structured personal memory (8 categories) + profile, fully inspectable/editable in agent settings
 - [x] Provider abstraction server-side; AI key never leaves the server; agent outage never breaks the app
-- [ ] Browser QA of tests A–N and technical report
+- [x] Browser QA: dashboard customisation persists across reload, accent/theme switch, privacy mode masks
+      every value, terminology rename is display-only, agent answers with engine values (20.000 available),
+      prepared expense left balances untouched until Confirmar then created exactly one transaction,
+      audit status confirmed, memory added and deleted, no console or runtime errors
 
 ## Phase 07 — Analytics, financial intelligence & insights (requested, not started)
 - [ ] Centralised metric definitions + analytics service layer on top of the engine
