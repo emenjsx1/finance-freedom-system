@@ -88,7 +88,14 @@ export function suggestOrganization(
   incomeMinor: number,
   options: { availableBeforeMinor?: number; balanceFor?: (rule: StrategyRule) => number } = {},
 ): OrganizeSuggestion {
-  if (!strategy || strategy.mode === "none" || incomeMinor <= 0) {
+  // No strategy, a paused one, or a manual one never organises money by itself.
+  if (
+    !strategy ||
+    strategy.mode === "none" ||
+    strategy.mode === "paused" ||
+    strategy.mode === "manual" ||
+    incomeMinor <= 0
+  ) {
     return { incomeMinor, lines: [], leftoverMinor: Math.max(0, incomeMinor) };
   }
 

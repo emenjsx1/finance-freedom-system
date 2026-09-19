@@ -1,6 +1,19 @@
 import type { BucketKind } from "./types";
 
-export type TxKind = "income" | "expense" | "transfer" | "reallocation" | "adjustment";
+/**
+ * `reservation` classifies money that already sits in an account as being for
+ * a purpose. `release` undoes it. Neither moves a single metical between
+ * accounts — only `transfer` does that. `reallocation` moves money from one
+ * purpose to another without touching accounts either.
+ */
+export type TxKind =
+  | "income"
+  | "expense"
+  | "transfer"
+  | "reservation"
+  | "release"
+  | "reallocation"
+  | "adjustment";
 export type MoneyType = "personal" | "business";
 
 export interface Attachment {

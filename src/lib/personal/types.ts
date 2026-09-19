@@ -156,7 +156,15 @@ export interface StrategyRule {
   enabled: boolean;
 }
 
-export type StrategyMode = "none" | "suggest" | "automatic";
+/**
+ * How a strategy behaves when new money arrives.
+ * No strategy at all is represented by `strategy: null`, never by a mode.
+ * - manual: organises nothing on its own; only when the person asks.
+ * - suggest: offers a suggestion after an income is recorded.
+ * - automatic: applies the configured organisation, explicit opt-in only.
+ * - paused: keeps the rules but organises nothing for now.
+ */
+export type StrategyMode = "none" | "manual" | "suggest" | "automatic" | "paused";
 
 export interface Strategy {
   id: string;

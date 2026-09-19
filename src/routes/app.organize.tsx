@@ -276,7 +276,7 @@ function OrganizePage() {
     for (const target of deltas.filter((d) => d.delta < 0)) {
       const ok = addTransaction({
         id: newId(),
-        kind: "reallocation",
+        kind: "release",
         amountMinor: -target.delta,
         occurredAt: now,
         createdAt: now,
@@ -304,7 +304,7 @@ function OrganizePage() {
         left -= fromUnassigned;
         const ok = addTransaction({
           id: newId(),
-          kind: "reallocation",
+          kind: "reservation",
           amountMinor: fromUnassigned,
           occurredAt: now,
           createdAt: now,

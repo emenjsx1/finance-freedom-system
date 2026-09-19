@@ -11,7 +11,7 @@ import {
 import { buildSnapshot } from "@/lib/finance/engine";
 import type { Transaction } from "@/lib/finance/ledger-types";
 import { DEFAULT_CATEGORIES } from "@/lib/finance/categories";
-import { DEFAULT_RULE_ITEMS, EMPTY_SETUP } from "@/lib/storage/local-setup-store";
+import { EMPTY_SETUP } from "@/lib/storage/local-setup-store";
 import type { Account } from "@/lib/finance/types";
 
 const accounts: Account[] = [
@@ -51,11 +51,17 @@ function tx(partial: Partial<Transaction> & Pick<Transaction, "id" | "kind" | "a
   } as Transaction;
 }
 
+// Purposes are user-created now, so tests declare the ones they need.
+const ruleItems = [
+  { id: "r1", name: "Construção", kind: "wealth", percentage: 0, icon: "🏗️", order: 0, source: "custom" },
+  { id: "r3", name: "Vida", kind: "life", percentage: 0, icon: "🏠", order: 1, source: "custom" },
+] as AnalyticsInput["setup"]["ruleItems"];
+
 function makeInput(transactions: Transaction[]): AnalyticsInput {
-  const setup = { ...EMPTY_SETUP, accounts, currencyCode: "MZN" };
+  const setup = { ...EMPTY_SETUP, accounts, ruleItems, currencyCode: "MZN" };
   const snapshot = buildSnapshot({
     openingAccounts: accounts,
-    ruleItems: DEFAULT_RULE_ITEMS,
+    ruleItems,
     transactions,
     baseCurrency: "MZN",
     exchangeRates: [],
@@ -155,7 +161,7 @@ describe("analytics service", () => {
     ];
     const snapshot = buildSnapshot({
       openingAccounts: setupAccounts,
-      ruleItems: DEFAULT_RULE_ITEMS,
+      ruleItems: ruleItems,
       transactions,
       baseCurrency: "MZN",
       exchangeRates: [],

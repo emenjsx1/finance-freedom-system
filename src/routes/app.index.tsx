@@ -354,7 +354,7 @@ function ModuleView({ id }: { id: HomeModuleId }) {
             items={[
               { label: "Adicionar", icon: Plus, primary: true, onSelect: () => openComposer({ kind: "income" }) },
               { label: "Transferir", icon: ArrowLeftRight, onSelect: () => openComposer({ kind: "transfer" }) },
-              { label: "Guardar", icon: PiggyBank, onSelect: () => openComposer({ kind: "reallocation" }) },
+              { label: "Guardar", icon: PiggyBank, onSelect: () => openComposer({ kind: "reservation" }) },
               { label: "Mais", icon: MoreHorizontal, onSelect: openQuickActions },
             ]}
           />

@@ -13,17 +13,13 @@ import { haptic, newId, useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { findCategory } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
-import {
-  allocationsTotal,
-  largeExpenseRatio,
-  previewAllocation,
-  suggestFromHistory,
-} from "@/lib/finance/engine";
+import { largeExpenseRatio, suggestFromHistory } from "@/lib/finance/engine";
 import { debitWalletError } from "@/lib/finance/integrity";
+import { financialPosition } from "@/lib/finance/position";
+import { listPurposes } from "@/lib/finance/purposes";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
-import { Symbol } from "@/lib/icons/symbols";
 
 export interface ComposerOptions {
   kind: TxKind;
@@ -33,7 +29,7 @@ export interface ComposerOptions {
   base?: Transaction;
   editingId?: string;
   /** Prefill from context, e.g. saving straight into a specific goal. */
-  preset?: { toBucketId?: string; bucketId?: string; accountId?: string };
+  preset?: { toBucketId?: string; fromBucketId?: string; bucketId?: string; accountId?: string };
 }
 
 function localInputValue(iso: string) {
@@ -73,7 +69,7 @@ export function TransactionComposer({
     base?.accountId ?? preset?.accountId ?? suggestions.suggestedAccountId ?? setup.accounts[0]?.id,
   );
   const [bucketId, setBucketId] = useState<string | undefined>(
-    base?.bucketId ?? preset?.bucketId ?? suggestions.suggestedBucketId ?? setup.ruleItems.find((r) => r.kind === "life")?.id,
+    base?.bucketId ?? preset?.bucketId ?? suggestions.suggestedBucketId,
   );
   const [fromAccountId, setFromAccountId] = useState<string | undefined>(
     base?.fromAccountId ?? setup.accounts[0]?.id,
@@ -82,10 +78,10 @@ export function TransactionComposer({
     base?.toAccountId ?? setup.accounts[1]?.id,
   );
   const [fromBucketId, setFromBucketId] = useState<string | undefined>(
-    base?.fromBucketId ?? setup.ruleItems.find((r) => r.kind === "free")?.id,
+    base?.fromBucketId ?? preset?.fromBucketId,
   );
   const [toBucketId, setToBucketId] = useState<string | undefined>(
-    base?.toBucketId ?? preset?.toBucketId ?? setup.ruleItems.find((r) => r.kind === "goals")?.id,
+    base?.toBucketId ?? preset?.toBucketId,
   );
   const [occurredAt, setOccurredAt] = useState(localInputValue(base?.occurredAt ?? new Date().toISOString()));
   const [merchant, setMerchant] = useState(base?.merchant ?? "");
@@ -94,19 +90,23 @@ export function TransactionComposer({
   const [tagsText, setTagsText] = useState((base?.tags ?? []).join(" "));
   const [attachments, setAttachments] = useState<Attachment[]>(base?.attachments ?? []);
   const [moneyType, setMoneyType] = useState<MoneyType>(base?.moneyType ?? "personal");
-  const [manualAllocation, setManualAllocation] = useState(false);
-  const [allocations, setAllocations] = useState<Allocation[]>(base?.allocations ?? []);
+  // Income no longer distributes itself. New money lands in an account and is
+  // available until the person decides it has a purpose.
+  const [allocations] = useState<Allocation[]>(base?.allocations ?? []);
 
-  useEffect(() => {
-    if (kind !== "income" || manualAllocation) return;
-    setAllocations(moneyType === "personal" ? previewAllocation(amountMinor, setup.ruleItems) : []);
-  }, [kind, amountMinor, moneyType, manualAllocation, setup.ruleItems]);
+  const position = financialPosition(snapshot);
+  const purposes = useMemo(() => listPurposes(setup.ruleItems, snapshot), [setup.ruleItems, snapshot]);
+  const purposeOptions = purposes.map((p) => ({ value: p.id, label: p.name }));
+  const accountOptions = setup.accounts
+    .filter((a) => !a.archived)
+    .map((a) => ({ value: a.id, label: a.name || "Conta" }));
 
   const bucket = setup.ruleItems.find((r) => r.id === bucketId);
   const bucketBalance = bucketId ? (snapshot.bucketBalances[bucketId] ?? 0) : 0;
   const ratio = kind === "expense" ? largeExpenseRatio(amountMinor, bucketBalance) : null;
   const isLarge = ratio !== null && ratio >= 0.4;
-  const sourceWalletId = kind === "reallocation" ? fromBucketId : kind === "expense" ? bucketId : undefined;
+  const sourceWalletId =
+    kind === "reallocation" || kind === "release" ? fromBucketId : kind === "expense" ? bucketId : undefined;
   const sourceWallet = setup.ruleItems.find((r) => r.id === sourceWalletId);
   // Money leaving a protected wallet asks for a deliberate, recorded reason.
   const protectedWarning = Boolean(sourceWallet && isProtectedWallet(sourceWallet));
@@ -141,9 +141,19 @@ export function TransactionComposer({
     }
     if (kind === "income") {
       if (!accountId) return "Escolhe a conta que recebeu o dinheiro.";
-      if (moneyType === "personal" && allocationsTotal(allocations) !== amountMinor) {
-        return "A distribuição tem de somar exatamente o valor recebido.";
-      }
+    }
+    if (kind === "reservation") {
+      if (!accountId) return "Escolhe a conta de onde vem o dinheiro.";
+      if (!toBucketId) return "Escolhe para que é este dinheiro.";
+      // Only money that is not already reserved can receive a new purpose.
+      if ((snapshot.accountAvailable[accountId] ?? 0) < amountMinor)
+        return "Essa conta não tem dinheiro disponível suficiente.";
+    }
+    if (kind === "release") {
+      if (!fromBucketId) return "Escolhe o propósito de onde queres libertar dinheiro.";
+      const walletName = setup.ruleItems.find((r) => r.id === fromBucketId)?.name;
+      const error = debitWalletError(snapshot, fromBucketId, amountMinor, walletName, creditBackFor(fromBucketId));
+      if (error) return error;
     }
     if (kind === "transfer") {
       if (!fromAccountId || !toAccountId) return "Escolhe as duas contas.";
@@ -199,10 +209,12 @@ export function TransactionComposer({
         ...(merchant ? { merchant } : {}),
         ...(description ? { description } : {}),
         ...(note ? { note } : {}),
-        ...(kind === "expense" || kind === "income" ? { accountId } : {}),
+        ...(kind === "expense" || kind === "income" || kind === "reservation" ? { accountId } : {}),
         ...(kind === "expense" ? { bucketId } : {}),
-        ...(kind === "income" ? { allocations } : {}),
+        ...(kind === "income" && allocations.length ? { allocations } : {}),
         ...(kind === "transfer" ? { fromAccountId, toAccountId } : {}),
+        ...(kind === "reservation" ? { toBucketId } : {}),
+        ...(kind === "release" ? { fromBucketId } : {}),
         ...(kind === "reallocation" ? { fromBucketId, toBucketId } : {}),
         ...(protectedWarning && protectedReason.trim() ? { protectedReason: protectedReason.trim() } : {}),
       };
@@ -231,26 +243,46 @@ export function TransactionComposer({
       return;
     }
     if (tx.kind === "income") {
-      toast.success(`${formatMoney(tx.amountMinor, currency)} adicionados`, {
-        description: (tx.allocations ?? [])
-          .map((a) => `${setup.ruleItems.find((r) => r.id === a.bucketId)?.name}: ${formatMoney(a.amountMinor, currency, { compactDecimals: true })}`)
-          .join(" · "),
+      const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
+      toast.success(`${formatMoney(tx.amountMinor, currency)} adicionados ao ${accountName}`, {
+        description: "O dinheiro está disponível.",
+        // Organising is always the person's choice, never automatic.
+        action: {
+          label: "Organizar esta entrada",
+          onClick: () => {
+            window.location.assign("/app/organize");
+          },
+        },
       });
+      return;
+    }
+    if (tx.kind === "reservation") {
+      const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
+      const purposeName = setup.ruleItems.find((r) => r.id === tx.toBucketId)?.name ?? "";
+      toast.success(`${formatMoney(tx.amountMinor, currency)} guardados para ${purposeName}`, {
+        description: `O dinheiro continua em ${accountName}.`,
+      });
+      return;
+    }
+    if (tx.kind === "release") {
+      toast.success("Dinheiro libertado", { description: "Voltou a ficar disponível, na mesma conta." });
       return;
     }
     if (tx.kind === "transfer") {
       toast.success("Transferência registada", { description: "O teu património não mudou." });
       return;
     }
-    toast.success("Redistribuição registada", { description: "O dinheiro continua na mesma conta." });
+    toast.success("Propósito alterado", { description: "As contas não mudaram." });
   }
 
   const titles: Record<TxKind, string> = {
     income: "Nova entrada",
     expense: "Nova despesa",
     transfer: "Nova transferência",
-    reallocation: "Redistribuição",
-  adjustment: "Ajuste de saldo",
+    reservation: "Guardar dinheiro",
+    release: "Libertar dinheiro",
+    reallocation: "Mudar propósito",
+    adjustment: "Ajuste de saldo",
   };
 
   if (stage === "confirm") {
@@ -290,6 +322,15 @@ export function TransactionComposer({
               value={`${setup.accounts.find((a) => a.id === fromAccountId)?.name} → ${setup.accounts.find((a) => a.id === toAccountId)?.name}`}
             />
           ) : null}
+          {kind === "reservation" ? (
+            <>
+              <Line label="De onde" value={setup.accounts.find((a) => a.id === accountId)?.name ?? "—"} />
+              <Line label="Para quê" value={setup.ruleItems.find((r) => r.id === toBucketId)?.name ?? "—"} />
+            </>
+          ) : null}
+          {kind === "release" ? (
+            <Line label="Libertar de" value={setup.ruleItems.find((r) => r.id === fromBucketId)?.name ?? "—"} />
+          ) : null}
           {kind === "reallocation" ? (
             <Line
               label="Propósito"
@@ -300,18 +341,55 @@ export function TransactionComposer({
           <Line label="Data" value={new Date(occurredAt).toLocaleString("pt-PT")} />
         </dl>
 
-        {kind === "income" && moneyType === "personal" ? (
-          <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
-            <p className="border-b border-border/70 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-              Distribuição
+        {kind === "reservation" && accountId && toBucketId ? (
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+            <BeforeAfter
+              label={`${setup.accounts.find((a) => a.id === accountId)?.name ?? "Conta"} — saldo`}
+              before={snapshot.accountBalances[accountId] ?? 0}
+              after={snapshot.accountBalances[accountId] ?? 0}
+              currency={currency}
+            />
+            <BeforeAfter
+              label="Disponível"
+              before={position.availableMinor}
+              after={position.availableMinor - amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label={setup.ruleItems.find((r) => r.id === toBucketId)?.name ?? "Propósito"}
+              before={snapshot.bucketBalances[toBucketId] ?? 0}
+              after={(snapshot.bucketBalances[toBucketId] ?? 0) + amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label="Total"
+              before={snapshot.wealthMinor}
+              after={snapshot.wealthMinor}
+              currency={currency}
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              O dinheiro continua em {setup.accounts.find((a) => a.id === accountId)?.name ?? "—"}.
             </p>
-            {allocations.map((a) => (
-              <Line
-                key={a.bucketId}
-                label={setup.ruleItems.find((r) => r.id === a.bucketId)?.name ?? ""}
-                value={formatMoney(a.amountMinor, currency)}
-              />
-            ))}
+          </div>
+        ) : null}
+
+        {kind === "release" && fromBucketId ? (
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+            <BeforeAfter
+              label={setup.ruleItems.find((r) => r.id === fromBucketId)?.name ?? "Propósito"}
+              before={snapshot.bucketBalances[fromBucketId] ?? 0}
+              after={(snapshot.bucketBalances[fromBucketId] ?? 0) - amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label="Disponível"
+              before={position.availableMinor}
+              after={position.availableMinor + amountMinor}
+              currency={currency}
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Nenhuma conta muda de saldo. O dinheiro deixa de estar reservado.
+            </p>
           </div>
         ) : null}
 
@@ -457,17 +535,14 @@ export function TransactionComposer({
 
       {kind === "expense" ? (
         <div className="grid grid-cols-2 gap-3">
-          <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId}
-            options={setup.accounts.map((a) => ({ value: a.id, label: a.name || "Conta" }))} />
-          <SelectField label="Propósito" value={bucketId ?? ""} onChange={setBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
+          <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
+          <SelectField label="Propósito" value={bucketId ?? ""} onChange={setBucketId} options={purposeOptions} />
         </div>
       ) : null}
 
       {kind === "income" ? (
         <>
-          <SelectField label="Conta de destino" value={accountId ?? ""} onChange={setAccountId}
-            options={setup.accounts.map((a) => ({ value: a.id, label: a.name || "Conta" }))} />
+          <SelectField label="Conta de destino" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
           <div className="flex gap-2">
             {(["personal", "business"] as MoneyType[]).map((type) => (
               <button
@@ -485,59 +560,9 @@ export function TransactionComposer({
             ))}
           </div>
 
-          {moneyType === "personal" ? (
-            <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
-              <div className="flex items-center justify-between border-b border-border/70 px-4 py-2">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Distribuição</p>
-                <button
-                  type="button"
-                  onClick={() => setManualAllocation((v) => !v)}
-                  className="text-xs text-primary underline"
-                >
-                  {manualAllocation ? "Usar a minha regra" : "Ajustar manualmente"}
-                </button>
-              </div>
-              {setup.ruleItems.map((item) => {
-                const current = allocations.find((a) => a.bucketId === item.id)?.amountMinor ?? 0;
-                return (
-                  <div key={item.id} className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-2 last:border-b-0">
-                    <span className="text-sm">
-                      <Symbol name={item.icon} className="size-4" /> {item.name}
-                    </span>
-                    {manualAllocation ? (
-                      <Input
-                        className="numeric w-28 text-right"
-                        inputMode="numeric"
-                        value={String(current)}
-                        aria-label={`Valor para ${item.name}`}
-                        onChange={(e) => {
-                          const digits = Number(e.target.value.replace(/\D/g, "")) || 0;
-                          setAllocations((prev) => {
-                            const others = prev.filter((a) => a.bucketId !== item.id);
-                            return [...others, { bucketId: item.id, amountMinor: digits }];
-                          });
-                        }}
-                      />
-                    ) : (
-                      <span className="numeric text-sm text-muted-foreground">
-                        {formatMoney(current, currency)}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-              {manualAllocation ? (
-                <p
-                  className={cn(
-                    "px-4 py-2 text-xs",
-                    allocationsTotal(allocations) === amountMinor ? "text-primary" : "text-muted-foreground",
-                  )}
-                >
-                  Distribuído: {formatMoney(allocationsTotal(allocations), currency)} de {formatMoney(amountMinor, currency)}
-                </p>
-              ) : null}
-            </div>
-          ) : null}
+          <p className="type-meta">
+            O dinheiro entra na conta e fica disponível. Podes dar-lhe um propósito quando quiseres.
+          </p>
         </>
       ) : null}
 
@@ -553,15 +578,44 @@ export function TransactionComposer({
         </div>
       ) : null}
 
+      {kind === "reservation" ? (
+        <div className="space-y-3">
+          {accountOptions.length === 0 ? (
+            <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+              Ainda não tens nenhuma conta. Adiciona uma conta para poderes guardar dinheiro.
+            </p>
+          ) : (
+            <SelectField label="De onde?" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
+          )}
+          {accountId ? (
+            <p className="type-meta">
+              Disponível nesta conta: {formatMoney(snapshot.accountAvailable[accountId] ?? 0, currency)}
+            </p>
+          ) : null}
+          <SelectField label="Para quê?" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          <p className="type-meta">
+            O dinheiro fica onde está. Só passa a ter um propósito.
+          </p>
+        </div>
+      ) : null}
+
+      {kind === "release" ? (
+        <div className="space-y-3">
+          <SelectField label="Libertar de" value={fromBucketId ?? ""} onChange={setFromBucketId} options={purposeOptions} />
+          <p className="type-meta">O dinheiro volta a ficar disponível, na mesma conta onde está.</p>
+        </div>
+      ) : null}
+
       {kind === "reallocation" ? (
         <div className="space-y-2">
-          <SelectField label="De" value={fromBucketId ?? ""} onChange={setFromBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
+          <SelectField label="De" value={fromBucketId ?? ""} onChange={setFromBucketId} options={purposeOptions} />
           <div className="flex justify-center text-muted-foreground" aria-hidden>
             <ArrowRight className="size-4 rotate-90" />
           </div>
-          <SelectField label="Para" value={toBucketId ?? ""} onChange={setToBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
+          <SelectField label="Para" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          <p className="type-meta">
+            Isto não é uma transferência: as contas não mudam, só muda o propósito do dinheiro.
+          </p>
         </div>
       ) : null}
 
@@ -610,7 +664,11 @@ export function TransactionComposer({
             ? "Registar despesa"
             : kind === "transfer"
               ? "Transferir"
-              : "Guardar dinheiro"}
+              : kind === "reservation"
+                ? "Guardar dinheiro"
+                : kind === "release"
+                  ? "Libertar dinheiro"
+                  : "Mudar propósito"}
       </Button>
     </div>
   );

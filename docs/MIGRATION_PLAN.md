@@ -56,3 +56,13 @@ the product. Illustrative figures exist only in documentation.
 
 Decisões por resolver: nomes finais das rotas no backend, retenção de conversas do Agente,
 se os check-ins de programa geram notificação push por defeito, e detalhe dos snapshots de widget.
+
+## Limpeza do modelo de dinheiro
+
+`src/lib/finance/money-migration.ts` corre uma vez por dispositivo
+(`setup.moneyModelMigratedAt`):
+
+1. Remove os cinco propósitos por defeito (r1–r5) quando nunca foram tocados.
+2. Mantém os que têm histórico real, mas sem percentagem e sem estatuto de sistema.
+3. Liga cada plano ao propósito com o mesmo nome (`planId`), evitando "Turquia" duplicada.
+4. Nenhum movimento real é apagado.

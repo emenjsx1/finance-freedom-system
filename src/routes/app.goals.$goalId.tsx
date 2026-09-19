@@ -149,7 +149,7 @@ function GoalDetailPage() {
           <div className="mt-6 flex gap-2">
             <Button
               className="flex-1"
-              onClick={() => openComposer({ kind: "reallocation", preset: { toBucketId: goalId } })}
+              onClick={() => openComposer({ kind: "reservation", preset: { toBucketId: goalId } })}
             >
               <PiggyBank className="size-4" aria-hidden /> Guardar dinheiro
             </Button>

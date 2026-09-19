@@ -89,8 +89,16 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       if (tx.kind === "expense") {
         return debitWalletError(base, tx.bucketId, tx.amountMinor, walletName(tx.bucketId));
       }
-      if (tx.kind === "reallocation") {
+      if (tx.kind === "reallocation" || tx.kind === "release") {
         return debitWalletError(base, tx.fromBucketId, tx.amountMinor, walletName(tx.fromBucketId));
+      }
+      if (tx.kind === "reservation" && tx.accountId) {
+        // Only money that is not already reserved can receive a purpose.
+        const available = base.accountAvailable[tx.accountId] ?? 0;
+        if (available < tx.amountMinor) {
+          const name = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "Esta conta";
+          return `${name} não tem dinheiro disponível suficiente.`;
+        }
       }
       if (tx.kind === "adjustment" && tx.direction === "negative") {
         for (const allocation of tx.allocations ?? []) {

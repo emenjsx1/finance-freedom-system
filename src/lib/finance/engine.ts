@@ -33,6 +33,15 @@ export interface CurrencyTotal {
 
 export interface LedgerSnapshot {
   accountBalances: Record<string, number>;
+  /** Money reserved for some purpose, per physical account. */
+  accountReserved: Record<string, number>;
+  /** Physical balance minus what is reserved inside that same account. */
+  accountAvailable: Record<string, number>;
+  /**
+   * purposeId → accountId → amount. Answers "the 50.000 for Turquia are in BIM"
+   * without ever inventing an account named Turquia.
+   */
+  purposeByAccount: Record<string, Record<string, number>>;
   bucketBalances: Record<string, number>;
   buckets: BucketView[];
   wallets: WalletView[];
@@ -66,6 +75,9 @@ export function findRate(rates: ExchangeRate[], from: string, to: string): numbe
   return null;
 }
 
+/** Attribution bucket for reserved money whose source account is unknown. */
+export const UNKNOWN_ACCOUNT = "__sem_conta__";
+
 export function buildSnapshot({
   openingAccounts,
   ruleItems,
@@ -86,7 +98,41 @@ export function buildSnapshot({
     map[key] = (map[key] ?? 0) + delta;
   };
 
-  for (const tx of transactions) {
+  /** purposeId → accountId → amount. `UNKNOWN_ACCOUNT` holds pre-cleanup rows. */
+  const purposeByAccount: Record<string, Record<string, number>> = {};
+  const attribute = (purposeId: string | undefined, accountId: string, delta: number) => {
+    if (!purposeId) return;
+    const row = (purposeByAccount[purposeId] ??= {});
+    row[accountId] = (row[accountId] ?? 0) + delta;
+    if (row[accountId] === 0) delete row[accountId];
+  };
+  /** Takes `amount` out of a purpose, proportionally to where it physically is. */
+  const detach = (purposeId: string | undefined, amount: number): Record<string, number> => {
+    if (!purposeId) return {};
+    const row = purposeByAccount[purposeId] ?? {};
+    const entries = Object.entries(row).filter(([, value]) => value > 0);
+    const total = entries.reduce((sum, [, value]) => sum + value, 0);
+    if (total <= 0) return { [UNKNOWN_ACCOUNT]: amount };
+    const take = Math.min(amount, total);
+    const shares = splitAmount(
+      take,
+      entries.map(([id, value]) => ({ id, percentage: (value / total) * 100 })),
+    );
+    for (const [accountId, value] of Object.entries(shares)) attribute(purposeId, accountId, -value);
+    if (take < amount) {
+      shares[UNKNOWN_ACCOUNT] = (shares[UNKNOWN_ACCOUNT] ?? 0) + (amount - take);
+    }
+    return shares;
+  };
+
+  // Attribution depends on the order money actually moved, not on insert order.
+  const ordered = [...transactions].sort((a, b) =>
+    a.occurredAt === b.occurredAt
+      ? a.createdAt.localeCompare(b.createdAt)
+      : a.occurredAt.localeCompare(b.occurredAt),
+  );
+
+  for (const tx of ordered) {
     // Business money is tracked apart so it never contaminates personal totals.
     if (tx.moneyType === "business") {
       if (tx.kind === "income") businessBalanceMinor += tx.amountMinor;
@@ -99,12 +145,14 @@ export function buildSnapshot({
         add(accountBalances, tx.accountId, tx.amountMinor);
         for (const allocation of tx.allocations ?? []) {
           add(bucketBalances, allocation.bucketId, allocation.amountMinor);
+          attribute(allocation.bucketId, tx.accountId ?? UNKNOWN_ACCOUNT, allocation.amountMinor);
         }
         break;
       }
       case "expense": {
         add(accountBalances, tx.accountId, -tx.amountMinor);
         add(bucketBalances, tx.bucketId, -tx.amountMinor);
+        detach(tx.bucketId, tx.amountMinor);
         break;
       }
       case "transfer": {
@@ -112,9 +160,31 @@ export function buildSnapshot({
         add(accountBalances, tx.toAccountId, tx.amountMinor);
         break;
       }
+      case "reservation": {
+        // Classification only: the physical balance of the account does not move.
+        add(bucketBalances, tx.toBucketId, tx.amountMinor);
+        attribute(tx.toBucketId, tx.accountId ?? UNKNOWN_ACCOUNT, tx.amountMinor);
+        break;
+      }
+      case "release": {
+        add(bucketBalances, tx.fromBucketId, -tx.amountMinor);
+        detach(tx.fromBucketId, tx.amountMinor);
+        break;
+      }
       case "reallocation": {
+        // Purpose → purpose. Source-account attribution follows the money.
+        if (!tx.fromBucketId && tx.toBucketId) {
+          // Pre-cleanup rows written by the plan funding sheet were reservations.
+          add(bucketBalances, tx.toBucketId, tx.amountMinor);
+          attribute(tx.toBucketId, tx.accountId ?? UNKNOWN_ACCOUNT, tx.amountMinor);
+          break;
+        }
         add(bucketBalances, tx.fromBucketId, -tx.amountMinor);
         add(bucketBalances, tx.toBucketId, tx.amountMinor);
+        const moved = detach(tx.fromBucketId, tx.amountMinor);
+        for (const [accountId, value] of Object.entries(moved)) {
+          attribute(tx.toBucketId, accountId, value);
+        }
         break;
       }
       case "adjustment": {
@@ -123,7 +193,10 @@ export function buildSnapshot({
         const delta = tx.direction === "negative" ? -tx.amountMinor : tx.amountMinor;
         add(accountBalances, tx.accountId, delta);
         for (const allocation of tx.allocations ?? []) {
-          add(bucketBalances, allocation.bucketId, tx.direction === "negative" ? -allocation.amountMinor : allocation.amountMinor);
+          const signed = tx.direction === "negative" ? -allocation.amountMinor : allocation.amountMinor;
+          add(bucketBalances, allocation.bucketId, signed);
+          if (signed >= 0) attribute(allocation.bucketId, tx.accountId ?? UNKNOWN_ACCOUNT, signed);
+          else detach(allocation.bucketId, -signed);
         }
         break;
       }
@@ -184,8 +257,28 @@ export function buildSnapshot({
   const purposeTotalMinor = Object.values(bucketBalances).reduce((a, b) => a + b, 0);
   const unallocatedMinor = wealthMinor - purposeTotalMinor;
 
+  // Reserved money per account: the same money already counted in the account
+  // balance, only classified. Nothing here adds to the total.
+  const accountReserved: Record<string, number> = {};
+  for (const row of Object.values(purposeByAccount)) {
+    for (const [accountId, value] of Object.entries(row)) {
+      if (accountId === UNKNOWN_ACCOUNT) continue;
+      accountReserved[accountId] = (accountReserved[accountId] ?? 0) + value;
+    }
+  }
+  const accountAvailable: Record<string, number> = {};
+  for (const account of openingAccounts) {
+    accountAvailable[account.id] = Math.max(
+      0,
+      (accountBalances[account.id] ?? 0) - (accountReserved[account.id] ?? 0),
+    );
+  }
+
   return {
     accountBalances,
+    accountReserved,
+    accountAvailable,
+    purposeByAccount,
     bucketBalances,
     buckets,
     wallets,

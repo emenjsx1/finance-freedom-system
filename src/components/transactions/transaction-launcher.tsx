@@ -24,7 +24,7 @@ const ACTIONS: { kind: TxKind; label: string; hint: string; icon: typeof Plus; t
   { kind: "income", label: "Entrada", hint: "Dinheiro que recebeste", icon: ArrowUp, tone: "text-income" },
   { kind: "expense", label: "Despesa", hint: "Dinheiro que gastaste", icon: ArrowDown, tone: "text-expense" },
   { kind: "transfer", label: "Transferência", hint: "Entre contas", icon: ArrowLeftRight, tone: "text-info" },
-  { kind: "reallocation", label: "Guardar", hint: "Reservar com propósito", icon: Diamond, tone: "text-wealth" },
+  { kind: "reservation", label: "Guardar", hint: "Dar um propósito a dinheiro que já tens", icon: Diamond, tone: "text-wealth" },
 ];
 
 
@@ -45,8 +45,10 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
     income: "Nova entrada",
     expense: "Nova despesa",
     transfer: "Nova transferência",
-    reallocation: "Redistribuição",
-  adjustment: "Ajuste de saldo",
+    reservation: "Guardar dinheiro",
+    release: "Libertar dinheiro",
+    reallocation: "Mudar propósito",
+    adjustment: "Ajuste de saldo",
   };
 
   return (

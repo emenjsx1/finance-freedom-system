@@ -41,8 +41,10 @@ export const Route = createFileRoute("/app/strategy")({
 
 const MODE_LABELS: Record<StrategyMode, string> = {
   none: "Não organizar",
+  manual: "Só quando eu pedir",
   suggest: "Sugerir e eu decido",
   automatic: "Organizar automaticamente",
+  paused: "Em pausa",
 };
 
 function StrategyPage() {
