@@ -98,10 +98,11 @@ export function TransactionComposer({
   const bucketBalance = bucketId ? (snapshot.bucketBalances[bucketId] ?? 0) : 0;
   const ratio = kind === "expense" ? largeExpenseRatio(amountMinor, bucketBalance) : null;
   const isLarge = ratio !== null && ratio >= 0.4;
-  const protectedWarning =
-    kind === "reallocation" && fromBucketId
-      ? isProtectedBucketKind(setup.ruleItems.find((r) => r.id === fromBucketId)?.kind ?? "")
-      : false;
+  const sourceWalletId = kind === "reallocation" ? fromBucketId : kind === "expense" ? bucketId : undefined;
+  const sourceWallet = setup.ruleItems.find((r) => r.id === sourceWalletId);
+  // Money leaving a protected wallet asks for a deliberate, recorded reason.
+  const protectedWarning = Boolean(sourceWallet && isProtectedWallet(sourceWallet));
+
 
   const tags = tagsText
     .split(/[\s,]+/)
