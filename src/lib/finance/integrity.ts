@@ -124,6 +124,16 @@ export function checkIntegrity(input: LedgerInput, snapshot: LedgerSnapshot): In
     }
   }
 
+  /** One card per missing purpose, not one per movement. */
+  const orphanPurposes = new Map<string, { movements: number; amountMinor: number }>();
+  const noteOrphan = (walletId: string, amountMinor: number) => {
+    const current = orphanPurposes.get(walletId) ?? { movements: 0, amountMinor: 0 };
+    orphanPurposes.set(walletId, {
+      movements: current.movements + 1,
+      amountMinor: current.amountMinor + amountMinor,
+    });
+  };
+
   for (const tx of input.transactions) {
     const refs: Array<string | undefined> = [tx.accountId, tx.fromAccountId, tx.toAccountId];
     for (const ref of refs) {
