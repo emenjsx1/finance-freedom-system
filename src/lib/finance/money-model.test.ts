@@ -29,10 +29,10 @@ describe("money model: account vs purpose", () => {
 
   it("reserving money does not move it between accounts", () => {
     const s = snap([tx({ id: "1", kind: "reservation", amountMinor: 5_000_000, accountId: "bim", toBucketId: "turquia" })]);
-    expect(s.).toBe(10_000_000);
-    expect(s.).toBe(5_000_000);
-    expect(s.).toBe(5_000_000);
-    expect(s.).toBe(5_000_000);
+    expect(s.accountBalances["bim"]).toBe(10_000_000);
+    expect(s.accountReserved["bim"]).toBe(5_000_000);
+    expect(s.accountAvailable["bim"]).toBe(5_000_000);
+    expect(s.bucketBalances["turquia"]).toBe(5_000_000);
     expect(s.wealthMinor).toBe(12_000_000);
   });
 
@@ -41,7 +41,7 @@ describe("money model: account vs purpose", () => {
       tx({ id: "1", kind: "reservation", amountMinor: 3_000_000, accountId: "bim", toBucketId: "turquia" }),
       tx({ id: "2", kind: "reservation", amountMinor: 1_000_000, accountId: "mpesa", toBucketId: "turquia" }),
     ]);
-    expect(s.).toBe(4_000_000);
+    expect(s.bucketBalances["turquia"]).toBe(4_000_000);
     expect(s.purposeByAccount["turquia"]?.["bim"]).toBe(3_000_000);
     expect(s.purposeByAccount["turquia"]?.["mpesa"]).toBe(1_000_000);
   });
@@ -51,9 +51,9 @@ describe("money model: account vs purpose", () => {
       tx({ id: "1", kind: "reservation", amountMinor: 3_000_000, accountId: "bim", toBucketId: "turquia" }),
       tx({ id: "2", kind: "release", amountMinor: 1_000_000, fromBucketId: "turquia" }),
     ]);
-    expect(s.).toBe(10_000_000);
-    expect(s.).toBe(2_000_000);
-    expect(s.).toBe(8_000_000);
+    expect(s.accountBalances["bim"]).toBe(10_000_000);
+    expect(s.bucketBalances["turquia"]).toBe(2_000_000);
+    expect(s.accountAvailable["bim"]).toBe(8_000_000);
   });
 
   it("changing purpose leaves physical balances untouched", () => {
@@ -61,9 +61,9 @@ describe("money model: account vs purpose", () => {
       tx({ id: "1", kind: "reservation", amountMinor: 3_000_000, accountId: "bim", toBucketId: "turquia" }),
       tx({ id: "2", kind: "reallocation", amountMinor: 1_000_000, fromBucketId: "turquia", toBucketId: "carro" }),
     ]);
-    expect(s.).toBe(10_000_000);
-    expect(s.).toBe(2_000_000);
-    expect(s.).toBe(1_000_000);
+    expect(s.accountBalances["bim"]).toBe(10_000_000);
+    expect(s.bucketBalances["turquia"]).toBe(2_000_000);
+    expect(s.bucketBalances["carro"]).toBe(1_000_000);
     expect(s.purposeByAccount["carro"]?.["bim"]).toBe(1_000_000);
   });
 
@@ -72,16 +72,16 @@ describe("money model: account vs purpose", () => {
       tx({ id: "1", kind: "reservation", amountMinor: 3_000_000, accountId: "bim", toBucketId: "turquia" }),
       tx({ id: "2", kind: "transfer", amountMinor: 2_000_000, fromAccountId: "bim", toAccountId: "mpesa" }),
     ]);
-    expect(s.).toBe(8_000_000);
-    expect(s.).toBe(4_000_000);
-    expect(s.).toBe(3_000_000);
+    expect(s.accountBalances["bim"]).toBe(8_000_000);
+    expect(s.accountBalances["mpesa"]).toBe(4_000_000);
+    expect(s.bucketBalances["turquia"]).toBe(3_000_000);
     expect(s.wealthMinor).toBe(12_000_000);
   });
 
   it("income stays available until it gets a purpose", () => {
     const s = snap([tx({ id: "1", kind: "income", amountMinor: 2_000_000, accountId: "mpesa" })]);
     const p = financialPosition(s);
-    expect(s.).toBe(4_000_000);
+    expect(s.accountBalances["mpesa"]).toBe(4_000_000);
     expect(p.totalMinor).toBe(p.availableMinor + p.reservedMinor);
   });
 
