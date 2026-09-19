@@ -153,7 +153,7 @@ function HomePage() {
           >
             {editing ? <Check /> : <Pencil />}
           </Button>
-          <Link to="/app/profile" aria-label="Abrir o teu perfil" className="rounded-full">
+          <Link to="/app/me" aria-label="Abrir o teu espaço" className="rounded-full">
             <UserAvatar
               name={preferredName || profile?.full_name || setup.fullName}
               email={user?.email ?? null}

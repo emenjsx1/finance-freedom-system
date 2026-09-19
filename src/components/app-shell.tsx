@@ -91,7 +91,6 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
       { to: "/app/notifications", label: "Notificações", icon: Bell },
       { to: "/app/automations", label: "Automações", icon: Zap },
       { to: "/app/personalization", label: "Personalização", icon: Sliders },
-      { to: "/app/profile", label: "Perfil e conta", icon: User },
       { to: "/app/settings", label: "Definições", icon: Settings },
     ],
   },
