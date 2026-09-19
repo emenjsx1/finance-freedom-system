@@ -17,6 +17,7 @@ import { largeExpenseRatio, suggestFromHistory } from "@/lib/finance/engine";
 import { debitWalletError } from "@/lib/finance/integrity";
 import { financialPosition } from "@/lib/finance/position";
 import { listPurposes } from "@/lib/finance/purposes";
+import { upsertWallet } from "@/lib/finance/setup-ops";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
@@ -47,7 +48,7 @@ export function TransactionComposer({
   onDone: () => void;
 }) {
   const { kind, quick, base, editingId, preset } = options;
-  const { setup } = useSetup();
+  const { setup, update } = useSetup();
   const { ledger, snapshot, addTransaction, updateTransaction } = useLedger();
   const currency = setup.currencyCode;
   /** "25 000 MZN" — the same shape the screens use, in every confirmation. */
@@ -101,6 +102,40 @@ export function TransactionComposer({
   const position = financialPosition(snapshot);
   const purposes = useMemo(() => listPurposes(setup.ruleItems, snapshot), [setup.ruleItems, snapshot]);
   const purposeOptions = purposes.map((p) => ({ value: p.id, label: p.name }));
+
+  // A purpose can be born right here: never send someone to another screen in
+  // the middle of putting money aside.
+  const [newPurposeName, setNewPurposeName] = useState("");
+  function createPurpose(name: string): string | null {
+    const clean = name.trim();
+    if (!clean) {
+      notifyError("Dá um nome a este propósito.");
+      return null;
+    }
+    // One name, one purpose. Two "Viagem" rows would split the same money in
+    // two and make the plan look half funded.
+    const existing = setup.ruleItems.find(
+      (item) => !item.archived && item.name.trim().toLowerCase() === clean.toLowerCase(),
+    );
+    if (existing) {
+      setNewPurposeName("");
+      return existing.id;
+    }
+    const id = newId();
+    update(
+      upsertWallet(setup, {
+        id,
+        name: clean,
+        percentage: 0,
+        icon: "star",
+        kind: "goals",
+        source: "custom",
+        order: setup.ruleItems.length,
+      }),
+    );
+    setNewPurposeName("");
+    return id;
+  }
   const accountOptions = setup.accounts
     .filter((a) => !a.archived)
     .map((a) => ({ value: a.id, label: a.name || "Conta" }));
@@ -135,8 +170,8 @@ export function TransactionComposer({
     if (kind === "expense") {
       if (!categoryId) return "Escolhe uma categoria.";
       if (!accountId) return "Escolhe a conta de onde saiu o dinheiro.";
-      if (!bucketId) return "Escolhe o propósito do dinheiro.";
-      if (moneyType === "personal") {
+      // A purpose is optional: most spending simply comes out of available money.
+      if (moneyType === "personal" && bucketId) {
         // Domain guard: a purpose can never hold less than zero.
         const walletName = setup.ruleItems.find((r) => r.id === bucketId)?.name;
         const error = debitWalletError(snapshot, bucketId, amountMinor, walletName, creditBackFor(bucketId));
@@ -214,7 +249,7 @@ export function TransactionComposer({
         ...(description ? { description } : {}),
         ...(note ? { note } : {}),
         ...(kind === "expense" || kind === "income" || kind === "reservation" ? { accountId } : {}),
-        ...(kind === "expense" ? { bucketId } : {}),
+        ...(kind === "expense" && bucketId ? { bucketId } : {}),
         ...(kind === "income" && allocations.length ? { allocations } : {}),
         ...(kind === "transfer" ? { fromAccountId, toAccountId } : {}),
         ...(kind === "reservation" ? { toBucketId } : {}),
@@ -240,9 +275,12 @@ export function TransactionComposer({
 
   function announceSuccess(tx: Transaction) {
     if (tx.kind === "expense") {
+      const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
       const before = bucketBalance;
       toast.success("Despesa registada", {
-        description: `${bucket?.name ?? ""} · ${amountLabel(before)} → ${amountLabel(before - tx.amountMinor)}`,
+        description: bucket
+          ? `${bucket.name} · ${amountLabel(before)} → ${amountLabel(before - tx.amountMinor)}`
+          : `Saiu de ${accountName}, do dinheiro disponível.`,
       });
       return;
     }
@@ -301,7 +339,7 @@ export function TransactionComposer({
             )}
           >
             {kind === "expense" ? "−" : kind === "income" ? "+" : ""}
-            {formatMoney(amountMinor, currency)}
+            {amountLabel(amountMinor)}
           </p>
         </div>
 
@@ -461,7 +499,7 @@ export function TransactionComposer({
               <TriangleAlert className="size-4" aria-hidden /> Estás a retirar dinheiro protegido.
             </p>
             <p className="mt-1 text-muted-foreground">
-              {formatMoney(amountMinor, currency)} de {sourceWallet?.name}. O dinheiro continua acessível — só
+              {amountLabel(amountMinor)} de {sourceWallet?.name}. O dinheiro continua acessível — só
               queremos que a decisão fique registada.
             </p>
             <Label htmlFor="protected-reason" className="mt-3 block text-xs text-muted-foreground">
@@ -538,9 +576,20 @@ export function TransactionComposer({
       ) : null}
 
       {kind === "expense" ? (
-        <div className="grid grid-cols-2 gap-3">
-          <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
-          <SelectField label="Propósito" value={bucketId ?? ""} onChange={setBucketId} options={purposeOptions} />
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
+            <SelectField
+              label="Propósito"
+              value={bucketId ?? ""}
+              onChange={setBucketId}
+              options={purposeOptions}
+              emptyLabel="Dinheiro disponível"
+            />
+          </div>
+          <p className="type-meta">
+            Se este dinheiro não estava guardado para nada, deixa em “Dinheiro disponível”.
+          </p>
         </div>
       ) : null}
 
@@ -593,12 +642,40 @@ export function TransactionComposer({
           )}
           {accountId ? (
             <p className="type-meta">
-              Disponível nesta conta: {formatMoney(snapshot.accountAvailable[accountId] ?? 0, currency)}
+              Disponível nesta conta: {amountLabel(snapshot.accountAvailable[accountId] ?? 0)}
             </p>
           ) : null}
-          <SelectField label="Para quê?" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          {purposeOptions.length > 0 ? (
+            <SelectField label="Para quê?" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          ) : null}
+          <div className="space-y-1.5">
+            <Label htmlFor="new-purpose">
+              {purposeOptions.length > 0 ? "Ou cria um propósito novo" : "Para quê?"}
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                id="new-purpose"
+                value={newPurposeName}
+                maxLength={40}
+                placeholder="Ex.: Viagem, Carro, Emergência"
+                onChange={(e) => setNewPurposeName(e.target.value)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="shrink-0"
+                onClick={() => {
+                  const id = createPurpose(newPurposeName);
+                  if (id) setToBucketId(id);
+                }}
+              >
+                Criar
+              </Button>
+            </div>
+          </div>
           <p className="type-meta">
-            O dinheiro fica onde está. Só passa a ter um propósito.
+            Guardar não move dinheiro nenhum: ele fica na mesma conta, só deixa de estar disponível
+            para gastar porque passou a ter um destino.
           </p>
         </div>
       ) : null}
@@ -692,11 +769,13 @@ function SelectField({
   value,
   onChange,
   options,
+  emptyLabel,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
+  emptyLabel?: string;
 }) {
   const id = `field-${label.replace(/\s/g, "-").toLowerCase()}`;
   return (
@@ -708,7 +787,7 @@ function SelectField({
         onChange={(e) => onChange(e.target.value)}
         className="h-11 w-full rounded-xl border border-input bg-background px-3 text-sm"
       >
-        <option value="">Selecionar</option>
+        <option value="">{emptyLabel ?? "Selecionar"}</option>
         {options.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}

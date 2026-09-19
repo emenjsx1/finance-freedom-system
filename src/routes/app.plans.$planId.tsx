@@ -51,7 +51,7 @@ function PlanDetailPage() {
   const navigate = useNavigate();
   const { state, updatePlan, removePlan, addMilestone, toggleMilestone } = usePersonal();
   const { snapshot, ledger } = useLedger();
-  const { setup } = useSetup();
+  const { setup, update: updateSetup } = useSetup();
   const [milestone, setMilestone] = useState("");
   const [funding, setFunding] = useState(false);
   const [showSteps, setShowSteps] = useState(false);
@@ -368,8 +368,30 @@ function PlanDetailPage() {
           variant="ghost"
           className="text-destructive"
           onClick={() => {
-            removePlan(plan.id);
-            toast.success("Plano removido. O dinheiro e o histórico ficam intactos.");
+            // The plan and its purpose are one identity: removing the plan must
+            // also retire the purpose, otherwise it keeps showing up in the
+            // money screens as if nothing had been deleted.
+            if (plan.walletId) {
+              const held = snapshot.bucketBalances[plan.walletId] ?? 0;
+              updateSetup(
+                held === 0
+                  ? { ruleItems: setup.ruleItems.filter((r) => r.id !== plan.walletId) }
+                  : {
+                      ruleItems: setup.ruleItems.map((r) =>
+                        r.id === plan.walletId ? { ...r, planId: undefined, source: "custom" } : r,
+                      ),
+                    },
+              );
+              removePlan(plan.id);
+              toast.success(
+                held === 0
+                  ? "Plano removido."
+                  : "Plano removido. O dinheiro guardado continua como propósito, podes libertá-lo quando quiseres.",
+              );
+            } else {
+              removePlan(plan.id);
+              toast.success("Plano removido. O dinheiro e o histórico ficam intactos.");
+            }
             void navigate({ to: "/app/plans" });
           }}
         >

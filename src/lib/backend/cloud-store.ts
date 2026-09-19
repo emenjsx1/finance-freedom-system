@@ -94,12 +94,29 @@ async function mergeSettingsBlob(userId: string, patch: Partial<SettingsBlob>): 
 }
 
 /**
- * The cloud copy wins, but nothing that only exists on this device is thrown
- * away. Dropping a purpose that a recorded movement still points at is what
- * produced "movimento sem propósito válido", so local-only rows are kept and
- * re-uploaded on the next save.
+ * The FIRST time a device meets the account, records that exist only here are
+ * carried up instead of being wiped — that is how a half-written account used
+ * to lose a purpose a movement still pointed at. After that first meeting the
+ * account is the single truth, otherwise something the person deleted on
+ * another device would come back from this device's stale cache.
  */
-function unionById<T extends { id: string }>(cloud: T[], local: T[]): T[] {
+const ADOPTED_KEY = "norte.cloud.adopted.v1";
+
+function adopted(domain: string): boolean {
+  if (typeof localStorage === "undefined") return true;
+  try {
+    const raw = localStorage.getItem(ADOPTED_KEY);
+    const list = raw ? (JSON.parse(raw) as string[]) : [];
+    if (list.includes(domain)) return true;
+    localStorage.setItem(ADOPTED_KEY, JSON.stringify([...list, domain]));
+    return false;
+  } catch {
+    return true;
+  }
+}
+
+function mergeById<T extends { id: string }>(domain: string, cloud: T[], local: T[]): T[] {
+  if (adopted(domain)) return cloud;
   const seen = new Set(cloud.map((row) => row.id));
   return [...cloud, ...local.filter((row) => !seen.has(row.id))];
 }
@@ -129,7 +146,7 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       (profile.data?.["full_name"] as string | null) ??
       base.fullName,
     currencyCode: (profile.data?.["base_currency"] as string | null) ?? base.currencyCode,
-    accounts: unionById(
+    accounts: mergeById("accounts", 
       (accounts ?? []).map(
       (row): Account => ({
         id: row["id"] as string,
@@ -155,7 +172,7 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       ),
       base.accounts,
     ),
-    ruleItems: unionById(
+    ruleItems: mergeById("purposes", 
       (purposes ?? []).map(
       (row): AllocationRuleItem => ({
         id: row["id"] as string,
@@ -185,7 +202,7 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       ),
       base.ruleItems,
     ),
-    exchangeRates: unionById(
+    exchangeRates: mergeById("rates", 
       (rates.data ?? []).map(
       (row): ExchangeRate => ({
         id: row["id"] as string,
@@ -300,11 +317,11 @@ export async function loadCloudLedger(base: LedgerState): Promise<LedgerState | 
   ]);
   if (!transactions.length && !categories.length && !recurring.length) return null;
   return {
-    transactions: unionById(transactions, base.transactions).sort((a, b) =>
+    transactions: mergeById("transactions", transactions, base.transactions).sort((a, b) =>
       b.occurredAt.localeCompare(a.occurredAt),
     ),
-    categories: categories.length ? unionById(categories, base.categories) : base.categories,
-    recurring: unionById(recurring, base.recurring),
+    categories: categories.length ? mergeById("categories", categories, base.categories) : base.categories,
+    recurring: mergeById("recurring", recurring, base.recurring),
   };
 }
 
