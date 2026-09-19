@@ -48,6 +48,10 @@ function PersonalInfoPage() {
   const [language, setLanguage] = useState("pt");
   const [currency, setCurrency] = useState("MZN");
   const [timezone, setTimezone] = useState("Africa/Maputo");
+  const [birthDate, setBirthDate] = useState("");
+  const [phone, setPhone] = useState("");
+  const [city, setCity] = useState("");
+  const [country, setCountry] = useState("");
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -57,7 +61,14 @@ function PersonalInfoPage() {
     setLanguage(profile?.language ?? "pt");
     setCurrency(profile?.base_currency ?? setup.currencyCode);
     setTimezone(profile?.timezone ?? "Africa/Maputo");
+    setBirthDate(profile?.birth_date ?? "");
+    setPhone(profile?.phone ?? "");
+    setCity(profile?.city ?? "");
+    setCountry(profile?.country ?? "");
   }, [profile, setup.fullName, setup.currencyCode]);
+
+  const age = ageFromBirthDate(birthDate);
+
 
   if (!user) {
     return (
