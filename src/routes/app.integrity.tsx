@@ -260,7 +260,7 @@ function FixNegativeWallet({
           const now = new Date().toISOString();
           onFix({
             id: newId(),
-            kind: "reallocation",
+            kind: "release",
             amountMinor,
             occurredAt: now,
             createdAt: now,
