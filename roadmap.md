@@ -175,3 +175,4 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - [x] Avisos do topo visíveis e clicáveis; Dinheiro mostra todos os propósitos e permite criar novos
 - [x] Disponível definido de forma única como total menos todo o dinheiro reservado
 - [x] Detalhe da conta mostra saldo físico, disponível, reservado e cada propósito guardado nessa conta
+- [ ] Detalhe da conta: histórico real de movimentos (data, valor, destino/origem) — entradas, saídas, transferências, reservas
