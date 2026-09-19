@@ -43,6 +43,7 @@ import { Route as AppNotificationsRouteImport } from './routes/app.notifications
 import { Route as AppOrganizeRouteImport } from './routes/app.organize'
 import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
 import { Route as AppPlanRouteImport } from './routes/app.plan'
+import { Route as AppPlanningRouteImport } from './routes/app.planning'
 import { Route as AppPlansRouteImport } from './routes/app.plans'
 import { Route as AppPrivacyRouteImport } from './routes/app.privacy'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
@@ -248,6 +249,11 @@ const AppPersonalizationRoute = AppPersonalizationRouteImport.update({
 const AppPlanRoute = AppPlanRouteImport.update({
   id: '/plan',
   path: '/plan',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppPlanningRoute = AppPlanningRouteImport.update({
+  id: '/planning',
+  path: '/planning',
   getParentRoute: () => AppRoute,
 } as any)
 const AppPlansRoute = AppPlansRouteImport.update({
@@ -468,6 +474,7 @@ export interface FileRoutesByFullPath {
   '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/planning': typeof AppPlanningRoute
   '/app/plans': typeof AppPlansRouteWithChildren
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
@@ -534,6 +541,7 @@ export interface FileRoutesByTo {
   '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/planning': typeof AppPlanningRoute
   '/app/privacy': typeof AppPrivacyRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
@@ -604,6 +612,7 @@ export interface FileRoutesById {
   '/app/organize': typeof AppOrganizeRoute
   '/app/personalization': typeof AppPersonalizationRoute
   '/app/plan': typeof AppPlanRoute
+  '/app/planning': typeof AppPlanningRoute
   '/app/plans': typeof AppPlansRouteWithChildren
   '/app/privacy': typeof AppPrivacyRoute
   '/app/profile': typeof AppProfileRouteWithChildren
@@ -678,6 +687,7 @@ export interface FileRouteTypes {
     | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/planning'
     | '/app/plans'
     | '/app/privacy'
     | '/app/profile'
@@ -744,6 +754,7 @@ export interface FileRouteTypes {
     | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/planning'
     | '/app/privacy'
     | '/app/protected'
     | '/app/recurring'
@@ -813,6 +824,7 @@ export interface FileRouteTypes {
     | '/app/organize'
     | '/app/personalization'
     | '/app/plan'
+    | '/app/planning'
     | '/app/plans'
     | '/app/privacy'
     | '/app/profile'
@@ -1105,6 +1117,13 @@ declare module '@tanstack/react-router' {
       path: '/plan'
       fullPath: '/app/plan'
       preLoaderRoute: typeof AppPlanRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/planning': {
+      id: '/app/planning'
+      path: '/planning'
+      fullPath: '/app/planning'
+      preLoaderRoute: typeof AppPlanningRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/plans': {
@@ -1511,6 +1530,7 @@ interface AppRouteChildren {
   AppOrganizeRoute: typeof AppOrganizeRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
   AppPlanRoute: typeof AppPlanRoute
+  AppPlanningRoute: typeof AppPlanningRoute
   AppPlansRoute: typeof AppPlansRouteWithChildren
   AppPrivacyRoute: typeof AppPrivacyRoute
   AppProfileRoute: typeof AppProfileRouteWithChildren
@@ -1549,6 +1569,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppOrganizeRoute: AppOrganizeRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
   AppPlanRoute: AppPlanRoute,
+  AppPlanningRoute: AppPlanningRoute,
   AppPlansRoute: AppPlansRouteWithChildren,
   AppPrivacyRoute: AppPrivacyRoute,
   AppProfileRoute: AppProfileRouteWithChildren,

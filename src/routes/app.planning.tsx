@@ -54,12 +54,11 @@ function PlanningPage() {
   function savePlanned() {
     if (!editing) return;
     const id = editing.id;
-    update((prev) => ({
-      ...prev,
-      ruleItems: prev.ruleItems.map((item) =>
+    update({
+      ruleItems: setup.ruleItems.map((item) =>
         item.id === id ? { ...item, monthlyPlanMinor: draftMinor > 0 ? draftMinor : undefined } : item,
       ),
-    }));
+    });
     setEditing(null);
   }
 
