@@ -14,7 +14,12 @@ import {
   type TerminologyKey,
   type UserPreferences,
 } from "@/lib/prefs/types";
+import { loadCloudPreferences, saveCloudPreferences } from "@/lib/backend/cloud-store";
+import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { loadPreferences, savePreferences } from "@/lib/storage/prefs-store";
+
+/** Preferences are one document; the base copy is only a fallback. */
+const loadCloudPreferencesState = () => loadCloudPreferences();
 
 interface PrefsContextValue {
   prefs: UserPreferences;
@@ -62,6 +67,19 @@ export function PrefsProvider({ children }: { children: ReactNode }) {
     setPrefs(DEFAULT_PREFERENCES);
     savePreferences(DEFAULT_PREFERENCES);
   }, []);
+
+  const applyCloud = useCallback((next: UserPreferences) => {
+    savePreferences(next);
+    setPrefs(next);
+  }, []);
+
+  useCloudSync({
+    state: prefs,
+    hydrated,
+    apply: applyCloud,
+    load: loadCloudPreferencesState,
+    save: saveCloudPreferences,
+  });
 
   const term = useCallback(
     (key: TerminologyKey) => prefs.terminology[key]?.trim() || TERMINOLOGY_DEFAULTS[key],

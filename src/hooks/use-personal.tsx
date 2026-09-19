@@ -38,6 +38,8 @@ import type {
   ProgramItem,
   Reflection,
 } from "@/lib/development/types";
+import { loadCloudPersonal, saveCloudPersonal } from "@/lib/backend/cloud-store";
+import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { loadPersonal, savePersonal } from "@/lib/storage/personal-store";
 
 function newId(): string {
@@ -122,6 +124,19 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
       return next;
     });
   }, []);
+
+  const applyCloud = useCallback((next: PersonalState) => {
+    savePersonal(next);
+    setState(next);
+  }, []);
+
+  useCloudSync({
+    state,
+    hydrated,
+    apply: applyCloud,
+    load: loadCloudPersonal,
+    save: saveCloudPersonal,
+  });
 
   /**
    * Legacy migration: an older version organised money with a fixed

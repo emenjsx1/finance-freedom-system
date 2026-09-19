@@ -26,6 +26,8 @@ import { previewAllocation } from "@/lib/finance/engine";
 import { newId, useLedger } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
+import { loadCloudAgent, saveCloudAgent } from "@/lib/backend/cloud-store";
+import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { loadAgentState, saveAgentState } from "@/lib/storage/agent-store";
 
 interface AgentContextValue {
@@ -83,6 +85,13 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       return next;
     });
   }, []);
+
+  const applyCloud = useCallback((next: AgentState) => {
+    saveAgentState(next);
+    setState(next);
+  }, []);
+
+  useCloudSync({ state, hydrated, apply: applyCloud, load: loadCloudAgent, save: saveCloudAgent });
 
   const deps = useMemo<AgentDeps>(
     () => ({

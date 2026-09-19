@@ -16,6 +16,8 @@ import { buildSnapshot, type LedgerSnapshot } from "@/lib/finance/engine";
 import { checkIntegrity, debitWalletError, type IntegrityReport } from "@/lib/finance/integrity";
 import type { Category } from "@/lib/finance/categories";
 import type { NotificationEvent, RecurringRule, Transaction } from "@/lib/finance/ledger-types";
+import { loadCloudLedger, saveCloudLedger } from "@/lib/backend/cloud-store";
+import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { EMPTY_LEDGER, loadLedger, saveLedger, type LedgerState } from "@/lib/storage/ledger-store";
 
 export function newId(): string {
@@ -68,6 +70,19 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       return next;
     });
   }, []);
+
+  const applyCloud = useCallback((next: LedgerState) => {
+    saveLedger(next);
+    setLedger(next);
+  }, []);
+
+  useCloudSync({
+    state: ledger,
+    hydrated,
+    apply: applyCloud,
+    load: loadCloudLedger,
+    save: saveCloudLedger,
+  });
 
   /**
    * Single domain guard for every writer (composer, agent, recurring,

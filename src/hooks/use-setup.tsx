@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { loadCloudSetup, saveCloudSetup } from "@/lib/backend/cloud-store";
+import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import {
   EMPTY_SETUP,
   loadSetup,
@@ -31,6 +33,13 @@ export function SetupProvider({ children }: { children: ReactNode }) {
       return next;
     });
   }, []);
+
+  const apply = useCallback((next: SetupState) => {
+    saveSetup(next);
+    setSetup(next);
+  }, []);
+
+  useCloudSync({ state: setup, hydrated, apply, load: loadCloudSetup, save: saveCloudSetup });
 
   const value = useMemo(() => ({ setup, hydrated, update }), [setup, hydrated, update]);
 
