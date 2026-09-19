@@ -153,7 +153,11 @@ function PlanDetailPage() {
 
           <div className="mt-5 flex flex-col gap-2">
             {plan.walletId ? (
-              <Button onClick={() => openComposer({ kind: "reallocation", preset: { toBucketId: plan.walletId } })}>
+              <Button
+                onClick={() =>
+                  openComposer({ kind: "reallocation", preset: { toBucketId: plan.walletId! } })
+                }
+              >
                 Guardar dinheiro
               </Button>
             ) : (
