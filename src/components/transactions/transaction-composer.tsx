@@ -621,3 +621,26 @@ function SelectField({
     </div>
   );
 }
+
+function BeforeAfter({
+  label,
+  before,
+  after,
+  currency,
+}: {
+  label: string;
+  before: number;
+  after: number;
+  currency: string;
+}) {
+  return (
+    <div className="flex items-center justify-between py-0.5">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="numeric flex items-center gap-1.5">
+        <span className="text-muted-foreground">{formatMoney(before, currency, { compactDecimals: true })}</span>
+        <ArrowRight className="size-3" aria-hidden />
+        <span className="font-medium">{formatMoney(after, currency, { compactDecimals: true })}</span>
+      </span>
+    </div>
+  );
+}
