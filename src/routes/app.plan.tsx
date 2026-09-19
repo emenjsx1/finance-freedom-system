@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   BarChart3,
+  CalendarClock,
+  Flag,
   Landmark,
   Wallet,
   Map,
