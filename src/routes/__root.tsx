@@ -17,6 +17,7 @@ import { PrefsProvider } from "@/hooks/use-prefs";
 import { AgentProvider } from "@/hooks/use-agent";
 import { PersonalProvider } from "@/hooks/use-personal";
 import { NotificationsProvider } from "@/hooks/use-notifications";
+import { MoneyModelMigration } from "@/components/system/money-migration";
 import { Toaster } from "@/components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -133,6 +134,7 @@ function RootComponent() {
             <PersonalProvider>
             <AgentProvider>
               <NotificationsProvider>
+                <MoneyModelMigration />
                 {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
                 <Outlet />
                 <Toaster position="top-center" />
