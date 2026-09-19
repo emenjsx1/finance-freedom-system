@@ -2,14 +2,16 @@
  * TEMPORARY persistence layer.
  *
  * The app's real source of truth is the backend (profiles, accounts, buckets,
- * allocation_rules, ...). Until the backend is enabled, onboarding output is
- * kept here so the product is usable end-to-end. The shape mirrors the domain
- * model so swapping this module for backend queries is a contained change.
+ * allocation_rules, ...). Until the backend is enabled, onboarding output and
+ * the money architecture are kept here so the product is usable end-to-end.
+ * The shape mirrors the domain model so swapping this module for backend
+ * queries is a contained change.
  */
 import {
   DEFAULT_NOTIFICATION_PREFERENCES,
   type Account,
   type AllocationRuleItem,
+  type ExchangeRate,
   type NotificationPreferences,
 } from "@/lib/finance/types";
 import { DEFAULT_CURRENCY_CODE } from "@/lib/finance/currency";
@@ -21,7 +23,10 @@ export interface SetupState {
   currencyCode: string;
   ruleItems: AllocationRuleItem[];
   accounts: Account[];
+  exchangeRates: ExchangeRate[];
   notifications: NotificationPreferences;
+  /** Hides every monetary value across the app. */
+  privacyMode: boolean;
   onboardingCompleted: boolean;
 }
 
@@ -38,16 +43,36 @@ export const EMPTY_SETUP: SetupState = {
   currencyCode: DEFAULT_CURRENCY_CODE,
   ruleItems: DEFAULT_RULE_ITEMS,
   accounts: [],
+  exchangeRates: [],
   notifications: DEFAULT_NOTIFICATION_PREFERENCES,
+  privacyMode: false,
   onboardingCompleted: false,
 };
+
+/** Fills Phase 04 fields for data created by earlier phases. */
+function normalize(state: SetupState): SetupState {
+  return {
+    ...state,
+    accounts: (state.accounts ?? []).map((account, index) => ({
+      includeInNetWorth: true,
+      currencyCode: state.currencyCode,
+      order: index,
+      ...account,
+    })),
+    ruleItems: (state.ruleItems ?? []).map((item, index) => ({
+      order: index,
+      ...item,
+    })),
+    exchangeRates: state.exchangeRates ?? [],
+  };
+}
 
 export function loadSetup(): SetupState {
   if (typeof window === "undefined") return EMPTY_SETUP;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return EMPTY_SETUP;
-    return { ...EMPTY_SETUP, ...(JSON.parse(raw) as Partial<SetupState>) };
+    return normalize({ ...EMPTY_SETUP, ...(JSON.parse(raw) as Partial<SetupState>) });
   } catch {
     return EMPTY_SETUP;
   }
