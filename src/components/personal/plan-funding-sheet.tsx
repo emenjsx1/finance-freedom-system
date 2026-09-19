@@ -58,7 +58,13 @@ export function PlanFundingSheet({
   }
 
   function confirm() {
-    let walletId = plan.walletId;
+    // One plan, one purpose. Reuse an existing purpose with the same identity
+    // instead of creating a second "Turquia" alongside the plan.
+    let walletId =
+      plan.walletId ??
+      setup.ruleItems.find(
+        (r) => r.planId === plan.id || r.name.trim().toLowerCase() === plan.name.trim().toLowerCase(),
+      )?.id;
     if (!walletId) {
       walletId = newId();
       update(
@@ -66,19 +72,21 @@ export function PlanFundingSheet({
           id: walletId,
           name: plan.name,
           percentage: 0,
+          source: "plan",
+          planId: plan.id,
           icon: plan.symbol ?? PLAN_TYPE_SYMBOL[plan.type],
           kind: "goals",
           ...(plan.targetMinor ? { targetMinor: plan.targetMinor } : {}),
           ...(plan.targetDate ? { targetDate: plan.targetDate } : {}),
         }),
       );
-      updatePlan(plan.id, { walletId, financial: true });
     }
+    if (plan.walletId !== walletId) updatePlan(plan.id, { walletId, financial: true });
 
     const now = new Date().toISOString();
     const ok = addTransaction({
       id: newId(),
-      kind: "reallocation",
+      kind: "reservation",
       amountMinor,
       occurredAt: now,
       createdAt: now,
