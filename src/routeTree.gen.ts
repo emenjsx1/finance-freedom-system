@@ -28,9 +28,11 @@ import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-setting
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
 import { Route as AppContextRouteImport } from './routes/app.context'
+import { Route as AppDirectionRouteImport } from './routes/app.direction'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppHelpRouteImport } from './routes/app.help'
 import { Route as AppIntegrityRouteImport } from './routes/app.integrity'
+import { Route as AppMeRouteImport } from './routes/app.me'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
 import { Route as AppNotificationSettingsRouteImport } from './routes/app.notification-settings'
 import { Route as AppNotificationsRouteImport } from './routes/app.notifications'
@@ -159,6 +161,11 @@ const AppContextRoute = AppContextRouteImport.update({
   path: '/context',
   getParentRoute: () => AppRoute,
 } as any)
+const AppDirectionRoute = AppDirectionRouteImport.update({
+  id: '/direction',
+  path: '/direction',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
   id: '/goals',
   path: '/goals',
@@ -172,6 +179,11 @@ const AppHelpRoute = AppHelpRouteImport.update({
 const AppIntegrityRoute = AppIntegrityRouteImport.update({
   id: '/integrity',
   path: '/integrity',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppMeRoute = AppMeRouteImport.update({
+  id: '/me',
+  path: '/me',
   getParentRoute: () => AppRoute,
 } as any)
 const AppMoneyMapRoute = AppMoneyMapRouteImport.update({
@@ -355,9 +367,11 @@ export interface FileRoutesByFullPath {
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
   '/app/context': typeof AppContextRoute
+  '/app/direction': typeof AppDirectionRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
+  '/app/me': typeof AppMeRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
@@ -407,8 +421,10 @@ export interface FileRoutesByTo {
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/context': typeof AppContextRoute
+  '/app/direction': typeof AppDirectionRoute
   '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
+  '/app/me': typeof AppMeRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
@@ -460,9 +476,11 @@ export interface FileRoutesById {
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
   '/app/context': typeof AppContextRoute
+  '/app/direction': typeof AppDirectionRoute
   '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/help': typeof AppHelpRoute
   '/app/integrity': typeof AppIntegrityRoute
+  '/app/me': typeof AppMeRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
   '/app/notifications': typeof AppNotificationsRoute
@@ -518,9 +536,11 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/automations'
     | '/app/context'
+    | '/app/direction'
     | '/app/goals'
     | '/app/help'
     | '/app/integrity'
+    | '/app/me'
     | '/app/money-map'
     | '/app/notification-settings'
     | '/app/notifications'
@@ -570,8 +590,10 @@ export interface FileRouteTypes {
     | '/app/agent-settings'
     | '/app/automations'
     | '/app/context'
+    | '/app/direction'
     | '/app/help'
     | '/app/integrity'
+    | '/app/me'
     | '/app/money-map'
     | '/app/notification-settings'
     | '/app/notifications'
@@ -622,9 +644,11 @@ export interface FileRouteTypes {
     | '/app/analytics'
     | '/app/automations'
     | '/app/context'
+    | '/app/direction'
     | '/app/goals'
     | '/app/help'
     | '/app/integrity'
+    | '/app/me'
     | '/app/money-map'
     | '/app/notification-settings'
     | '/app/notifications'
@@ -809,6 +833,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppContextRouteImport
       parentRoute: typeof AppRoute
     }
+    '/app/direction': {
+      id: '/app/direction'
+      path: '/direction'
+      fullPath: '/app/direction'
+      preLoaderRoute: typeof AppDirectionRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/app/goals': {
       id: '/app/goals'
       path: '/goals'
@@ -828,6 +859,13 @@ declare module '@tanstack/react-router' {
       path: '/integrity'
       fullPath: '/app/integrity'
       preLoaderRoute: typeof AppIntegrityRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/me': {
+      id: '/app/me'
+      path: '/me'
+      fullPath: '/app/me'
+      preLoaderRoute: typeof AppMeRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/money-map': {
@@ -1169,9 +1207,11 @@ interface AppRouteChildren {
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
   AppAutomationsRoute: typeof AppAutomationsRoute
   AppContextRoute: typeof AppContextRoute
+  AppDirectionRoute: typeof AppDirectionRoute
   AppGoalsRoute: typeof AppGoalsRouteWithChildren
   AppHelpRoute: typeof AppHelpRoute
   AppIntegrityRoute: typeof AppIntegrityRoute
+  AppMeRoute: typeof AppMeRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
   AppNotificationSettingsRoute: typeof AppNotificationSettingsRoute
   AppNotificationsRoute: typeof AppNotificationsRoute
@@ -1198,9 +1238,11 @@ const AppRouteChildren: AppRouteChildren = {
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
   AppAutomationsRoute: AppAutomationsRoute,
   AppContextRoute: AppContextRoute,
+  AppDirectionRoute: AppDirectionRoute,
   AppGoalsRoute: AppGoalsRouteWithChildren,
   AppHelpRoute: AppHelpRoute,
   AppIntegrityRoute: AppIntegrityRoute,
+  AppMeRoute: AppMeRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
   AppNotificationSettingsRoute: AppNotificationSettingsRoute,
   AppNotificationsRoute: AppNotificationsRoute,
