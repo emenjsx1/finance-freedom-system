@@ -73,9 +73,19 @@ export interface Bucket {
   balanceMinor: number;
 }
 
+/**
+ * Where a purpose came from. A purpose answers "what is this money for" — it is
+ * never a place where money sits. Physical locations are `Account`.
+ */
+export type PurposeSource = "plan" | "protection" | "commitment" | "custom" | "legacy";
+
 export interface AllocationRuleItem {
   id: string;
   name: string;
+  /** Origin of this purpose. Absent on records created before the cleanup. */
+  source?: PurposeSource | undefined;
+  /** Set when this purpose is the money side of a plan. One plan, one purpose. */
+  planId?: string | undefined;
   /** Whole or fractional percent, must sum to 100 across a rule. */
   percentage: number;
   icon: string;
