@@ -132,6 +132,10 @@ function MePage() {
           <span>O que o sistema sabe sobre mim</span>
           <span className="type-meta">{state.context.length || "Nada"}</span>
         </Link>
+        <Link to="/app/reminders" className="list-row justify-between">
+          <span>Os meus lembretes</span>
+          <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+        </Link>
         <Link to="/app/review" className="list-row justify-between">
           <span>Revisão</span>
           <span className="type-meta">Sem pontuações</span>

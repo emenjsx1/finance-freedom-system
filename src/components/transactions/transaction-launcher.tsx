@@ -90,6 +90,14 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
             <span>Adicionar compromisso</span>
             <span className="type-meta">Renda, internet, propinas</span>
           </Link>
+          <Link
+            to="/app/reminders"
+            onClick={() => setQuickOpen(false)}
+            className="list-row justify-between"
+          >
+            <span>Criar lembrete</span>
+            <span className="type-meta">Algo para lembrares a uma hora</span>
+          </Link>
           <button
             type="button"
             onClick={() => openComposer({ kind: "adjustment" })}
