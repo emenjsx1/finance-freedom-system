@@ -170,6 +170,14 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
       commit((prev) => ({
         ...prev,
         direction: [...prev.direction, { ...item, id: newId(), createdAt: now() }],
+        // Real change, written by the person: it belongs in the timeline.
+        development: {
+          ...prev.development,
+          evolution: [
+            { id: newId(), kind: "direction_added" as const, title: item.content, at: now() },
+            ...prev.development.evolution,
+          ],
+        },
       })),
     [commit],
   );
