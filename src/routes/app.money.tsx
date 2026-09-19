@@ -74,16 +74,26 @@ function MoneyPage() {
               <div>
                 <p className="type-meta">Disponível</p>
                 <p className="type-section mt-1">
-                  <Money minor={snapshot.spendableMinor} options={{ compactDecimals: true }} />
+                  <Money minor={position.availableMinor} options={{ compactDecimals: true }} />
                 </p>
               </div>
               <div>
                 <p className="type-meta">Reservado</p>
                 <p className="type-section mt-1">
-                  <Money minor={reservedMinor} options={{ compactDecimals: true }} />
+                  <Money minor={position.reservedMinor} options={{ compactDecimals: true }} />
                 </p>
               </div>
             </div>
+          </section>
+
+          <section className="card-standard">
+            <h2 className="text-base font-semibold">Ajuda-me a organizar</h2>
+            <p className="mt-1 type-secondary">
+              Responde a algumas perguntas e vê formas de organizar o teu dinheiro.
+            </p>
+            <Button className="mt-4" asChild>
+              <Link to="/app/organize">Começar</Link>
+            </Button>
           </section>
 
           <section>
