@@ -161,7 +161,7 @@ describe("analytics service", () => {
     ];
     const snapshot = buildSnapshot({
       openingAccounts: setupAccounts,
-      ruleItems: DEFAULT_RULE_ITEMS,
+      ruleItems: ruleItems,
       transactions,
       baseCurrency: "MZN",
       exchangeRates: [],
