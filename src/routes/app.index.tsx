@@ -330,27 +330,23 @@ function ModuleView({ id }: { id: HomeModuleId }) {
       if (goals.length === 0) return null;
       return (
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="type-section">{term("goals")}</h2>
-            <Link to="/app/goals" className="type-caption text-primary">
-              Ver todos
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {goals.map((goal) => (
-              <Link
-                key={goal.id}
-                to="/app/wallets/$walletId"
-                params={{ walletId: goal.id }}
-                className="card-interactive flex items-center justify-between"
-              >
-                <span className="flex items-center gap-3 text-sm font-medium">
-                  <span aria-hidden>{goal.icon}</span>
-                  {goal.name}
-                </span>
-                <Money minor={goal.balanceMinor} className="text-sm" />
-              </Link>
-            ))}
+          <SectionHeader title={term("goals")} actionLabel="Ver todos" to="/app/goals" />
+          <div className="space-y-3">
+            {goals.map((goal) => {
+              const item = setup.ruleItems.find((r) => r.id === goal.id);
+              return (
+                <GoalCard
+                  key={goal.id}
+                  name={goal.name}
+                  balanceMinor={goal.balanceMinor}
+                  targetMinor={item?.targetMinor}
+                  targetDate={item?.targetDate}
+                  coverImageUrl={item?.coverImageUrl}
+                  icon={goal.icon}
+                  to={{ to: "/app/wallets/$walletId", params: { walletId: goal.id } }}
+                />
+              );
+            })}
           </div>
         </section>
       );
@@ -363,13 +359,8 @@ function ModuleView({ id }: { id: HomeModuleId }) {
       if (recent.length === 0) return null;
       return (
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="type-section">Atividade recente</h2>
-            <Link to="/app/transactions" className="type-caption text-primary">
-              Ver tudo
-            </Link>
-          </div>
-          <div className="space-y-2">
+          <SectionHeader title="Atividade recente" actionLabel="Ver tudo" to="/app/transactions" />
+          <div className="list-group">
             {recent.map((tx) => (
               <TransactionRow
                 key={tx.id}
