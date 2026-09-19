@@ -20,7 +20,7 @@ const ACTIONS: { kind: TxKind; label: string; hint: string; icon: typeof Plus; t
   { kind: "income", label: "Entrada", hint: "Dinheiro que recebeste", icon: Plus, tone: "text-income" },
   { kind: "expense", label: "Despesa", hint: "Dinheiro que gastaste", icon: Minus, tone: "text-expense" },
   { kind: "transfer", label: "Transferência", hint: "Mover dinheiro entre contas", icon: ArrowLeftRight, tone: "text-info" },
-  { kind: "reallocation", label: "Redistribuição", hint: "Mudar o propósito do dinheiro", icon: Shuffle, tone: "text-wealth" },
+  { kind: "reallocation", label: "Guardar", hint: "Reservar dinheiro para um propósito", icon: PiggyBank, tone: "text-wealth" },
 ];
 
 export function TransactionLauncherProvider({ children }: { children: ReactNode }) {
