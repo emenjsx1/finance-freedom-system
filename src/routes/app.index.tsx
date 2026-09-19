@@ -64,13 +64,38 @@ export const Route = createFileRoute("/app/")({
 
 function HomePage() {
   const { setup } = useSetup();
-  const { ledger } = useLedger();
+  const { ledger, snapshot } = useLedger();
   const { prefs, update } = usePrefs();
+  const { profile, user } = useAuth();
   const { openQuickActions } = useTransactionLauncher();
   const [editing, setEditing] = useState(false);
 
-  const firstName = setup.fullName.trim().split(" ")[0] ?? "";
+  const preferredName = (profile?.preferred_name ?? "").trim();
+  const firstName = preferredName || (setup.fullName.trim().split(" ")[0] ?? "");
   const modules = prefs.homeModules;
+
+  // Deterministic, context-aware supporting line. No model call on Home.
+  const analyticsInput = useAnalyticsInput();
+  const supportingLine = useMemo(() => {
+    const summary = periodSummary(analyticsInput, resolvePeriod("this_month"));
+    const goals = snapshot.wallets.filter((w) => w.kind === "goals" && !w.archived);
+    const withProgress = goals
+      .map((goal) => {
+        const target = setup.ruleItems.find((r) => r.id === goal.id)?.targetMinor;
+        return target && target > 0
+          ? { name: goal.name, progress: goal.balanceMinor / target }
+          : null;
+      })
+      .filter((g): g is { name: string; progress: number } => g !== null)
+      .sort((a, b) => b.progress - a.progress);
+
+    return homeMessage({
+      isNewUser: setup.accounts.length === 0 || ledger.transactions.length === 0,
+      nearestGoal: withProgress[0],
+      builtThisMonthMinor: summary.builtMinor,
+      hasActivityThisMonth: summary.incomeMinor > 0 || summary.expensesMinor > 0,
+    });
+  }, [analyticsInput, snapshot.wallets, setup.ruleItems, setup.accounts.length, ledger.transactions.length]);
 
   function toggleModule(id: HomeModuleId) {
     update({
