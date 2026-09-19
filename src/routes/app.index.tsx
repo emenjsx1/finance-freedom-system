@@ -68,7 +68,7 @@ export const Route = createFileRoute("/app/")({
 
 function HomePage() {
   const { setup } = useSetup();
-  const { ledger, snapshot } = useLedger();
+  const { ledger, snapshot, integrity, hydrated } = useLedger();
   const { prefs, update } = usePrefs();
   const { profile, user } = useAuth();
   const { openQuickActions } = useTransactionLauncher();
