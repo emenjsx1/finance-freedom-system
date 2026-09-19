@@ -101,6 +101,10 @@ function PersonalInfoPage() {
         language,
         base_currency: currency,
         timezone,
+        birth_date: birthDate || null,
+        phone: phone.trim() || null,
+        city: city.trim() || null,
+        country: country.trim() || null,
       });
       // Keep the on-device money architecture aligned with the account profile.
       updateSetup({ fullName: fullName.trim() || preferredName.trim() });
