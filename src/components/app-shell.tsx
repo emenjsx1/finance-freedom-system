@@ -19,6 +19,9 @@ import {
   User,
   Bell,
   Zap,
+  Compass,
+  Sun,
+  ListChecks,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
