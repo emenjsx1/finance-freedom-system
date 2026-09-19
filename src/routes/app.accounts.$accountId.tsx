@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowLeft, ArrowLeftRight, Minus, Plus, ScaleIcon } from "lucide-react";
+import { ArrowLeft, ArrowLeftRight, Diamond, Minus, Plus, ScaleIcon } from "lucide-react";
 import { toast } from "sonner";
 
 import { AccountForm } from "@/components/accounts/account-form";
@@ -33,6 +33,8 @@ export const Route = createFileRoute("/app/accounts/$accountId")({
       { name: "description", content: "Saldo, entradas, saídas e transferências desta conta." },
       { property: "og:title", content: "Conta — Norte" },
       { property: "og:description", content: "Saldo, entradas, saídas e transferências desta conta." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AccountDetailPage,
@@ -63,6 +65,17 @@ function AccountDetailPage() {
 
   const currency = account.currencyCode ?? setup.currencyCode;
   const balance = snapshot.accountBalances[account.id] ?? 0;
+  const reserved = snapshot.accountReserved[account.id] ?? 0;
+  const available = snapshot.accountAvailable[account.id] ?? 0;
+  const reservedHere = setup.ruleItems
+    .filter((purpose) => !purpose.archived && (snapshot.purposeByAccount[purpose.id]?.[account.id] ?? 0) > 0)
+    .map((purpose) => ({
+      id: purpose.id,
+      name: purpose.name,
+      icon: purpose.icon,
+      amountMinor: snapshot.purposeByAccount[purpose.id]?.[account.id] ?? 0,
+    }))
+    .sort((a, b) => b.amountMinor - a.amountMinor);
   const now = new Date();
   const stats = accountMonthStats(ledger.transactions, account.id, now.getFullYear(), now.getMonth());
   const activity = ledger.transactions
@@ -104,10 +117,72 @@ function AccountDetailPage() {
             </p>
           </div>
         </div>
-        <Money minor={balance} currency={currency} className="mt-4 block text-3xl font-semibold" />
+        <p className="type-meta mt-5">Saldo na conta</p>
+        <Money minor={balance} currency={currency} className="mt-1 block text-3xl font-semibold" />
+        <p className="mt-2 text-xs text-muted-foreground">
+          Este saldo não diminui quando guardas dinheiro. Guardar apenas separa uma parte por propósito.
+        </p>
         {!account.includeInNetWorth ? (
           <p className="mt-1 text-xs text-muted-foreground">Não conta para o teu património.</p>
         ) : null}
+      </section>
+
+      <section className="mt-4 overflow-hidden rounded-2xl border border-border/70 bg-surface">
+        <div className="grid grid-cols-2 divide-x divide-border border-b border-border">
+          <div className="p-4">
+            <p className="type-meta">Disponível</p>
+            <Money minor={available} currency={currency} className="mt-1 block text-xl font-semibold" />
+          </div>
+          <div className="p-4">
+            <p className="type-meta">Reservado aqui</p>
+            <Money minor={reserved} currency={currency} className="mt-1 block text-xl font-semibold" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between gap-3 px-4 py-3 text-xs text-muted-foreground">
+          <span>Disponível + reservado</span>
+          <Money minor={available + reserved} currency={currency} className="font-medium text-foreground" />
+        </div>
+      </section>
+
+      <section className="mt-6">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold">Guardado nesta conta</h2>
+            <p className="type-meta mt-0.5">Para onde foi cada parte do saldo.</p>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => openComposer({ kind: "reservation", preset: { accountId: account.id } })}
+          >
+            <Diamond className="size-4" />
+            Guardar
+          </Button>
+        </div>
+        {reservedHere.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-border/70 px-4 py-6 text-center">
+            <p className="text-sm text-muted-foreground">Ainda não reservaste dinheiro desta conta.</p>
+          </div>
+        ) : (
+          <div className="list-group">
+            {reservedHere.map((purpose) => (
+              <Link
+                key={purpose.id}
+                to="/app/wallets/$walletId"
+                params={{ walletId: purpose.id }}
+                className="list-row justify-between"
+              >
+                <span className="flex min-w-0 items-center gap-3">
+                  <span className="icon-tile" aria-hidden>
+                    <Symbol name={purpose.icon} />
+                  </span>
+                  <span className="truncate text-sm">{purpose.name}</span>
+                </span>
+                <Money minor={purpose.amountMinor} currency={currency} className="shrink-0 font-semibold" />
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section className="mt-4 grid grid-cols-3 gap-2">
