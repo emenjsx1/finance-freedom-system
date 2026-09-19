@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  BarChart3,
   ArrowDownLeft,
   ArrowUpRight,
   Check,
@@ -24,12 +25,16 @@ import { Button } from "@/components/ui/button";
 import { TransactionRow } from "@/components/transactions/transaction-row";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
 import { useAgent } from "@/hooks/use-agent";
+import { useAnalyticsInput } from "@/hooks/use-analytics";
 import { useLedger } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
 import { buildDailyBrief } from "@/lib/agent/context-builder";
+import { buildInsights } from "@/lib/analytics/insights";
+import { resolvePeriod } from "@/lib/analytics/periods";
+import { periodSummary } from "@/lib/analytics/service";
 import { greetingFor } from "@/lib/finance/greeting";
-import { monthTotals, nextOccurrence } from "@/lib/finance/engine";
+import { nextOccurrence } from "@/lib/finance/engine";
 import { DEFAULT_HOME_MODULES, HOME_MODULES, type HomeModuleId } from "@/lib/prefs/types";
 import { cn } from "@/lib/utils";
 
@@ -224,11 +229,12 @@ function ModuleView({ id }: { id: HomeModuleId }) {
   const { term } = usePrefs();
   const { openComposer } = useTransactionLauncher();
 
-  const now = new Date();
-  const totals = useMemo(
-    () => monthTotals(ledger.transactions, now.getFullYear(), now.getMonth(), setup.ruleItems),
-    [ledger.transactions, setup.ruleItems, now],
-  );
+  // One definition of the month's figures: the analytics service (business money excluded).
+  const analyticsInput = useAnalyticsInput();
+  const totals = useMemo(() => {
+    const summary = periodSummary(analyticsInput, resolvePeriod("this_month"));
+    return { income: summary.incomeMinor, expenses: summary.expensesMinor, built: summary.builtMinor };
+  }, [analyticsInput]);
 
   switch (id) {
     case "available":
@@ -396,7 +402,32 @@ function ModuleView({ id }: { id: HomeModuleId }) {
 
     case "agent":
       return <AgentCard />;
+
+    case "insight":
+      return <InsightCard />;
   }
+}
+
+/** One factual observation, calculated by the analytics engine. */
+function InsightCard() {
+  const input = useAnalyticsInput();
+  const period = useMemo(() => resolvePeriod("this_month"), []);
+  const insight = useMemo(() => buildInsights(input, period, 1)[0], [input, period]);
+  if (!insight) return null;
+
+  return (
+    <section className="card-standard">
+      <div className="flex items-center justify-between">
+        <p className="type-section">Observação</p>
+        <BarChart3 className="size-4 text-primary" aria-hidden />
+      </div>
+      <p className="type-body mt-3">{insight.title}</p>
+      {insight.detail ? <p className="type-caption mt-1">{insight.detail}</p> : null}
+      <Button asChild variant="ghost" size="sm" className="mt-3">
+        <Link to="/app/analytics">Ver análise</Link>
+      </Button>
+    </section>
+  );
 }
 
 /** Only shows statements supported by real app data. */

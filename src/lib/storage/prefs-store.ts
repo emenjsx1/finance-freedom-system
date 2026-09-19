@@ -16,6 +16,7 @@ export function loadPreferences(): UserPreferences {
       ...DEFAULT_PREFERENCES,
       ...parsed,
       homeModules: parsed.homeModules?.length ? parsed.homeModules : DEFAULT_PREFERENCES.homeModules,
+      analyticsModules: parsed.analyticsModules?.length ? parsed.analyticsModules : DEFAULT_PREFERENCES.analyticsModules,
       terminology: parsed.terminology ?? {},
     };
   } catch {

@@ -30,7 +30,8 @@ export type HomeModuleId =
   | "upcoming"
   | "month_spending"
   | "wealth_building"
-  | "agent";
+  | "agent"
+  | "insight";
 
 export const HOME_MODULES: { id: HomeModuleId; label: string; description: string }[] = [
   { id: "available", label: "Disponível para gastar", description: "O valor que podes usar hoje." },
@@ -43,16 +44,52 @@ export const HOME_MODULES: { id: HomeModuleId; label: string; description: strin
   { id: "month_spending", label: "Gastos do mês", description: "Entradas e gastos deste mês." },
   { id: "wealth_building", label: "Construção", description: "Quanto construíste este mês." },
   { id: "agent", label: "Resumo do Agente", description: "Uma observação baseada nos teus dados." },
+  { id: "insight", label: "Observação do mês", description: "Um facto relevante calculado a partir dos teus dados." },
 ];
 
 export const DEFAULT_HOME_MODULES: HomeModuleId[] = [
   "available",
   "position",
   "agent",
+  "insight",
   "goals",
   "recent",
   "month_spending",
 ];
+
+/** Analytics modules the user can show or hide. */
+export type AnalyticsModuleId =
+  | "flow"
+  | "spending"
+  | "trend"
+  | "comparison"
+  | "income"
+  | "wealth"
+  | "net_worth"
+  | "wallets"
+  | "protected"
+  | "goals"
+  | "recurring"
+  | "largest"
+  | "patterns";
+
+export const ANALYTICS_MODULES: { id: AnalyticsModuleId; label: string }[] = [
+  { id: "flow", label: "Fluxo do dinheiro" },
+  { id: "spending", label: "Gastos por categoria" },
+  { id: "trend", label: "Tendência" },
+  { id: "comparison", label: "Comparação de períodos" },
+  { id: "income", label: "Entradas" },
+  { id: "wealth", label: "Construção" },
+  { id: "net_worth", label: "Evolução do património" },
+  { id: "wallets", label: "Carteiras" },
+  { id: "protected", label: "Dinheiro protegido" },
+  { id: "goals", label: "Objetivos" },
+  { id: "recurring", label: "Despesas recorrentes" },
+  { id: "largest", label: "Maiores despesas" },
+  { id: "patterns", label: "Padrões e frequência" },
+];
+
+export const DEFAULT_ANALYTICS_MODULES: AnalyticsModuleId[] = ANALYTICS_MODULES.map((m) => m.id);
 
 /** Display-only labels. Internal ids (wealth, goals, life...) never change. */
 export type TerminologyKey =
@@ -80,6 +117,7 @@ export const DEFAULT_PAGES = [
   { to: "/app", label: "Início" },
   { to: "/app/transactions", label: "Atividade" },
   { to: "/app/plan", label: "Plano" },
+  { to: "/app/analytics", label: "Análise" },
   { to: "/app/agent", label: "Agente" },
 ] as const;
 
@@ -88,6 +126,7 @@ export interface UserPreferences {
   accent: AccentKey;
   density: Density;
   homeModules: HomeModuleId[];
+  analyticsModules: AnalyticsModuleId[];
   defaultPage: string;
   /** Show the currency code next to every amount. */
   showCurrencyCode: boolean;
@@ -105,6 +144,7 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   accent: "emerald",
   density: "comfortable",
   homeModules: DEFAULT_HOME_MODULES,
+  analyticsModules: DEFAULT_ANALYTICS_MODULES,
   defaultPage: "/app",
   showCurrencyCode: true,
   terminology: {},

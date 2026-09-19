@@ -17,6 +17,7 @@ import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppAgentRouteImport } from './routes/app.agent'
 import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-settings'
+import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppGoalsRouteImport } from './routes/app.goals'
 import { Route as AppMoneyMapRouteImport } from './routes/app.money-map'
 import { Route as AppPersonalizationRouteImport } from './routes/app.personalization'
@@ -31,8 +32,10 @@ import { Route as AppAccountsIndexRouteImport } from './routes/app.accounts.inde
 import { Route as AppAccountsAccountIdRouteImport } from './routes/app.accounts.$accountId'
 import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
 import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$conversationId'
+import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.index'
 import { Route as AppWalletsIndexRouteImport } from './routes/app.wallets.index'
 import { Route as AppWalletsWalletIdRouteImport } from './routes/app.wallets.$walletId'
+import { Route as AppAnalyticsCategoryCategoryIdRouteImport } from './routes/app.analytics.category.$categoryId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -72,6 +75,11 @@ const AppAgentRoute = AppAgentRouteImport.update({
 const AppAgentSettingsRoute = AppAgentSettingsRouteImport.update({
   id: '/agent-settings',
   path: '/agent-settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => AppRoute,
 } as any)
 const AppGoalsRoute = AppGoalsRouteImport.update({
@@ -144,6 +152,11 @@ const AppAgentConversationIdRoute = AppAgentConversationIdRouteImport.update({
   path: '/$conversationId',
   getParentRoute: () => AppAgentRoute,
 } as any)
+const AppAnalyticsIndexRoute = AppAnalyticsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppAnalyticsRoute,
+} as any)
 const AppWalletsIndexRoute = AppWalletsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -154,6 +167,12 @@ const AppWalletsWalletIdRoute = AppWalletsWalletIdRouteImport.update({
   path: '/$walletId',
   getParentRoute: () => AppWalletsRoute,
 } as any)
+const AppAnalyticsCategoryCategoryIdRoute =
+  AppAnalyticsCategoryCategoryIdRouteImport.update({
+    id: '/category/$categoryId',
+    path: '/category/$categoryId',
+    getParentRoute: () => AppAnalyticsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -163,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
+  '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/personalization': typeof AppPersonalizationRoute
@@ -179,7 +199,9 @@ export interface FileRoutesByFullPath {
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
+  '/app/analytics/': typeof AppAnalyticsIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
+  '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -201,7 +223,9 @@ export interface FileRoutesByTo {
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts': typeof AppAccountsIndexRoute
   '/app/agent': typeof AppAgentIndexRoute
+  '/app/analytics': typeof AppAnalyticsIndexRoute
   '/app/wallets': typeof AppWalletsIndexRoute
+  '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -212,6 +236,7 @@ export interface FileRoutesById {
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
+  '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/goals': typeof AppGoalsRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/personalization': typeof AppPersonalizationRoute
@@ -228,7 +253,9 @@ export interface FileRoutesById {
   '/app/wallets/$walletId': typeof AppWalletsWalletIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
+  '/app/analytics/': typeof AppAnalyticsIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
+  '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -240,6 +267,7 @@ export interface FileRouteTypes {
     | '/app/accounts'
     | '/app/agent'
     | '/app/agent-settings'
+    | '/app/analytics'
     | '/app/goals'
     | '/app/money-map'
     | '/app/personalization'
@@ -256,7 +284,9 @@ export interface FileRouteTypes {
     | '/app/wallets/$walletId'
     | '/app/accounts/'
     | '/app/agent/'
+    | '/app/analytics/'
     | '/app/wallets/'
+    | '/app/analytics/category/$categoryId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -278,7 +308,9 @@ export interface FileRouteTypes {
     | '/app/wallets/$walletId'
     | '/app/accounts'
     | '/app/agent'
+    | '/app/analytics'
     | '/app/wallets'
+    | '/app/analytics/category/$categoryId'
   id:
     | '__root__'
     | '/'
@@ -288,6 +320,7 @@ export interface FileRouteTypes {
     | '/app/accounts'
     | '/app/agent'
     | '/app/agent-settings'
+    | '/app/analytics'
     | '/app/goals'
     | '/app/money-map'
     | '/app/personalization'
@@ -304,7 +337,9 @@ export interface FileRouteTypes {
     | '/app/wallets/$walletId'
     | '/app/accounts/'
     | '/app/agent/'
+    | '/app/analytics/'
     | '/app/wallets/'
+    | '/app/analytics/category/$categoryId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -370,6 +405,13 @@ declare module '@tanstack/react-router' {
       path: '/agent-settings'
       fullPath: '/app/agent-settings'
       preLoaderRoute: typeof AppAgentSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/analytics': {
+      id: '/app/analytics'
+      path: '/analytics'
+      fullPath: '/app/analytics'
+      preLoaderRoute: typeof AppAnalyticsRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/goals': {
@@ -470,6 +512,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAgentConversationIdRouteImport
       parentRoute: typeof AppAgentRoute
     }
+    '/app/analytics/': {
+      id: '/app/analytics/'
+      path: '/'
+      fullPath: '/app/analytics/'
+      preLoaderRoute: typeof AppAnalyticsIndexRouteImport
+      parentRoute: typeof AppAnalyticsRoute
+    }
     '/app/wallets/': {
       id: '/app/wallets/'
       path: '/'
@@ -483,6 +532,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/wallets/$walletId'
       preLoaderRoute: typeof AppWalletsWalletIdRouteImport
       parentRoute: typeof AppWalletsRoute
+    }
+    '/app/analytics/category/$categoryId': {
+      id: '/app/analytics/category/$categoryId'
+      path: '/category/$categoryId'
+      fullPath: '/app/analytics/category/$categoryId'
+      preLoaderRoute: typeof AppAnalyticsCategoryCategoryIdRouteImport
+      parentRoute: typeof AppAnalyticsRoute
     }
   }
 }
@@ -515,6 +571,20 @@ const AppAgentRouteWithChildren = AppAgentRoute._addFileChildren(
   AppAgentRouteChildren,
 )
 
+interface AppAnalyticsRouteChildren {
+  AppAnalyticsIndexRoute: typeof AppAnalyticsIndexRoute
+  AppAnalyticsCategoryCategoryIdRoute: typeof AppAnalyticsCategoryCategoryIdRoute
+}
+
+const AppAnalyticsRouteChildren: AppAnalyticsRouteChildren = {
+  AppAnalyticsIndexRoute: AppAnalyticsIndexRoute,
+  AppAnalyticsCategoryCategoryIdRoute: AppAnalyticsCategoryCategoryIdRoute,
+}
+
+const AppAnalyticsRouteWithChildren = AppAnalyticsRoute._addFileChildren(
+  AppAnalyticsRouteChildren,
+)
+
 interface AppWalletsRouteChildren {
   AppWalletsWalletIdRoute: typeof AppWalletsWalletIdRoute
   AppWalletsIndexRoute: typeof AppWalletsIndexRoute
@@ -533,6 +603,7 @@ interface AppRouteChildren {
   AppAccountsRoute: typeof AppAccountsRouteWithChildren
   AppAgentRoute: typeof AppAgentRouteWithChildren
   AppAgentSettingsRoute: typeof AppAgentSettingsRoute
+  AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
   AppGoalsRoute: typeof AppGoalsRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
   AppPersonalizationRoute: typeof AppPersonalizationRoute
@@ -550,6 +621,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAccountsRoute: AppAccountsRouteWithChildren,
   AppAgentRoute: AppAgentRouteWithChildren,
   AppAgentSettingsRoute: AppAgentSettingsRoute,
+  AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
   AppGoalsRoute: AppGoalsRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
   AppPersonalizationRoute: AppPersonalizationRoute,
