@@ -22,8 +22,7 @@ import { useSetup } from "@/hooks/use-setup";
 import { findCategory } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
 import { monthTotals } from "@/lib/finance/engine";
-import type { Transaction } from "@/lib/finance/ledger-types";
-import type { TxKind } from "@/lib/finance/types";
+import type { Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/app/activity")({
