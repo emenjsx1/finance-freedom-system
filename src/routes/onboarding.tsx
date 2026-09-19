@@ -128,7 +128,7 @@ function Onboarding() {
                       "flex w-full items-center justify-between rounded-xl border px-4 py-3 text-left transition-colors",
                       currencyCode === c.code
                         ? "border-primary bg-primary-soft"
-                        : "border-border bg-surface",
+                        : "border-border/70 bg-surface",
                     )}
                   >
                     <span>
@@ -147,7 +147,7 @@ function Onboarding() {
           {step === 3 ? (
             <StepShell title={pt.onboarding.philosophy} subtitle="É por isso que separamos duas coisas.">
               <div className="space-y-3">
-                <div className="rounded-2xl border border-border bg-surface p-4">
+                <div className="rounded-2xl border border-border/70 bg-surface p-4">
                   <p className="text-sm font-semibold">Contas</p>
                   <p className="mt-1 text-sm text-muted-foreground">
                     Onde o dinheiro está fisicamente: banco, carteira móvel, numerário.
@@ -170,7 +170,7 @@ function Onboarding() {
             >
               <div className="space-y-2">
                 {items.map((item, index) => (
-                  <div key={item.id} className="rounded-xl border border-border bg-surface p-3">
+                  <div key={item.id} className="rounded-xl border border-border/70 bg-surface p-3">
                     <div className="flex items-center gap-2">
                       <select
                         aria-label="Ícone"
@@ -232,7 +232,7 @@ function Onboarding() {
                     { id: uid(), name: "Novo pote", percentage: 0, icon: "✨", kind: "free" },
                   ])
                 }
-                className="mt-3 w-full rounded-xl border border-dashed border-border py-2.5 text-sm text-muted-foreground"
+                className="mt-3 w-full rounded-xl border border-dashed border-border/70 py-2.5 text-sm text-muted-foreground"
               >
                 Adicionar pote
               </button>
@@ -261,7 +261,7 @@ function Onboarding() {
             >
               <div className="space-y-2">
                 {accounts.map((account, index) => (
-                  <div key={account.id} className="flex items-center gap-2 rounded-xl border border-border bg-surface p-3">
+                  <div key={account.id} className="flex items-center gap-2 rounded-xl border border-border/70 bg-surface p-3">
                     <Input
                       value={account.name}
                       placeholder="Nome da conta"
@@ -299,7 +299,7 @@ function Onboarding() {
                   </div>
                 ))}
                 {accounts.length === 0 ? (
-                  <div className="flex flex-col items-center rounded-2xl border border-dashed border-border py-10 text-center">
+                  <div className="flex flex-col items-center rounded-2xl border border-dashed border-border/70 py-10 text-center">
                     <Wallet className="mb-2 size-5 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">Ainda não adicionaste contas.</p>
                   </div>
@@ -312,7 +312,7 @@ function Onboarding() {
                     { id: uid(), name: "", type: "bank", balanceMinor: 0 },
                   ])
                 }
-                className="mt-3 w-full rounded-xl border border-dashed border-border py-2.5 text-sm text-muted-foreground"
+                className="mt-3 w-full rounded-xl border border-dashed border-border/70 py-2.5 text-sm text-muted-foreground"
               >
                 Adicionar conta
               </button>
@@ -329,7 +329,7 @@ function Onboarding() {
               ) : (
                 <div className="space-y-2">
                   {accounts.map((account, index) => (
-                    <div key={account.id} className="flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-3">
+                    <div key={account.id} className="flex items-center justify-between gap-3 rounded-xl border border-border/70 bg-surface p-3">
                       <span className="text-sm font-medium">{account.name || "Conta sem nome"}</span>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-muted-foreground">{currency.symbol}</span>

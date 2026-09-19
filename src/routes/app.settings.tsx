@@ -94,7 +94,7 @@ function SettingsPage() {
       </Section>
 
       <Section title="Aplicação">
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
+        <div className="flex items-center justify-between border-b border-border/70 px-4 py-3">
           <span className="flex items-center gap-3 text-sm">
             <EyeOff className="size-4 text-muted-foreground" />
             Modo privado
@@ -112,7 +112,7 @@ function SettingsPage() {
         <Row icon={LifeBuoy} label="Enviar feedback" />
       </Section>
 
-      <div className="flex items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3">
+      <div className="flex items-center justify-between rounded-2xl border border-border/70 bg-surface px-4 py-3">
         <span className="flex items-center gap-3 text-sm text-destructive">
           <LogOut className="size-4" />
           Terminar sessão
@@ -131,7 +131,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
       <h2 className="mb-2 px-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
         {title}
       </h2>
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface">{children}</div>
+      <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">{children}</div>
     </section>
   );
 }
@@ -170,7 +170,7 @@ function Row({
   );
 
   const className =
-    "flex items-center justify-between border-b border-border px-4 py-3 last:border-b-0";
+    "flex items-center justify-between border-b border-border/70 px-4 py-3 last:border-b-0";
 
   return to ? (
     <Link to={to} className={className}>

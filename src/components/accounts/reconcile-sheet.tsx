@@ -97,7 +97,7 @@ export function ReconcileSheet({
         </SheetHeader>
 
         <div className="space-y-4 pb-6">
-          <div className="rounded-2xl border border-border bg-surface p-4">
+          <div className="rounded-2xl border border-border/70 bg-surface p-4">
             <Row label="Saldo na app" value={<Money minor={appMinor} currency={currency} className="font-semibold" />} />
             {realMinor !== null ? (
               <>
@@ -128,7 +128,7 @@ export function ReconcileSheet({
           </Field>
 
           {realMinor !== null && absMinor === 0 ? (
-            <p className="rounded-xl border border-border bg-surface px-4 py-3 text-sm text-muted-foreground">
+            <p className="rounded-xl border border-border/70 bg-surface px-4 py-3 text-sm text-muted-foreground">
               O saldo da app já corresponde ao saldo real. Nada a corrigir.
             </p>
           ) : null}
@@ -159,7 +159,7 @@ export function ReconcileSheet({
               {mode === "single" ? (
                 <select
                   aria-label="Carteira"
-                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm"
                   value={singleWalletId}
                   onChange={(e) => setSingleWalletId(e.target.value)}
                 >
@@ -198,7 +198,7 @@ export function ReconcileSheet({
               ) : null}
 
               {mode === "rule" ? (
-                <ul className="space-y-1 rounded-xl border border-border bg-surface px-4 py-3">
+                <ul className="space-y-1 rounded-xl border border-border/70 bg-surface px-4 py-3">
                   {allocations.map((a) => {
                     const wallet = wallets.find((w) => w.id === a.bucketId);
                     return (
@@ -245,7 +245,7 @@ function ModeButton({ active, onClick, label }: { active: boolean; onClick: () =
       aria-pressed={active}
       className={cn(
         "rounded-xl border px-3 py-2 text-xs font-medium",
-        active ? "border-primary bg-primary-soft text-primary" : "border-border text-muted-foreground",
+        active ? "border-primary bg-primary-soft text-primary" : "border-border/70 text-muted-foreground",
       )}
     >
       {label}

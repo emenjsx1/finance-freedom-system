@@ -52,24 +52,21 @@ export function TransactionRow({
   const time = new Date(tx.occurredAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
 
   return (
-    <button
-      type="button"
-      onClick={() => onOpen(tx)}
-      className="flex w-full items-center gap-3 rounded-xl border border-border bg-surface px-3 py-3 text-left transition-colors hover:border-muted-foreground/40"
-    >
-      <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted text-base" aria-hidden>
+    <button type="button" onClick={() => onOpen(tx)} className="list-row">
+      <span className="icon-tile text-base" aria-hidden>
         {tx.kind === "transfer" ? <ArrowLeftRight className="size-4" /> : tx.kind === "reallocation" ? <Shuffle className="size-4" /> : icon}
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-medium">{title}</span>
-        <span className="block truncate text-xs text-muted-foreground">{context}</span>
+        <span className="block truncate text-[0.9375rem] font-medium">{title}</span>
+        <span className="type-meta block truncate">{context}</span>
       </span>
-      <span className="text-right">
-        <span className={cn("numeric block text-sm font-semibold", amountClass)}>
+      <span className="shrink-0 text-right">
+        <span className={cn("numeric block text-[0.9375rem] font-semibold", amountClass)}>
           {sign}
-          {formatMoney(tx.amountMinor, currencyCode)}
+          {formatMoney(tx.amountMinor, currencyCode, { withSymbol: false, compactDecimals: true })}
+          <span className="ml-1 text-[0.6875rem] font-medium text-muted-foreground">{currencyCode}</span>
         </span>
-        <span className="block text-xs text-muted-foreground">{time}</span>
+        <span className="type-meta block">{time}</span>
       </span>
     </button>
   );

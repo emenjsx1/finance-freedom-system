@@ -140,7 +140,7 @@ export interface UserPreferences {
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
-  theme: "dark",
+  theme: "light",
   accent: "emerald",
   density: "comfortable",
   homeModules: DEFAULT_HOME_MODULES,

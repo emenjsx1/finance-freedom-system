@@ -74,7 +74,7 @@ export function AccountForm({
           <Field label="Tipo" htmlFor="acc-type">
             <select
               id="acc-type"
-              className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+              className="h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm"
               value={form.type}
               onChange={(e) => setForm((f) => ({ ...f, type: e.target.value as AccountType }))}
             >
@@ -94,7 +94,7 @@ export function AccountForm({
           <Field label="Moeda" htmlFor="acc-currency">
             <select
               id="acc-currency"
-              className="h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+              className="h-10 w-full rounded-xl border border-border/70 bg-background px-3 text-sm"
               value={form.currencyCode}
               onChange={(e) => setForm((f) => ({ ...f, currencyCode: e.target.value }))}
             >
@@ -147,7 +147,7 @@ export function AccountForm({
                   onClick={() => setForm((f) => ({ ...f, icon }))}
                   className={cn(
                     "flex size-10 items-center justify-center rounded-xl border text-lg",
-                    form.icon === icon ? "border-primary bg-primary-soft" : "border-border",
+                    form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70",
                   )}
                 >
                   {icon}
@@ -275,7 +275,7 @@ export function ToggleRow({
   onChange: (value: boolean) => void;
 }) {
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-border bg-surface px-4 py-3">
+    <div className="flex items-center justify-between gap-4 rounded-xl border border-border/70 bg-surface px-4 py-3">
       <div>
         <p className="text-sm font-medium">{label}</p>
         {description ? <p className="text-xs text-muted-foreground">{description}</p> : null}

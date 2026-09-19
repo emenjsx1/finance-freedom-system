@@ -83,7 +83,7 @@ function AccountDetailPage() {
         Minhas contas
       </Link>
 
-      <section className="rounded-2xl border border-border bg-surface p-5">
+      <section className="rounded-2xl border border-border/70 bg-surface p-5">
         <div className="flex items-center gap-3">
           <span
             aria-hidden
@@ -128,7 +128,7 @@ function AccountDetailPage() {
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold">Transações recentes</h2>
         {activity.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-center text-sm text-muted-foreground">
             Ainda não há movimentos nesta conta.
           </p>
         ) : (
@@ -230,7 +230,7 @@ function Stat({
   tone: string;
 }) {
   return (
-    <div className="rounded-xl border border-border bg-surface p-3">
+    <div className="rounded-xl border border-border/70 bg-surface p-3">
       <p className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</p>
       <Money minor={minor} currency={currency} className={`mt-1 block text-sm font-semibold ${tone}`} />
     </div>
@@ -250,7 +250,7 @@ function Action({
     <button
       type="button"
       onClick={onClick}
-      className="flex flex-col items-center gap-1.5 rounded-xl border border-border bg-surface px-2 py-3 text-xs font-medium transition-colors hover:border-muted-foreground/40"
+      className="flex flex-col items-center gap-1.5 rounded-xl border border-border/70 bg-surface px-2 py-3 text-xs font-medium transition-colors hover:border-muted-foreground/40"
     >
       <Icon className="size-4 text-primary" />
       {label}

@@ -38,11 +38,11 @@ interface NavItem {
 /** Mobile: five deliberate destinations, the middle one is the action. */
 const mobileLeft: NavItem[] = [
   { to: "/app", label: "Início", icon: Home },
-  { to: "/app/transactions", label: "Atividade", icon: ArrowLeftRight },
+  { to: "/app/analytics", label: "Análise", icon: BarChart3 },
 ];
 const mobileRight: NavItem[] = [
-  { to: "/app/plan", label: "Plano", icon: LayoutGrid },
-  { to: "/app/agent", label: "Agente", icon: MessageSquare },
+  { to: "/app/goals", label: "Objetivos", icon: Target },
+  { to: "/app/settings", label: "Mais", icon: LayoutGrid },
 ];
 
 const desktopGroups: { title: string; items: NavItem[] }[] = [
@@ -186,7 +186,7 @@ export function AppShell() {
       <PreparedMovementSheet />
 
       {/* The action lives inside the bar, not floating above it. */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/90 backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-elevated/92 backdrop-blur-xl lg:hidden">
         <div className="mx-auto grid max-w-md grid-cols-5 items-center px-2 pb-[max(env(safe-area-inset-bottom),0.4rem)] pt-1.5">
           {mobileLeft.map((item) => (
             <BottomLink
@@ -204,7 +204,7 @@ export function AppShell() {
               onPointerUp={endHold}
               onPointerLeave={endHold}
               onContextMenu={(e) => e.preventDefault()}
-              className="flex h-11 w-14 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform active:scale-95"
+              className="flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-[var(--shadow-medium)] transition-transform active:scale-95"
             >
               <Plus className="size-5" />
             </button>

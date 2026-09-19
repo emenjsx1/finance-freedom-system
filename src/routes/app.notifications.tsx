@@ -125,7 +125,7 @@ function NotificationsPage() {
               "shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
               filter === item.key
                 ? "border-primary/40 bg-primary/10 text-foreground"
-                : "border-border text-muted-foreground hover:text-foreground",
+                : "border-border/70 text-muted-foreground hover:text-foreground",
             )}
           >
             {item.label}
@@ -145,7 +145,7 @@ function NotificationsPage() {
             <li
               key={notification.id}
               className={cn(
-                "rounded-2xl border border-border bg-surface p-4 transition-colors",
+                "rounded-2xl border border-border/70 bg-surface p-4 transition-colors",
                 !notification.read && "border-primary/25 bg-primary/[0.04]",
               )}
             >

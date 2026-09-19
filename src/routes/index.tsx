@@ -46,7 +46,7 @@ function Landing() {
           </Link>
           <Link
             to="/auth"
-            className="flex w-full items-center justify-center rounded-2xl border border-border px-5 py-3.5 text-sm font-semibold"
+            className="flex w-full items-center justify-center rounded-2xl border border-border/70 px-5 py-3.5 text-sm font-semibold"
           >
             Já tenho conta
           </Link>

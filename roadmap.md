@@ -91,3 +91,5 @@
 - [ ] Migrate Home first as the quality benchmark, then every remaining screen
 - [ ] Remove old visual language; light mode primary, intentional dark mode
 - [ ] Preserve all engine, agent, analytics, notification and security behaviour
+
+## Migração visual completa (referência iPhone) — done

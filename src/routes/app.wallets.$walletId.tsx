@@ -76,7 +76,7 @@ function WalletDetailPage() {
         Carteiras
       </Link>
 
-      <section className="rounded-2xl border border-border bg-surface p-5">
+      <section className="rounded-2xl border border-border/70 bg-surface p-5">
         <div className="flex items-center gap-3">
           <span
             aria-hidden
@@ -104,13 +104,13 @@ function WalletDetailPage() {
       </section>
 
       <section className="mt-4 grid grid-cols-2 gap-2">
-        <div className="rounded-xl border border-border bg-surface p-3">
+        <div className="rounded-xl border border-border/70 bg-surface p-3">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
             {wallet.wealthBuilding ? "Construído este mês" : "Recebido este mês"}
           </p>
           <Money minor={stats.addedMinor} className="mt-1 block text-sm font-semibold text-income" />
         </div>
-        <div className="rounded-xl border border-border bg-surface p-3">
+        <div className="rounded-xl border border-border/70 bg-surface p-3">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Utilizado este mês</p>
           <Money minor={stats.usedMinor} className="mt-1 block text-sm font-semibold text-expense" />
         </div>
@@ -134,7 +134,7 @@ function WalletDetailPage() {
       <section className="mt-6">
         <h2 className="mb-3 text-sm font-semibold">Atividade</h2>
         {activity.length === 0 ? (
-          <p className="rounded-2xl border border-dashed border-border px-4 py-8 text-center text-sm text-muted-foreground">
+          <p className="rounded-2xl border border-dashed border-border/70 px-4 py-8 text-center text-sm text-muted-foreground">
             Ainda não há movimentos nesta carteira.
           </p>
         ) : (

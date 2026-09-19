@@ -52,7 +52,7 @@ export function TransactionDetail({ tx, onClose }: { tx: Transaction; onClose: (
         </p>
       </div>
 
-      <dl className="divide-y divide-border overflow-hidden rounded-2xl border border-border bg-surface text-sm">
+      <dl className="divide-y divide-border overflow-hidden rounded-2xl border border-border/70 bg-surface text-sm">
         {tx.kind === "expense" ? (
           <>
             <Line label="Categoria" value={category?.name ?? "—"} />
@@ -78,8 +78,8 @@ export function TransactionDetail({ tx, onClose }: { tx: Transaction; onClose: (
       </dl>
 
       {tx.kind === "income" && (tx.allocations?.length ?? 0) > 0 ? (
-        <div className="overflow-hidden rounded-2xl border border-border bg-surface">
-          <p className="border-b border-border px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
+          <p className="border-b border-border/70 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
             Distribuição
           </p>
           {tx.allocations!.map((a) => (

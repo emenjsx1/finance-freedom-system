@@ -2,6 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   BarChart3,
   ArrowDownLeft,
+  ArrowLeftRight,
+  MoreHorizontal,
+  PiggyBank,
+  Plus,
   ArrowUpRight,
   Check,
   Eye,
@@ -20,6 +24,11 @@ import { useMemo, useState } from "react";
 import type { ComponentType } from "react";
 
 import { EmptyState } from "@/components/empty-state";
+import { MoneyHero } from "@/components/design/money-hero";
+import { QuickActions } from "@/components/design/quick-actions";
+import { GoalCard } from "@/components/design/goal-card";
+import { InsightTile } from "@/components/design/insight-card";
+import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
 import { Button } from "@/components/ui/button";
 import { TransactionRow } from "@/components/transactions/transaction-row";
@@ -81,13 +90,31 @@ function HomePage() {
 
   return (
     <div className="space-y-9 pb-4">
-      <header className="flex items-start justify-between gap-4">
-        <div>
-          <p className="type-caption">
-            {greetingFor()}
-            {firstName ? `, ${firstName}` : ""}
-          </p>
-          <h1 className="type-title mt-1">{editing ? "Personalizar painel" : "O teu sistema"}</h1>
+      <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
+        <div className="min-w-0">
+          <span
+            aria-hidden
+            className="mb-4 grid size-8 place-items-center rounded-[var(--r-md)] bg-accent text-sm text-accent-foreground"
+          >
+            ◈
+          </span>
+          {editing ? (
+            <h1 className="type-title">Personalizar painel</h1>
+          ) : (
+            <>
+              <h1 className="type-hero">
+                {greetingFor()}
+                {firstName ? "," : "."}
+                {firstName ? (
+                  <>
+                    <br />
+                    <span className="text-primary">{firstName}.</span>
+                  </>
+                ) : null}
+              </h1>
+              <p className="type-secondary mt-3">Disciplina hoje. Liberdade amanhã.</p>
+            </>
+          )}
         </div>
         <Button
           variant={editing ? "default" : "ghost"}
@@ -106,6 +133,22 @@ function HomePage() {
           onMove={move}
           onReset={() => update({ homeModules: DEFAULT_HOME_MODULES })}
         />
+      ) : setup.accounts.length === 0 ? (
+        /* Beautiful empty home: the real zero, never fake balances. */
+        <div className="space-y-6">
+          <ModuleView id="available" />
+          <div>
+            <p className="type-body">Começa por adicionar onde guardas o teu dinheiro.</p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              <Button asChild>
+                <Link to="/app/accounts">Adicionar conta</Link>
+              </Button>
+              <Button variant="secondary" onClick={() => openQuickActions()}>
+                Registar entrada
+              </Button>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className="space-y-9">
           {modules.map((id) => (
@@ -121,19 +164,6 @@ function HomePage() {
           ) : null}
         </div>
       )}
-
-      {!editing && setup.accounts.length === 0 ? (
-        <EmptyState
-          icon={Receipt}
-          title="Adiciona onde guardas o teu dinheiro."
-          description="Banco, carteira móvel, numerário — cada lugar onde o dinheiro existe."
-          action={
-            <Button asChild variant="secondary">
-              <Link to="/app/accounts">Adicionar conta</Link>
-            </Button>
-          }
-        />
-      ) : null}
 
       {!editing && setup.accounts.length > 0 && ledger.transactions.length === 0 ? (
         <EmptyState
@@ -227,7 +257,7 @@ function ModuleView({ id }: { id: HomeModuleId }) {
   const { setup } = useSetup();
   const { ledger, snapshot } = useLedger();
   const { term } = usePrefs();
-  const { openComposer } = useTransactionLauncher();
+  const { openComposer, openQuickActions } = useTransactionLauncher();
 
   // One definition of the month's figures: the analytics service (business money excluded).
   const analyticsInput = useAnalyticsInput();
@@ -239,22 +269,27 @@ function ModuleView({ id }: { id: HomeModuleId }) {
   switch (id) {
     case "available":
       return (
-        <section className="card-hero rise-in">
-          <p className="type-section">{term("available")}</p>
-          <Money minor={snapshot.spendableMinor} className="type-display mt-2 block" />
-          <p className="type-caption mt-2">
-            Só as carteiras que marcaste como disponíveis. O saldo das contas não é o que podes gastar.
-          </p>
-          {snapshot.unallocatedMinor > 0 ? (
-            <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border/70 pt-4">
-              <p className="type-caption flex-1">
-                <Money minor={snapshot.unallocatedMinor} /> ainda não têm propósito.
-              </p>
-              <Button size="sm" variant="secondary" onClick={() => openComposer({ kind: "reallocation" })}>
-                Distribuir agora
-              </Button>
-            </div>
-          ) : null}
+        <section className="space-y-5">
+          <MoneyHero
+            title="O teu dinheiro"
+            totalMinor={snapshot.wealthMinor}
+            availableMinor={snapshot.spendableMinor}
+            reservedMinor={snapshot.wealthMinor - snapshot.spendableMinor}
+            availableLabel="Disponível"
+            reservedLabel="Reservado"
+            to="/app/money-map"
+            {...(snapshot.unallocatedMinor > 0
+              ? { note: "Tens dinheiro sem propósito. Toca em Guardar para o distribuir." }
+              : {})}
+          />
+          <QuickActions
+            items={[
+              { label: "Adicionar", icon: Plus, primary: true, onSelect: () => openComposer({ kind: "income" }) },
+              { label: "Transferir", icon: ArrowLeftRight, onSelect: () => openComposer({ kind: "transfer" }) },
+              { label: "Guardar", icon: PiggyBank, onSelect: () => openComposer({ kind: "reallocation" }) },
+              { label: "Mais", icon: MoreHorizontal, onSelect: openQuickActions },
+            ]}
+          />
         </section>
       );
 
@@ -298,27 +333,23 @@ function ModuleView({ id }: { id: HomeModuleId }) {
       if (goals.length === 0) return null;
       return (
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="type-section">{term("goals")}</h2>
-            <Link to="/app/goals" className="type-caption text-primary">
-              Ver todos
-            </Link>
-          </div>
-          <div className="space-y-2">
-            {goals.map((goal) => (
-              <Link
-                key={goal.id}
-                to="/app/wallets/$walletId"
-                params={{ walletId: goal.id }}
-                className="card-interactive flex items-center justify-between"
-              >
-                <span className="flex items-center gap-3 text-sm font-medium">
-                  <span aria-hidden>{goal.icon}</span>
-                  {goal.name}
-                </span>
-                <Money minor={goal.balanceMinor} className="text-sm" />
-              </Link>
-            ))}
+          <SectionHeader title={term("goals")} actionLabel="Ver todos" to="/app/goals" />
+          <div className="space-y-3">
+            {goals.map((goal) => {
+              const item = setup.ruleItems.find((r) => r.id === goal.id);
+              return (
+                <GoalCard
+                  key={goal.id}
+                  name={goal.name}
+                  balanceMinor={goal.balanceMinor}
+                  targetMinor={item?.targetMinor}
+                  targetDate={item?.targetDate}
+                  coverImageUrl={item?.coverImageUrl}
+                  icon={goal.icon}
+                  to={{ to: "/app/wallets/$walletId", params: { walletId: goal.id } }}
+                />
+              );
+            })}
           </div>
         </section>
       );
@@ -331,13 +362,8 @@ function ModuleView({ id }: { id: HomeModuleId }) {
       if (recent.length === 0) return null;
       return (
         <section>
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="type-section">Atividade recente</h2>
-            <Link to="/app/transactions" className="type-caption text-primary">
-              Ver tudo
-            </Link>
-          </div>
-          <div className="space-y-2">
+          <SectionHeader title="Atividade recente" actionLabel="Ver tudo" to="/app/transactions" />
+          <div className="list-group">
             {recent.map((tx) => (
               <TransactionRow
                 key={tx.id}
@@ -416,17 +442,17 @@ function InsightCard() {
   if (!insight) return null;
 
   return (
-    <section className="card-standard">
-      <div className="flex items-center justify-between">
-        <p className="type-section">Observação</p>
-        <BarChart3 className="size-4 text-primary" aria-hidden />
-      </div>
-      <p className="type-body mt-3">{insight.title}</p>
-      {insight.detail ? <p className="type-caption mt-1">{insight.detail}</p> : null}
-      <Button asChild variant="ghost" size="sm" className="mt-3">
-        <Link to="/app/analytics">Ver análise</Link>
-      </Button>
-    </section>
+    <InsightTile
+      eyebrow="Observação"
+      title={insight.title}
+      footer={
+        <Link to="/app/analytics" className="text-[0.8125rem] font-medium text-primary">
+          Ver análise →
+        </Link>
+      }
+    >
+      {insight.detail ?? null}
+    </InsightTile>
   );
 }
 
@@ -437,21 +463,27 @@ function AgentCard() {
   const lines = buildDailyBrief(deps);
 
   return (
-    <section className="card-standard">
-      <div className="flex items-center justify-between">
-        <p className="type-section">{prefs.agentName}</p>
-        <MessageSquare className="size-4 text-primary" aria-hidden />
-      </div>
-      <ul className="mt-3 space-y-1.5">
+    <section>
+      <SectionHeader title={prefs.agentName} />
+      <ul className="space-y-1.5">
         {lines.map((line) => (
           <li key={line} className="type-body">
             {line}
           </li>
         ))}
       </ul>
-      <Button asChild variant="secondary" size="sm" className="mt-4">
-        <Link to="/app/agent">Falar com o {prefs.agentName}</Link>
-      </Button>
+      <Link
+        to="/app/agent"
+        className="mt-4 flex items-center gap-3 rounded-[var(--r-xl)] bg-surface px-4 py-3 shadow-[var(--shadow-soft)]"
+      >
+        <span className="icon-tile size-9 bg-accent text-accent-foreground">
+          <MessageSquare className="size-4" aria-hidden />
+        </span>
+        <span className="type-secondary flex-1">Pergunta ao teu {prefs.agentName}</span>
+        <span aria-hidden className="text-muted-foreground">
+          →
+        </span>
+      </Link>
     </section>
   );
 }
@@ -460,7 +492,7 @@ function Figure({ label, minor }: { label: string; minor: number }) {
   return (
     <div className="card-standard">
       <p className="type-meta">{label}</p>
-      <Money minor={minor} className="mt-1.5 block text-xl font-semibold" />
+      <Money minor={minor} className="mt-1.5 block text-xl font-semibold" options={{ withSymbol: false, compactDecimals: true }} />
     </div>
   );
 }
@@ -481,7 +513,7 @@ function SummaryTile({
     <div className="card-compact">
       <Icon className={cn("size-4", toneClass)} />
       <p className="type-meta mt-2">{label}</p>
-      <Money minor={minor} className="mt-0.5 block text-sm font-medium" options={{ compactDecimals: true }} />
+      <Money minor={minor} className="mt-0.5 block text-[0.9375rem] font-semibold" options={{ withSymbol: false, compactDecimals: true }} />
     </div>
   );
 }

@@ -98,11 +98,11 @@ function AutomationsPage() {
         </TabsContent>
 
         <TabsContent value="new">
-          <div className="space-y-4 rounded-2xl border border-border bg-surface p-4">
+          <div className="space-y-4 rounded-2xl border border-border/70 bg-surface p-4">
             <div>
               <Label className="type-meta mb-1 block">Quando</Label>
               <select
-                className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
+                className="h-10 w-full rounded-lg border border-border/70 bg-background px-3 text-sm"
                 value={trigger}
                 onChange={(e) => setTrigger(e.target.value as AutomationTriggerKind)}
               >
@@ -118,7 +118,7 @@ function AutomationsPage() {
               <div>
                 <Label className="type-meta mb-1 block">Carteira</Label>
                 <select
-                  className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
+                  className="h-10 w-full rounded-lg border border-border/70 bg-background px-3 text-sm"
                   value={walletId}
                   onChange={(e) => setWalletId(e.target.value)}
                 >
@@ -162,7 +162,7 @@ function AutomationsPage() {
             <p className="type-meta">Ainda não há histórico.</p>
           ) : (
             state.runs.map((entry) => (
-              <div key={entry.id} className="rounded-xl border border-border bg-surface p-3">
+              <div key={entry.id} className="rounded-xl border border-border/70 bg-surface p-3">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-medium">{entry.automationName}</p>
                   <span className="type-meta">{relativeTime(entry.at)}</span>
@@ -195,7 +195,7 @@ function RuleCard({
 }) {
   const financial = FINANCIAL_ACTIONS.includes(rule.action.kind as AutomationActionKind);
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-border bg-surface p-4">
+    <div className="flex items-start gap-3 rounded-2xl border border-border/70 bg-surface p-4">
       <span className="mt-0.5 text-muted-foreground">
         {rule.trigger.kind.startsWith("schedule") ? <History className="size-4" /> : <Zap className="size-4" />}
       </span>

@@ -35,11 +35,11 @@ function WalletsPage() {
       <PageHeader title="Carteiras" subtitle="Para que serve o teu dinheiro." />
 
       <div className="mb-4 grid grid-cols-2 gap-2">
-        <div className="rounded-2xl border border-border bg-surface p-4">
+        <div className="rounded-2xl border border-border/70 bg-surface p-4">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Total organizado</p>
           <Money minor={snapshot.purposeTotalMinor} className="mt-1 block text-lg font-semibold" />
         </div>
-        <div className="rounded-2xl border border-border bg-surface p-4">
+        <div className="rounded-2xl border border-border/70 bg-surface p-4">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Por distribuir</p>
           <Money minor={snapshot.unallocatedMinor} className="mt-1 block text-lg font-semibold" />
         </div>
@@ -59,7 +59,7 @@ function WalletsPage() {
               <Link
                 to="/app/wallets/$walletId"
                 params={{ walletId: wallet.id }}
-                className="flex flex-1 items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3.5 transition-colors hover:border-muted-foreground/40"
+                className="flex flex-1 items-center justify-between rounded-2xl border border-border/70 bg-surface px-4 py-3.5 transition-colors hover:border-muted-foreground/40"
               >
                 <span className="flex items-center gap-3">
                   <span

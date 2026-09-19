@@ -23,14 +23,14 @@ const buttonVariants = cva(
       variant: {
         default: "rounded-xl bg-primary text-primary-foreground hover:bg-primary/90",
         secondary:
-          "rounded-xl border border-border bg-surface text-foreground hover:bg-elevated hover:border-foreground/20",
-        outline: "rounded-xl border border-border bg-transparent text-foreground hover:bg-elevated",
+          "rounded-xl border border-border/70 bg-surface text-foreground hover:bg-elevated hover:border-foreground/20",
+        outline: "rounded-xl border border-border/70 bg-transparent text-foreground hover:bg-elevated",
         ghost: "rounded-xl bg-transparent text-muted-foreground hover:bg-elevated hover:text-foreground",
         danger: "rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90",
         destructive: "rounded-xl bg-destructive text-destructive-foreground hover:bg-destructive/90",
         fab: "rounded-2xl bg-primary text-primary-foreground shadow-[var(--shadow-raised)] hover:bg-primary/90",
         compact:
-          "rounded-lg border border-border bg-transparent text-foreground hover:bg-elevated",
+          "rounded-lg border border-border/70 bg-transparent text-foreground hover:bg-elevated",
         link: "rounded-md text-primary underline-offset-4 hover:underline",
       },
       size: {

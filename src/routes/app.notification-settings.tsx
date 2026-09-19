@@ -87,7 +87,7 @@ function NotificationSettingsPage() {
               onClick={() => updatePrefs({ frequency: key })}
               className={cn(
                 "rounded-xl border p-3 text-left transition-colors",
-                prefs.frequency === key ? "border-primary/40 bg-primary/[0.06]" : "border-border hover:bg-surface",
+                prefs.frequency === key ? "border-primary/40 bg-primary/[0.06]" : "border-border/70 hover:bg-surface",
               )}
             >
               <p className="text-sm font-medium">{FREQUENCY_LABELS[key].label}</p>
@@ -145,7 +145,7 @@ function NotificationSettingsPage() {
                 "rounded-full border px-3 py-1.5 text-xs transition-colors",
                 prefs.dailyBrief.sections.includes(section)
                   ? "border-primary/40 bg-primary/10 text-foreground"
-                  : "border-border text-muted-foreground",
+                  : "border-border/70 text-muted-foreground",
               )}
             >
               {BRIEF_SECTION_LABELS[section]}
@@ -163,7 +163,7 @@ function NotificationSettingsPage() {
         <div className="grid grid-cols-2 gap-3">
           <Field label="Dia">
             <select
-              className="h-10 w-full rounded-lg border border-border bg-background px-3 text-sm"
+              className="h-10 w-full rounded-lg border border-border/70 bg-background px-3 text-sm"
               value={prefs.weeklyReview.weekday ?? 0}
               onChange={(e) => updatePrefs({ weeklyReview: { ...prefs.weeklyReview, weekday: Number(e.target.value) } })}
             >
@@ -212,7 +212,7 @@ function NotificationSettingsPage() {
       <Section title="O que queres saber" description="Cada assunto tem os seus canais. Desligar um assunto desliga-o em todo o lado.">
         <div className="space-y-3">
           {(Object.keys(PREF_LABELS) as PrefKey[]).map((key) => (
-            <div key={key} className="rounded-xl border border-border p-3">
+            <div key={key} className="rounded-xl border border-border/70 p-3">
               <p className="text-sm font-medium">{PREF_LABELS[key].label}</p>
               <p className="type-meta mt-0.5">{PREF_LABELS[key].description}</p>
               <div className="mt-2 flex flex-wrap gap-3">
@@ -240,7 +240,7 @@ function NotificationSettingsPage() {
               onClick={() => updatePrefs({ preview: key })}
               className={cn(
                 "w-full rounded-xl border p-3 text-left transition-colors",
-                prefs.preview === key ? "border-primary/40 bg-primary/[0.06]" : "border-border hover:bg-surface",
+                prefs.preview === key ? "border-primary/40 bg-primary/[0.06]" : "border-border/70 hover:bg-surface",
               )}
             >
               <p className="text-sm font-medium">{PREVIEW_LABELS[key].label}</p>
@@ -259,7 +259,7 @@ function NotificationSettingsPage() {
             <li className="type-meta">Sem dispositivos associados.</li>
           ) : (
             state.devices.map((device) => (
-              <li key={device.id} className="flex items-center justify-between rounded-xl border border-border p-3 text-sm">
+              <li key={device.id} className="flex items-center justify-between rounded-xl border border-border/70 p-3 text-sm">
                 <span className="truncate pr-3">{device.label || device.platform}</span>
                 <Button size="xs" variant="ghost" onClick={() => forgetDevice(device.id)}>
                   Remover
@@ -286,7 +286,7 @@ function NotificationSettingsPage() {
 
 function Section({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
-    <section className="mb-6 rounded-2xl border border-border bg-surface p-4">
+    <section className="mb-6 rounded-2xl border border-border/70 bg-surface p-4">
       <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
       {description ? <p className="type-meta mb-3 mt-0.5">{description}</p> : <div className="mb-3" />}
       {children}
