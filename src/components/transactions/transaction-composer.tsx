@@ -19,6 +19,7 @@ import {
   previewAllocation,
   suggestFromHistory,
 } from "@/lib/finance/engine";
+import { debitWalletError } from "@/lib/finance/integrity";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
@@ -111,12 +112,27 @@ export function TransactionComposer({
     .map((t) => t.replace(/^#/, "").trim())
     .filter(Boolean);
 
+  /** Money this very movement already takes out of a wallet (edit mode only). */
+  function creditBackFor(walletId: string | undefined): number {
+    if (!editingId || !base || !walletId) return 0;
+    if (base.moneyType === "business") return 0;
+    if (base.kind === "expense" && base.bucketId === walletId) return base.amountMinor;
+    if (base.kind === "reallocation" && base.fromBucketId === walletId) return base.amountMinor;
+    return 0;
+  }
+
   function validate(): string | null {
     if (amountMinor <= 0) return "Introduz um valor maior que zero.";
     if (kind === "expense") {
       if (!categoryId) return "Escolhe uma categoria.";
       if (!accountId) return "Escolhe a conta de onde saiu o dinheiro.";
       if (!bucketId) return "Escolhe o propósito do dinheiro.";
+      if (moneyType === "personal") {
+        // Domain guard: a purpose can never hold less than zero.
+        const walletName = setup.ruleItems.find((r) => r.id === bucketId)?.name;
+        const error = debitWalletError(snapshot, bucketId, amountMinor, walletName, creditBackFor(bucketId));
+        if (error) return error;
+      }
     }
     if (kind === "income") {
       if (!accountId) return "Escolhe a conta que recebeu o dinheiro.";
@@ -133,8 +149,15 @@ export function TransactionComposer({
     if (kind === "reallocation") {
       if (!fromBucketId || !toBucketId) return "Escolhe os dois propósitos.";
       if (fromBucketId === toBucketId) return "Os propósitos têm de ser diferentes.";
-      if ((snapshot.bucketBalances[fromBucketId] ?? 0) < amountMinor)
-        return "Esse propósito não tem saldo suficiente.";
+      const walletName = setup.ruleItems.find((r) => r.id === fromBucketId)?.name;
+      const error = debitWalletError(
+        snapshot,
+        fromBucketId,
+        amountMinor,
+        walletName,
+        creditBackFor(fromBucketId),
+      );
+      if (error) return error;
     }
     return null;
   }
