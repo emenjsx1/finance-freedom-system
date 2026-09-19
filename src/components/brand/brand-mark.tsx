@@ -29,7 +29,7 @@ export function BrandMark({
         )}
       >
         <span
-          className="h-[56%] w-[56%] bg-current"
+          className="h-[66%] w-[66%] bg-current"
           style={{
             WebkitMaskImage: `url(${markUrl})`,
             maskImage: `url(${markUrl})`,
