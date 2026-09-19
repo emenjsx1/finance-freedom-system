@@ -50,9 +50,9 @@ export const Route = createFileRoute("/app/")({
 
 function HomePage() {
   const { setup } = useSetup();
-  const { ledger, snapshot } = useLedger();
-  const { prefs, update, term } = usePrefs();
-  const { openQuickActions, openComposer } = useTransactionLauncher();
+  const { ledger } = useLedger();
+  const { prefs, update } = usePrefs();
+  const { openQuickActions } = useTransactionLauncher();
   const [editing, setEditing] = useState(false);
 
   const firstName = setup.fullName.trim().split(" ")[0] ?? "";
@@ -138,10 +138,6 @@ function HomePage() {
           action={<Button onClick={openQuickActions}>Adicionar primeira transação</Button>}
         />
       ) : null}
-
-      {/* Keeps the reallocation launcher reachable from the unallocated banner. */}
-      <span className="hidden" aria-hidden onClick={() => openComposer({ kind: "reallocation" })} />
-      <p className="type-meta">{term("available")}</p>
     </div>
   );
 }

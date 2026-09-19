@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { MessageSquare, Sliders } from "lucide-react";
 import {
   Bell,
   ChevronRight,
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/app/settings")({
   component: SettingsPage,
 });
 
-const APP_VERSION = "0.4.0 (Fase 04)";
+const APP_VERSION = "0.6.0 (Fase 06)";
 
 const notificationLabels: Record<keyof NotificationPreferences, string> = {
   monthlySummary: "Resumo mensal",
@@ -66,6 +67,8 @@ function SettingsPage() {
         <Row icon={Scale} label="Regra financeira" value="100% distribuído" />
         <Row icon={ListTree} label="Categorias" value="Padrão" />
         <Row icon={Repeat} label="Pagamentos recorrentes" to="/app/recurring" />
+        <Row icon={Sliders} label="Personalização" to="/app/personalization" />
+        <Row icon={MessageSquare} label="Agente e memória" to="/app/agent-settings" />
         <Row icon={Coins} label="Moeda" value={`${currency.code} · ${currency.symbol}`} />
       </Section>
 
@@ -140,7 +143,14 @@ function Row({
   icon: ComponentType<{ className?: string }>;
   label: string;
   value?: string;
-  to?: "/app/wallets" | "/app/recurring" | "/app/accounts" | "/app/money-map" | "/app/protected";
+  to?:
+    | "/app/wallets"
+    | "/app/recurring"
+    | "/app/accounts"
+    | "/app/money-map"
+    | "/app/protected"
+    | "/app/personalization"
+    | "/app/agent-settings";
 }) {
   const content = (
     <>
