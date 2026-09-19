@@ -28,6 +28,16 @@ import {
   type Strategy,
   type StrategyRule,
 } from "@/lib/personal/types";
+import type {
+  ActionStatus,
+  Decision,
+  DevelopmentState,
+  EvolutionEvent,
+  PersonalAction,
+  Program,
+  ProgramItem,
+  Reflection,
+} from "@/lib/development/types";
 import { loadPersonal, savePersonal } from "@/lib/storage/personal-store";
 
 function newId(): string {
@@ -62,6 +72,34 @@ interface PersonalContextValue {
   addCommitment: (item: Omit<Commitment, "id" | "createdAt">) => void;
   removeCommitment: (id: string) => void;
   setPermissions: (patch: Partial<AgentPermissions>) => void;
+
+  /* -------------------- personal development -------------------- */
+  createProgram: (
+    input: Omit<Program, "id" | "createdAt" | "updatedAt" | "items"> & {
+      items: (Omit<ProgramItem, "id" | "status" | "order"> & { order?: number })[];
+    },
+  ) => Program;
+  updateProgram: (id: string, patch: Partial<Program>) => void;
+  setProgramItemStatus: (programId: string, itemId: string, status: ActionStatus) => void;
+  completeProgram: (id: string) => void;
+  removeProgram: (id: string) => void;
+  addAction: (
+    input: Omit<PersonalAction, "id" | "createdAt" | "updatedAt" | "status"> & {
+      status?: ActionStatus;
+    },
+  ) => PersonalAction;
+  updateAction: (id: string, patch: Partial<PersonalAction>) => void;
+  removeAction: (id: string) => void;
+  addDecision: (input: Omit<Decision, "id" | "createdAt" | "updatedAt" | "status"> & {
+    status?: Decision["status"];
+  }) => Decision;
+  updateDecision: (id: string, patch: Partial<Decision>) => void;
+  removeDecision: (id: string) => void;
+  addReflection: (input: Omit<Reflection, "id" | "createdAt">) => void;
+  removeReflection: (id: string) => void;
+  setDailyReflection: (enabled: boolean) => void;
+  logEvolution: (event: Omit<EvolutionEvent, "id" | "at"> & { at?: string }) => void;
+  hideEvolution: (id: string, hidden: boolean) => void;
 }
 
 const Ctx = createContext<PersonalContextValue | null>(null);
