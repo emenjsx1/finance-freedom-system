@@ -93,6 +93,17 @@ async function mergeSettingsBlob(userId: string, patch: Partial<SettingsBlob>): 
   await writeSettings(userId, { appearance: { ...(current?.settings ?? {}), ...patch } });
 }
 
+/**
+ * The cloud copy wins, but nothing that only exists on this device is thrown
+ * away. Dropping a purpose that a recorded movement still points at is what
+ * produced "movimento sem propósito válido", so local-only rows are kept and
+ * re-uploaded on the next save.
+ */
+function unionById<T extends { id: string }>(cloud: T[], local: T[]): T[] {
+  const seen = new Set(cloud.map((row) => row.id));
+  return [...cloud, ...local.filter((row) => !seen.has(row.id))];
+}
+
 // --------------------------------------------------------------------- setup
 
 export async function loadCloudSetup(base: SetupState): Promise<SetupState | null> {
