@@ -232,7 +232,7 @@ function HomePage() {
         <EmptyState
           icon={Receipt}
           title="A tua história financeira começa aqui."
-          description="Regista a primeira entrada ou gasto e o sistema começa a distribuir o dinheiro."
+          description="Regista a primeira entrada ou gasto e vais começar a ver para onde vai o teu dinheiro."
           action={<Button onClick={openQuickActions}>Adicionar primeira transação</Button>}
         />
       ) : null}

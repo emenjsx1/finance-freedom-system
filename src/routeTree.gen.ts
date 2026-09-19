@@ -55,6 +55,7 @@ import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppStrategyRouteImport } from './routes/app.strategy'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppWalletsRouteImport } from './routes/app.wallets'
+import { Route as ApiPublicPushDispatchRouteImport } from './routes/api/public/push-dispatch'
 import { Route as AppAccountsIndexRouteImport } from './routes/app.accounts.index'
 import { Route as AppAccountsAccountIdRouteImport } from './routes/app.accounts.$accountId'
 import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
@@ -309,6 +310,11 @@ const AppWalletsRoute = AppWalletsRouteImport.update({
   path: '/wallets',
   getParentRoute: () => AppRoute,
 } as any)
+const ApiPublicPushDispatchRoute = ApiPublicPushDispatchRouteImport.update({
+  id: '/api/public/push-dispatch',
+  path: '/api/public/push-dispatch',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppAccountsIndexRoute = AppAccountsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -475,6 +481,7 @@ export interface FileRoutesByFullPath {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/api/public/push-dispatch': typeof ApiPublicPushDispatchRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/development/decisions': typeof AppDevelopmentDecisionsRoute
@@ -537,6 +544,7 @@ export interface FileRoutesByTo {
   '/app/strategy': typeof AppStrategyRoute
   '/app/transactions': typeof AppTransactionsRoute
   '/app': typeof AppIndexRoute
+  '/api/public/push-dispatch': typeof ApiPublicPushDispatchRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/development/decisions': typeof AppDevelopmentDecisionsRoute
@@ -609,6 +617,7 @@ export interface FileRoutesById {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRouteWithChildren
   '/app/': typeof AppIndexRoute
+  '/api/public/push-dispatch': typeof ApiPublicPushDispatchRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
   '/app/development/decisions': typeof AppDevelopmentDecisionsRoute
@@ -682,6 +691,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
+    | '/api/public/push-dispatch'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
     | '/app/development/decisions'
@@ -744,6 +754,7 @@ export interface FileRouteTypes {
     | '/app/strategy'
     | '/app/transactions'
     | '/app'
+    | '/api/public/push-dispatch'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
     | '/app/development/decisions'
@@ -815,6 +826,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
+    | '/api/public/push-dispatch'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
     | '/app/development/decisions'
@@ -852,6 +864,7 @@ export interface RootRouteChildren {
   SignupRoute: typeof SignupRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
+  ApiPublicPushDispatchRoute: typeof ApiPublicPushDispatchRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -1177,6 +1190,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/app/wallets'
       preLoaderRoute: typeof AppWalletsRouteImport
       parentRoute: typeof AppRoute
+    }
+    '/api/public/push-dispatch': {
+      id: '/api/public/push-dispatch'
+      path: '/api/public/push-dispatch'
+      fullPath: '/api/public/push-dispatch'
+      preLoaderRoute: typeof ApiPublicPushDispatchRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/app/accounts/': {
       id: '/app/accounts/'
@@ -1558,6 +1578,7 @@ const rootRouteChildren: RootRouteChildren = {
   SignupRoute: SignupRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
+  ApiPublicPushDispatchRoute: ApiPublicPushDispatchRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

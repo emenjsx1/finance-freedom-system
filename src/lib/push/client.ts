@@ -16,8 +16,15 @@ export type PushSupport =
 
 export type PushPermission = "default" | "granted" | "denied";
 
+/**
+ * VAPID *public* key. Public by design (the browser must send it to the push
+ * service). The matching private key lives only in server secrets.
+ */
+const DEFAULT_VAPID_PUBLIC_KEY =
+  "BPa8u0v8c2fzDBpGy3VQOYuwA67AQK56ZGOCVtR0bB82HCrqjR-mzTudBYYtOwqlX0Ctqy0PYje55IsZtpCvtSg";
+
 export const VAPID_PUBLIC_KEY: string =
-  (import.meta.env['VITE_VAPID_PUBLIC_KEY'] as string | undefined) ?? "";
+  (import.meta.env['VITE_VAPID_PUBLIC_KEY'] as string | undefined) || DEFAULT_VAPID_PUBLIC_KEY;
 
 export function browserSupportsPush(): boolean {
   return (

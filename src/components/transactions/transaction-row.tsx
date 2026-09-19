@@ -1,5 +1,7 @@
 import { ArrowLeftRight, Shuffle } from "lucide-react";
 
+import { Symbol } from "@/lib/icons/symbols";
+
 import { findCategory, type Category } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
 import type { Transaction } from "@/lib/finance/ledger-types";
@@ -27,7 +29,7 @@ export function TransactionRow({
 
   let title = tx.merchant || tx.description || category?.name || "Transação";
   let context = "";
-  let icon = category?.icon ?? "•";
+  let icon = category?.icon ?? "other";
   let sign = "";
   let amountClass = "text-foreground";
 
@@ -42,11 +44,11 @@ export function TransactionRow({
   } else if (tx.kind === "transfer") {
     title = tx.description || "Transferência";
     context = `${accountName(tx.fromAccountId)} → ${accountName(tx.toAccountId)}`;
-    icon = "↔";
+    icon = "other";
   } else {
     title = tx.description || "Redistribuição";
     context = `${bucketName(tx.fromBucketId)} → ${bucketName(tx.toBucketId)}`;
-    icon = "⇄";
+    icon = "other";
   }
 
   const time = new Date(tx.occurredAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
@@ -54,7 +56,14 @@ export function TransactionRow({
   return (
     <button type="button" onClick={() => onOpen(tx)} className="list-row">
       <span className="icon-tile text-base" aria-hidden>
-        {tx.kind === "transfer" ? <ArrowLeftRight className="size-4" /> : tx.kind === "reallocation" ? <Shuffle className="size-4" /> : icon}
+        {tx.kind === "transfer" ? (
+          <ArrowLeftRight className="size-4" />
+        ) : tx.kind === "reallocation" ? (
+          <Shuffle className="size-4" />
+        ) : (
+          // Icons are drawn shapes, never raw stored keys like "business".
+          <Symbol name={icon} className="size-4" />
+        )}
       </span>
       <span className="min-w-0 flex-1">
         <span className="block truncate text-[0.9375rem] font-medium">{title}</span>

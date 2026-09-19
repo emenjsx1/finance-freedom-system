@@ -10,7 +10,7 @@
  * `url` is validated against same-origin app routes before it is opened.
  */
 
-const FALLBACK_TITLE = "Finan.";
+const FALLBACK_TITLE = "Norte";
 const FALLBACK_BODY = "Tens uma nova atualização.";
 
 function safePath(raw) {

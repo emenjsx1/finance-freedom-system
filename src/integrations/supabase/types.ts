@@ -185,6 +185,24 @@ export type Database = {
         }
         Relationships: []
       }
+      cron_config: {
+        Row: {
+          created_at: string
+          key: string
+          value: string
+        }
+        Insert: {
+          created_at?: string
+          key: string
+          value: string
+        }
+        Update: {
+          created_at?: string
+          key?: string
+          value?: string
+        }
+        Relationships: []
+      }
       decisions: {
         Row: {
           created_at: string
@@ -533,6 +551,50 @@ export type Database = {
         }
         Relationships: []
       }
+      push_deliveries: {
+        Row: {
+          created_at: string
+          error: string | null
+          http_status: number | null
+          id: string
+          reminder_id: string | null
+          status: string
+          subscription_id: string | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error?: string | null
+          http_status?: number | null
+          id?: string
+          reminder_id?: string | null
+          status: string
+          subscription_id?: string | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error?: string | null
+          http_status?: number | null
+          id?: string
+          reminder_id?: string | null
+          status?: string
+          subscription_id?: string | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "push_deliveries_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "push_subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth: string
@@ -632,6 +694,7 @@ export type Database = {
           entity_id: string | null
           entity_type: string | null
           id: string
+          last_push_at: string | null
           payload: Json
           scheduled_at: string | null
           status: string
@@ -645,6 +708,7 @@ export type Database = {
           entity_id?: string | null
           entity_type?: string | null
           id: string
+          last_push_at?: string | null
           payload: Json
           scheduled_at?: string | null
           status?: string
@@ -658,6 +722,7 @@ export type Database = {
           entity_id?: string | null
           entity_type?: string | null
           id?: string
+          last_push_at?: string | null
           payload?: Json
           scheduled_at?: string | null
           status?: string
