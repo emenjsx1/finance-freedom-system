@@ -396,11 +396,12 @@ function ModuleView({ id }: { id: HomeModuleId }) {
     case "recent": {
       const recent = [...ledger.transactions]
         .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
-        .slice(0, 4);
+        .slice(0, 3);
       if (recent.length === 0) return null;
       return (
         <section>
-          <SectionHeader title="Atividade recente" actionLabel="Ver tudo" to="/app/transactions" />
+          {/* Preview only: search, filters and detail live on /app/activity. */}
+          <SectionHeader title="Atividade recente" actionLabel="Ver todas" to="/app/activity" />
           <div className="list-group">
             {recent.map((tx) => (
               <TransactionRow
