@@ -732,11 +732,13 @@ function SelectField({
   value,
   onChange,
   options,
+  emptyLabel,
 }: {
   label: string;
   value: string;
   onChange: (value: string) => void;
   options: { value: string; label: string }[];
+  emptyLabel?: string;
 }) {
   const id = `field-${label.replace(/\s/g, "-").toLowerCase()}`;
   return (
