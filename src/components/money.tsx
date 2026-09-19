@@ -21,7 +21,7 @@ export function Money({
 
   if (setup.privacyMode) {
     return (
-      <span className={cn("numeric", className)} aria-label="Valor oculto">
+      <span className={cn(className)} aria-label="Valor oculto">
         {MASK} {getCurrency(code).symbol}
       </span>
     );

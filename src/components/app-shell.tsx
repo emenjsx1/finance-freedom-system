@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Home,
   ArrowLeftRight,
@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { pt } from "@/lib/i18n/pt";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
 import { haptic } from "@/hooks/use-ledger";
+import { useSetup } from "@/hooks/use-setup";
 
 interface NavItem {
   to: string;
@@ -47,6 +48,12 @@ const desktopNav: NavItem[] = [
 export function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { openQuickActions, openComposer } = useTransactionLauncher();
+  const { setup } = useSetup();
+
+  // Privacy mode hides every monetary value, including screens that format money directly.
+  useEffect(() => {
+    document.documentElement.classList.toggle("privacy-mode", setup.privacyMode);
+  }, [setup.privacyMode]);
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heldRef = useRef(false);
 

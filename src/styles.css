@@ -149,3 +149,9 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-xl);
 }
+
+/* Privacy mode: every monetary value uses .numeric, so one rule hides them all. */
+.privacy-mode .numeric {
+  filter: blur(7px);
+  user-select: none;
+}
