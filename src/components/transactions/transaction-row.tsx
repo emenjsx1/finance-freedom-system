@@ -63,7 +63,8 @@ export function TransactionRow({
       <span className="shrink-0 text-right">
         <span className={cn("numeric block text-[0.9375rem] font-semibold", amountClass)}>
           {sign}
-          {formatMoney(tx.amountMinor, currencyCode)}
+          {formatMoney(tx.amountMinor, currencyCode, { withSymbol: false, compactDecimals: true })}
+          <span className="ml-1 text-[0.6875rem] font-medium text-muted-foreground">{currencyCode}</span>
         </span>
         <span className="type-meta block">{time}</span>
       </span>
