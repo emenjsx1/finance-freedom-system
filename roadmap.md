@@ -156,3 +156,6 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 - Entradas: Dinheiro, Início (quando há dinheiro sem propósito) e Estratégia.
 - Agente: ferramenta simulate_organization usa o mesmo motor; explica, nunca calcula nem aplica.
 - Onboarding sem a antiga regra fixa 40/20/20/10/10; novos utilizadores começam sem carteiras impostas.
+
+## Frase da marca
+- "Ter ambição não é o mesmo que ter direção…" no signup e na Home.
