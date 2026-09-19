@@ -109,7 +109,7 @@ function TransactionsPage() {
 
   const page = results.slice(0, visible);
   const groups = useMemo(() => groupByDay(page), [page]);
-  const totals = monthTotals(ledger.transactions, cursor.getFullYear(), cursor.getMonth());
+  const totals = monthTotals(ledger.transactions, cursor.getFullYear(), cursor.getMonth(), setup.ruleItems);
   const filterCount = activeFilterCount(filters);
 
   const monthLabel = cursor.toLocaleDateString("pt-PT", { month: "long", year: "numeric" });

@@ -89,7 +89,16 @@ export function allocationsTotal(allocations: { amountMinor: number }[]): number
 }
 
 /** Month summary derived from the same ledger. */
-export function monthTotals(transactions: Transaction[], year: number, month: number) {
+export function monthTotals(
+  transactions: Transaction[],
+  year: number,
+  month: number,
+  ruleItems: AllocationRuleItem[] = [],
+) {
+  const buildingBuckets = new Set(
+    ruleItems.filter((r) => r.kind === "wealth" || r.kind === "goals").map((r) => r.id),
+  );
+
   let income = 0;
   let expenses = 0;
   let built = 0;
@@ -99,12 +108,14 @@ export function monthTotals(transactions: Transaction[], year: number, month: nu
     if (date.getFullYear() !== year || date.getMonth() !== month) continue;
     if (tx.kind === "income") {
       income += tx.amountMinor;
-      for (const allocation of tx.allocations ?? []) built += allocation.amountMinor;
+      for (const allocation of tx.allocations ?? []) {
+        if (buildingBuckets.has(allocation.bucketId)) built += allocation.amountMinor;
+      }
     }
     if (tx.kind === "expense") expenses += tx.amountMinor;
   }
 
-  return { income, expenses, built: built - expenses > 0 ? built : built };
+  return { income, expenses, built };
 }
 
 export function dayTotalSpent(transactions: Transaction[], isoDate: string): number {

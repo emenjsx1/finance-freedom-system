@@ -32,7 +32,7 @@ function HomePage() {
   const currency = setup.currencyCode;
 
   const now = new Date();
-  const totals = monthTotals(ledger.transactions, now.getFullYear(), now.getMonth());
+  const totals = monthTotals(ledger.transactions, now.getFullYear(), now.getMonth(), setup.ruleItems);
   const recent = [...ledger.transactions]
     .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
     .slice(0, 5);
