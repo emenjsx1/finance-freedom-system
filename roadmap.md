@@ -71,10 +71,10 @@
       prepared expense left balances untouched until Confirmar then created exactly one transaction,
       audit status confirmed, memory added and deleted, no console or runtime errors
 
-## Phase 07 — Analytics, financial intelligence & insights (requested, not started)
-- [ ] Centralised metric definitions + analytics service layer on top of the engine
-- [ ] Análise section: period selector, money flow, spending by category + detail, comparisons, trends
-- [ ] Income analysis, wealth building, build/spend rate, net worth history, wallet & protected analytics
-- [ ] Deterministic insights engine with data-sufficiency thresholds and ranked insights
-- [ ] Agent analytics tools + "Pergunta ao teu dinheiro" + structured response blocks
-- [ ] Reports (monthly, weekly, custom period) with clean serialisation for future export
+## Phase 07 — Analytics, financial intelligence & insights (done, on-device data)
+- [x] Centralised metric definitions + analytics service layer on top of the engine
+- [x] Análise section: period selector, money flow, spending by category + detail, comparisons, trends
+- [x] Income analysis, wealth building, build/spend rate, net worth history, wallet & protected analytics
+- [x] Deterministic insights engine with data-sufficiency thresholds and ranked insights
+- [x] Agent analytics tools + "Pergunta ao teu dinheiro" + structured response blocks
+- [x] Reports (monthly, weekly, custom period) with clean serialisation for future export

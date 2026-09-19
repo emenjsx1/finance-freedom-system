@@ -18,10 +18,12 @@ import { useSetup } from "@/hooks/use-setup";
 import {
   ACCENTS,
   DEFAULT_PAGES,
+  ANALYTICS_MODULES,
   HOME_MODULES,
   TERMINOLOGY_DEFAULTS,
   type AccentKey,
   type Density,
+  type AnalyticsModuleId,
   type HomeModuleId,
   type TerminologyKey,
   type ThemeMode,
@@ -58,6 +60,14 @@ function PersonalizationPage() {
       homeModules: prefs.homeModules.includes(id)
         ? prefs.homeModules.filter((m) => m !== id)
         : [...prefs.homeModules, id],
+    });
+  }
+
+  function toggleAnalyticsModule(id: AnalyticsModuleId) {
+    update({
+      analyticsModules: prefs.analyticsModules.includes(id)
+        ? prefs.analyticsModules.filter((m) => m !== id)
+        : [...prefs.analyticsModules, id],
     });
   }
 
@@ -169,6 +179,22 @@ function PersonalizationPage() {
             description={module.description}
             checked={prefs.homeModules.includes(module.id)}
             onChange={() => toggleModule(module.id)}
+          />
+        ))}
+      </section>
+
+      <section className="card-standard space-y-3">
+        <div>
+          <h2 className="type-section">Módulos de análise</h2>
+          <p className="type-caption mt-1">O que aparece na secção Análise.</p>
+        </div>
+        {ANALYTICS_MODULES.map((module) => (
+          <Row
+            key={module.id}
+            label={module.label}
+            description="Mostrar na Análise"
+            checked={prefs.analyticsModules.includes(module.id)}
+            onChange={() => toggleAnalyticsModule(module.id)}
           />
         ))}
       </section>

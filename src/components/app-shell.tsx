@@ -1,6 +1,7 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
 import {
+  BarChart3,
   Home,
   ArrowLeftRight,
   Plus,
@@ -61,6 +62,7 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
   {
     title: "Planeamento",
     items: [
+      { to: "/app/analytics", label: "Análise", icon: BarChart3 },
       { to: "/app/goals", label: "Objetivos", icon: Target },
       { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
       { to: "/app/reports", label: "Relatórios", icon: PieChart },

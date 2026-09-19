@@ -13,6 +13,9 @@ import type { RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import type { SetupState } from "@/lib/storage/local-setup-store";
 import type { Memory, AgentProfile } from "@/lib/agent/types";
 
+import { runAnalyticsTool, selectAnalyticsTools } from "@/lib/agent/analytics-tools";
+import type { AnalyticsInput } from "@/lib/analytics/service";
+
 export interface AgentDeps {
   setup: SetupState;
   snapshot: LedgerSnapshot;
@@ -274,6 +277,17 @@ export interface AgentContext {
 export function buildAgentContext(question: string, d: AgentDeps): AgentContext {
   const factos: Record<string, unknown> = {};
   for (const tool of selectTools(question)) factos[tool] = runTool(tool, d);
+
+  // Analytics facts come from the analytics service, never from the model.
+  const analyticsInput: AnalyticsInput = {
+    setup: d.setup,
+    snapshot: d.snapshot,
+    transactions: d.transactions,
+    categories: d.categories,
+    recurring: d.recurring,
+  };
+  for (const tool of selectAnalyticsTools(question))
+    factos[tool] = runAnalyticsTool(tool, analyticsInput);
 
   return {
     data: new Date().toISOString().slice(0, 10),

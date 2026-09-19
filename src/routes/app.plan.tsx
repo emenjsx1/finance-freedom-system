@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  BarChart3,
   Landmark,
   Wallet,
   Map,
@@ -52,6 +53,7 @@ function PlanPage() {
   ];
 
   const planning: Entry[] = [
+    { to: "/app/analytics", label: "Análise", description: "O que aconteceu com o teu dinheiro.", icon: BarChart3 },
     { to: "/app/goals", label: "Objetivos", description: "Aquilo que estás a construir.", icon: Target },
     { to: "/app/recurring", label: "Recorrentes", description: "Próximos pagamentos e subscrições.", icon: Repeat },
     { to: "/app/reports", label: "Relatórios", description: "Padrões dos teus movimentos.", icon: PieChart },
