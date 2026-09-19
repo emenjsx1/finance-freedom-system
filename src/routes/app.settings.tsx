@@ -157,6 +157,7 @@ function Row({
     | "/app/personalization"
     | "/app/agent-settings"
     | "/app/profile"
+    | "/app/integrity"
     | "/app/privacy";
 }) {
   const content = (
