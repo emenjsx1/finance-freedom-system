@@ -243,11 +243,22 @@ export function TransactionComposer({
       return;
     }
     if (tx.kind === "income") {
-      toast.success(`${formatMoney(tx.amountMinor, currency)} adicionados`, {
-        description: (tx.allocations ?? [])
-          .map((a) => `${setup.ruleItems.find((r) => r.id === a.bucketId)?.name}: ${formatMoney(a.amountMinor, currency, { compactDecimals: true })}`)
-          .join(" · "),
+      const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
+      toast.success(`${formatMoney(tx.amountMinor, currency)} adicionados ao ${accountName}`, {
+        description: "O dinheiro está disponível.",
       });
+      return;
+    }
+    if (tx.kind === "reservation") {
+      const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
+      const purposeName = setup.ruleItems.find((r) => r.id === tx.toBucketId)?.name ?? "";
+      toast.success(`${formatMoney(tx.amountMinor, currency)} guardados para ${purposeName}`, {
+        description: `O dinheiro continua em ${accountName}.`,
+      });
+      return;
+    }
+    if (tx.kind === "release") {
+      toast.success("Dinheiro libertado", { description: "Voltou a ficar disponível, na mesma conta." });
       return;
     }
     if (tx.kind === "transfer") {
