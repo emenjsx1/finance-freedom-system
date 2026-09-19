@@ -15,7 +15,7 @@ export function CategoryPicker({
 }: {
   categories: Category[];
   kind: "expense" | "income";
-  value?: string;
+  value: string | undefined;
   onChange: (id: string) => void;
   recentIds?: string[];
   frequentIds?: string[];
@@ -66,7 +66,7 @@ function Group({
 }: {
   title: string;
   items: Category[];
-  value?: string;
+  value: string | undefined;
   onChange: (id: string) => void;
 }) {
   if (items.length === 0) return null;
