@@ -567,9 +567,20 @@ export function TransactionComposer({
       ) : null}
 
       {kind === "expense" ? (
-        <div className="grid grid-cols-2 gap-3">
-          <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
-          <SelectField label="Propósito" value={bucketId ?? ""} onChange={setBucketId} options={purposeOptions} />
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
+            <SelectField
+              label="Propósito"
+              value={bucketId ?? ""}
+              onChange={setBucketId}
+              options={purposeOptions}
+              emptyLabel="Dinheiro disponível"
+            />
+          </div>
+          <p className="type-meta">
+            Se este dinheiro não estava guardado para nada, deixa em “Dinheiro disponível”.
+          </p>
         </div>
       ) : null}
 
