@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 
-import logoUrl from "@/assets/finan-logo.png";
+import { BrandMark } from "@/components/brand/brand-mark";
 
 /** Shared shell for the public legal and support pages. No sign-in required. */
 export function LegalPage({
@@ -16,7 +16,7 @@ export function LegalPage({
   return (
     <main className="mx-auto w-full max-w-2xl px-5 pb-24 pt-[max(env(safe-area-inset-top),2rem)]">
       <Link to="/" className="inline-block">
-        <img src={logoUrl} alt="Norte" className="h-7 w-auto" />
+        <BrandMark size="sm" />
       </Link>
 
       <h1 className="type-display mt-8">{title}</h1>

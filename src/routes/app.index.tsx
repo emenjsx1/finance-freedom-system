@@ -51,7 +51,7 @@ import { homeMessage } from "@/lib/home/message";
 import { useAuth } from "@/hooks/use-auth";
 import { UserAvatar } from "@/components/design/user-avatar";
 import { greetingFor } from "@/lib/finance/greeting";
-import logoUrl from "@/assets/finan-logo.png";
+import { BrandMark } from "@/components/brand/brand-mark";
 import { nextOccurrence } from "@/lib/finance/engine";
 import { DEFAULT_HOME_MODULES, HOME_MODULES, type HomeModuleId } from "@/lib/prefs/types";
 import { cn } from "@/lib/utils";
@@ -126,7 +126,7 @@ function HomePage() {
     <div className="space-y-9 pb-4">
       <header className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4">
         <div className="min-w-0">
-          <img src={logoUrl} alt="Norte" className="mb-4 h-8 w-auto" />
+          <BrandMark className="mb-4" />
           {editing ? (
             <h1 className="type-title">Personalizar painel</h1>
           ) : (
