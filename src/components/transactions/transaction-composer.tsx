@@ -50,6 +50,9 @@ export function TransactionComposer({
   const { setup } = useSetup();
   const { ledger, snapshot, addTransaction, updateTransaction } = useLedger();
   const currency = setup.currencyCode;
+  /** "25 000 MZN" — the same shape the screens use, in every confirmation. */
+  const amountLabel = (minor: number) =>
+    `${formatMoney(minor, currency, { withSymbol: false, compactDecimals: true })} ${currency}`;
 
   const suggestions = useMemo(
     () => suggestFromHistory(ledger.transactions, kind === "income" ? "income" : "expense"),
