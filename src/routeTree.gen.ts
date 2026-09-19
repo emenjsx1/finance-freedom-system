@@ -22,6 +22,7 @@ import { Route as AppSettingsRouteImport } from './routes/app.settings'
 import { Route as AppTransactionsRouteImport } from './routes/app.transactions'
 import { Route as AppWalletsRouteImport } from './routes/app.wallets'
 import { Route as AppAccountsIndexRouteImport } from './routes/app.accounts.index'
+import { Route as AppAccountsAccountIdRouteImport } from './routes/app.accounts.$accountId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -88,6 +89,11 @@ const AppAccountsIndexRoute = AppAccountsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppAccountsRoute,
 } as any)
+const AppAccountsAccountIdRoute = AppAccountsAccountIdRouteImport.update({
+  id: '/$accountId',
+  path: '/$accountId',
+  getParentRoute: () => AppAccountsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -102,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRoute
   '/app/': typeof AppIndexRoute
+  '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRoute
   '/app': typeof AppIndexRoute
+  '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/accounts': typeof AppAccountsIndexRoute
 }
 export interface FileRoutesById {
@@ -131,6 +139,7 @@ export interface FileRoutesById {
   '/app/transactions': typeof AppTransactionsRoute
   '/app/wallets': typeof AppWalletsRoute
   '/app/': typeof AppIndexRoute
+  '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/accounts/': typeof AppAccountsIndexRoute
 }
 export interface FileRouteTypes {
@@ -148,6 +157,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
+    | '/app/accounts/$accountId'
     | '/app/accounts/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app'
+    | '/app/accounts/$accountId'
     | '/app/accounts'
   id:
     | '__root__'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/app/transactions'
     | '/app/wallets'
     | '/app/'
+    | '/app/accounts/$accountId'
     | '/app/accounts/'
   fileRoutesById: FileRoutesById
 }
@@ -279,14 +291,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAccountsIndexRouteImport
       parentRoute: typeof AppAccountsRoute
     }
+    '/app/accounts/$accountId': {
+      id: '/app/accounts/$accountId'
+      path: '/$accountId'
+      fullPath: '/app/accounts/$accountId'
+      preLoaderRoute: typeof AppAccountsAccountIdRouteImport
+      parentRoute: typeof AppAccountsRoute
+    }
   }
 }
 
 interface AppAccountsRouteChildren {
+  AppAccountsAccountIdRoute: typeof AppAccountsAccountIdRoute
   AppAccountsIndexRoute: typeof AppAccountsIndexRoute
 }
 
 const AppAccountsRouteChildren: AppAccountsRouteChildren = {
+  AppAccountsAccountIdRoute: AppAccountsAccountIdRoute,
   AppAccountsIndexRoute: AppAccountsIndexRoute,
 }
 
