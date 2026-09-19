@@ -1,6 +1,6 @@
 import type { BucketKind } from "./types";
 
-export type TxKind = "income" | "expense" | "transfer" | "reallocation";
+export type TxKind = "income" | "expense" | "transfer" | "reallocation" | "adjustment";
 export type MoneyType = "personal" | "business";
 
 export interface Attachment {
@@ -46,6 +46,12 @@ export interface Transaction {
   /** reallocation */
   fromBucketId?: string | undefined;
   toBucketId?: string | undefined;
+
+  /** adjustment: whether the correction adds or removes physical money */
+  direction?: "positive" | "negative" | undefined;
+  /** adjustment / protected withdrawal: user-supplied explanation, kept private */
+  adjustmentReason?: string | undefined;
+  protectedReason?: string | undefined;
 
   /** Set when created from a recurring rule. */
   recurringId?: string | undefined;
@@ -98,4 +104,10 @@ export type NotificationEvent =
   | "subscription_due"
   | "transaction_created"
   | "transaction_updated"
-  | "transaction_deleted";
+  | "transaction_deleted"
+  | "account_reconciled"
+  | "balance_adjusted"
+  | "money_unallocated"
+  | "protected_money_withdrawn"
+  | "wallet_low_balance"
+  | "account_low_balance";

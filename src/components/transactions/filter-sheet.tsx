@@ -43,6 +43,7 @@ const KIND_LABELS: Record<TxKind, string> = {
   expense: "Despesa",
   transfer: "Transferência",
   reallocation: "Redistribuição",
+  adjustment: "Ajuste de saldo",
 };
 
 function toggle<T>(list: T[], value: T): T[] {

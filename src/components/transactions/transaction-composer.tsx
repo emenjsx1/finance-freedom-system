@@ -15,11 +15,11 @@ import { findCategory } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
 import {
   allocationsTotal,
-  isProtectedBucketKind,
   largeExpenseRatio,
   previewAllocation,
   suggestFromHistory,
 } from "@/lib/finance/engine";
+import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
 
@@ -58,6 +58,8 @@ export function TransactionComposer({
   const [stage, setStage] = useState<"form" | "confirm">("form");
   const [submitting, setSubmitting] = useState(false);
   const [acknowledgedLarge, setAcknowledgedLarge] = useState(false);
+  const [protectedReason, setProtectedReason] = useState("");
+  const [protectedAck, setProtectedAck] = useState(false);
 
   const [amountMinor, setAmountMinor] = useState(base?.amountMinor ?? 0);
   const [categoryId, setCategoryId] = useState<string | undefined>(base?.categoryId);
@@ -98,10 +100,11 @@ export function TransactionComposer({
   const bucketBalance = bucketId ? (snapshot.bucketBalances[bucketId] ?? 0) : 0;
   const ratio = kind === "expense" ? largeExpenseRatio(amountMinor, bucketBalance) : null;
   const isLarge = ratio !== null && ratio >= 0.4;
-  const protectedWarning =
-    kind === "reallocation" && fromBucketId
-      ? isProtectedBucketKind(setup.ruleItems.find((r) => r.id === fromBucketId)?.kind ?? "")
-      : false;
+  const sourceWalletId = kind === "reallocation" ? fromBucketId : kind === "expense" ? bucketId : undefined;
+  const sourceWallet = setup.ruleItems.find((r) => r.id === sourceWalletId);
+  // Money leaving a protected wallet asks for a deliberate, recorded reason.
+  const protectedWarning = Boolean(sourceWallet && isProtectedWallet(sourceWallet));
+
 
   const tags = tagsText
     .split(/[\s,]+/)
@@ -173,6 +176,7 @@ export function TransactionComposer({
         ...(kind === "income" ? { allocations } : {}),
         ...(kind === "transfer" ? { fromAccountId, toAccountId } : {}),
         ...(kind === "reallocation" ? { fromBucketId, toBucketId } : {}),
+        ...(protectedWarning && protectedReason.trim() ? { protectedReason: protectedReason.trim() } : {}),
       };
 
       if (editingId) {
@@ -218,6 +222,7 @@ export function TransactionComposer({
     expense: "Nova despesa",
     transfer: "Nova transferência",
     reallocation: "Redistribuição",
+  adjustment: "Ajuste de saldo",
   };
 
   if (stage === "confirm") {
@@ -282,15 +287,43 @@ export function TransactionComposer({
           </div>
         ) : null}
 
-        {kind === "transfer" ? (
-          <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-            Esta transferência não altera o teu património.
-          </p>
+        {kind === "transfer" && fromAccountId && toAccountId ? (
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+            <BeforeAfter
+              label={setup.accounts.find((a) => a.id === fromAccountId)?.name ?? ""}
+              before={snapshot.accountBalances[fromAccountId] ?? 0}
+              after={(snapshot.accountBalances[fromAccountId] ?? 0) - amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label={setup.accounts.find((a) => a.id === toAccountId)?.name ?? ""}
+              before={snapshot.accountBalances[toAccountId] ?? 0}
+              after={(snapshot.accountBalances[toAccountId] ?? 0) + amountMinor}
+              currency={currency}
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Carteiras de propósito: sem alteração. Esta transferência não altera o teu património.
+            </p>
+          </div>
         ) : null}
-        {kind === "reallocation" ? (
-          <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
-            O dinheiro continua na mesma conta. Apenas estás a mudar o seu propósito.
-          </p>
+        {kind === "reallocation" && fromBucketId && toBucketId ? (
+          <div className="rounded-xl bg-muted px-4 py-3 text-sm">
+            <BeforeAfter
+              label={setup.ruleItems.find((r) => r.id === fromBucketId)?.name ?? ""}
+              before={snapshot.bucketBalances[fromBucketId] ?? 0}
+              after={(snapshot.bucketBalances[fromBucketId] ?? 0) - amountMinor}
+              currency={currency}
+            />
+            <BeforeAfter
+              label={setup.ruleItems.find((r) => r.id === toBucketId)?.name ?? ""}
+              before={snapshot.bucketBalances[toBucketId] ?? 0}
+              after={(snapshot.bucketBalances[toBucketId] ?? 0) + amountMinor}
+              currency={currency}
+            />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Contas físicas: sem alteração. O dinheiro continua na mesma conta — apenas muda o seu propósito.
+            </p>
+          </div>
         ) : null}
 
         {isLarge && !acknowledgedLarge ? (
@@ -313,9 +346,35 @@ export function TransactionComposer({
         ) : null}
 
         {protectedWarning ? (
-          <p className="rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-warning">
-            Estás a tirar dinheiro de um propósito protegido.
-          </p>
+          <div className="rounded-xl border border-warning/40 bg-warning/10 p-4 text-sm">
+            <p className="flex items-center gap-2 font-semibold text-warning">
+              <TriangleAlert className="size-4" aria-hidden /> Estás a retirar dinheiro protegido.
+            </p>
+            <p className="mt-1 text-muted-foreground">
+              {formatMoney(amountMinor, currency)} de {sourceWallet?.name}. O dinheiro continua acessível — só
+              queremos que a decisão fique registada.
+            </p>
+            <Label htmlFor="protected-reason" className="mt-3 block text-xs text-muted-foreground">
+              Motivo (obrigatório)
+            </Label>
+            <select
+              id="protected-reason"
+              className="mt-1 h-10 w-full rounded-xl border border-border bg-background px-3 text-sm"
+              value={protectedReason}
+              onChange={(e) => setProtectedReason(e.target.value)}
+            >
+              <option value="">Escolher motivo</option>
+              <option value="Emergência">Emergência</option>
+              <option value="Compra planeada">Compra planeada</option>
+              <option value="Mudança de objetivo">Mudança de objetivo</option>
+              <option value="Outro">Outro</option>
+            </select>
+            {protectedReason && !protectedAck ? (
+              <Button className="mt-3 w-full" onClick={() => setProtectedAck(true)}>
+                Continuar
+              </Button>
+            ) : null}
+          </div>
         ) : null}
 
         <div className="flex gap-2">
@@ -325,8 +384,13 @@ export function TransactionComposer({
           <Button
             className="flex-1"
             onClick={submit}
-            disabled={submitting || (isLarge && !acknowledgedLarge)}
+            disabled={
+              submitting ||
+              (isLarge && !acknowledgedLarge) ||
+              (protectedWarning && (!protectedReason || !protectedAck))
+            }
           >
+
             {submitting ? <Loader2 className="size-4 animate-spin" /> : null}
             {editingId
               ? "Guardar alterações"
@@ -554,6 +618,29 @@ function SelectField({
           </option>
         ))}
       </select>
+    </div>
+  );
+}
+
+function BeforeAfter({
+  label,
+  before,
+  after,
+  currency,
+}: {
+  label: string;
+  before: number;
+  after: number;
+  currency: string;
+}) {
+  return (
+    <div className="flex items-center justify-between py-0.5">
+      <span className="text-muted-foreground">{label}</span>
+      <span className="numeric flex items-center gap-1.5">
+        <span className="text-muted-foreground">{formatMoney(before, currency, { compactDecimals: true })}</span>
+        <ArrowRight className="size-3" aria-hidden />
+        <span className="font-medium">{formatMoney(after, currency, { compactDecimals: true })}</span>
+      </span>
     </div>
   );
 }

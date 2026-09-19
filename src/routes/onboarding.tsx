@@ -33,7 +33,8 @@ const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
   { value: "mobile_wallet", label: "Carteira móvel" },
   { value: "cash", label: "Numerário" },
   { value: "savings", label: "Poupança" },
-  { value: "card", label: "Cartão" },
+  { value: "prepaid_card", label: "Cartão pré-pago" },
+  { value: "investment", label: "Investimento" },
   { value: "other", label: "Outro" },
 ];
 

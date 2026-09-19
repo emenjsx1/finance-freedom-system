@@ -1,5 +1,5 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   Home,
   ArrowLeftRight,
@@ -10,6 +10,8 @@ import {
   PieChart,
   Repeat,
   Settings,
+  Landmark,
+  Map,
 } from "lucide-react";
 import type { ComponentType } from "react";
 
@@ -17,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { pt } from "@/lib/i18n/pt";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
 import { haptic } from "@/hooks/use-ledger";
+import { useSetup } from "@/hooks/use-setup";
 
 interface NavItem {
   to: string;
@@ -34,7 +37,9 @@ const desktopNav: NavItem[] = [
   { to: "/app", label: pt.nav.home, icon: Home },
   { to: "/app/transactions", label: pt.nav.transactions, icon: ArrowLeftRight },
   { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
-  { to: "/app/wallets", label: pt.nav.wallets, icon: Wallet },
+  { to: "/app/accounts", label: "Contas", icon: Landmark },
+  { to: "/app/wallets", label: "Carteiras", icon: Wallet },
+  { to: "/app/money-map", label: "Mapa do dinheiro", icon: Map },
   { to: "/app/goals", label: pt.nav.goals, icon: Target },
   { to: "/app/reports", label: pt.nav.reports, icon: PieChart },
   { to: "/app/settings", label: pt.nav.settings, icon: Settings },
@@ -43,6 +48,12 @@ const desktopNav: NavItem[] = [
 export function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { openQuickActions, openComposer } = useTransactionLauncher();
+  const { setup } = useSetup();
+
+  // Privacy mode hides every monetary value, including screens that format money directly.
+  useEffect(() => {
+    document.documentElement.classList.toggle("privacy-mode", setup.privacyMode);
+  }, [setup.privacyMode]);
   const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const heldRef = useRef(false);
 

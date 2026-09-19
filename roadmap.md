@@ -27,3 +27,23 @@
 - [x] Engine (`src/lib/finance/engine.ts`) is the single source of truth for every balance
 - [ ] Backend: schema + RLS + auth still pending; ledger lives in `pfos.ledger.v1` (localStorage)
 - [ ] Attachments must move to authenticated storage (currently data URLs on device)
+
+## Phase 04 — Accounts, wallets & money architecture (done, on-device data)
+- [x] Physical accounts vs purpose wallets: same money, two views (never summed twice)
+- [x] Mapa do dinheiro (/app/money-map): single total, Onde está / Para que serve, organisation ratio, moedas
+- [x] Minhas contas (/app/accounts) + account detail: stats, transfer/income/expense/reconcile, edit, safe archive
+- [x] Account model: 8 types, currency, institution, last 4 digits only, icon/colour, include-in-net-worth,
+      notes, ordering, default spending/income account
+- [x] Carteiras (/app/wallets) + wallet detail: behaviour flags (spendable, wealth-building, protection level,
+      included in available-to-spend), percentage, ordering, safe archive, activity
+- [x] Available-to-spend derived only from wallets flagged as available (never from account balances)
+- [x] Protected money: total, /app/protected history, deliberate withdrawal flow (mandatory reason + 2nd confirm)
+- [x] Reconciliation + auditable BALANCE_ADJUSTMENT events with purpose assignment (rule / single / manual)
+- [x] Unallocated money ("Por distribuir") with Home banner and CTA
+- [x] Multi-currency foundation + manual exchange-rate editor (no invented rates, converted totals flagged)
+- [x] Privacy mode masks every monetary value across Home, contas, carteiras, mapa
+- [x] Notification events: account_reconciled, balance_adjusted, money_unallocated, protected_money_withdrawn
+- [x] Browser QA: net worth not double-counted, transfer/reallocation invariants, reconciliation +1.500,
+      protected withdrawal reason + history, privacy mode, no console errors
+- [ ] Cross-currency transfers intentionally unavailable (would require FX accounting in the engine)
+- [ ] Backend (schema, RLS, auth, secure attachment storage) still pending — data is device-local

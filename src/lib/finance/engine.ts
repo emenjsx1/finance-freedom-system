@@ -5,30 +5,81 @@
  * opening balances captured at onboarding. Nothing in the UI mutates a stored
  * balance, so editing and deleting a transaction reverses its effect exactly.
  */
-import type { Account, AllocationRuleItem } from "./types";
+import type { Account, AllocationRuleItem, ExchangeRate } from "./types";
 import type { BucketView, Frequency, RecurringRule, Transaction } from "./ledger-types";
 import { splitAmount } from "./allocation";
+import { orderedWallets, walletBehaviour, type WalletBehaviour } from "./wallet-config";
 
 export interface LedgerInput {
   openingAccounts: Account[];
   ruleItems: AllocationRuleItem[];
   transactions: Transaction[];
+  baseCurrency?: string;
+  exchangeRates?: ExchangeRate[];
+}
+
+export interface WalletView extends BucketView, WalletBehaviour {
+  percentage: number;
+  archived: boolean;
+  color?: string | undefined;
+}
+
+export interface CurrencyTotal {
+  currencyCode: string;
+  totalMinor: number;
+  convertedMinor: number | null;
+  rate: number | null;
 }
 
 export interface LedgerSnapshot {
   accountBalances: Record<string, number>;
   bucketBalances: Record<string, number>;
   buckets: BucketView[];
+  wallets: WalletView[];
+  /** Physical personal money, base currency (converted amounts included when a rate exists). */
   wealthMinor: number;
+  /** Sum of wallets flagged included-in-available. */
   spendableMinor: number;
+  /** Sum of wallets whose protection level is not normal. */
+  protectedMinor: number;
+  /** Everything that already has a purpose. */
+  purposeTotalMinor: number;
+  /** Physical personal money minus purpose money. Never hidden. */
+  unallocatedMinor: number;
+  totalsByCurrency: CurrencyTotal[];
+  /** Currencies that could not be converted to base — never summed blindly. */
+  unconvertedCurrencies: string[];
+  businessBalanceMinor: number;
 }
 
-export function buildSnapshot({ openingAccounts, ruleItems, transactions }: LedgerInput): LedgerSnapshot {
+/** 1 unit of `from` expressed in `to`, or null when no manual rate exists. */
+export function findRate(rates: ExchangeRate[], from: string, to: string): number | null {
+  if (from === to) return 1;
+  const direct = [...rates]
+    .filter((r) => r.baseCurrency === from && r.quoteCurrency === to)
+    .sort((a, b) => b.effectiveAt.localeCompare(a.effectiveAt))[0];
+  if (direct) return direct.rate;
+  const inverse = [...rates]
+    .filter((r) => r.baseCurrency === to && r.quoteCurrency === from)
+    .sort((a, b) => b.effectiveAt.localeCompare(a.effectiveAt))[0];
+  if (inverse && inverse.rate !== 0) return 1 / inverse.rate;
+  return null;
+}
+
+export function buildSnapshot({
+  openingAccounts,
+  ruleItems,
+  transactions,
+  baseCurrency = "MZN",
+  exchangeRates = [],
+}: LedgerInput): LedgerSnapshot {
   const accountBalances: Record<string, number> = {};
   for (const account of openingAccounts) accountBalances[account.id] = account.balanceMinor;
 
   const bucketBalances: Record<string, number> = {};
   for (const item of ruleItems) bucketBalances[item.id] = 0;
+
+  let businessBalanceMinor = 0;
 
   const add = (map: Record<string, number>, key: string | undefined, delta: number) => {
     if (!key) return;
@@ -36,6 +87,13 @@ export function buildSnapshot({ openingAccounts, ruleItems, transactions }: Ledg
   };
 
   for (const tx of transactions) {
+    // Business money is tracked apart so it never contaminates personal totals.
+    if (tx.moneyType === "business") {
+      if (tx.kind === "income") businessBalanceMinor += tx.amountMinor;
+      if (tx.kind === "expense") businessBalanceMinor -= tx.amountMinor;
+      continue;
+    }
+
     switch (tx.kind) {
       case "income": {
         add(accountBalances, tx.accountId, tx.amountMinor);
@@ -59,23 +117,218 @@ export function buildSnapshot({ openingAccounts, ruleItems, transactions }: Ledg
         add(bucketBalances, tx.toBucketId, tx.amountMinor);
         break;
       }
+      case "adjustment": {
+        // Signed: a correction may add or remove physical money, and the user
+        // always says which purpose absorbs the difference.
+        const delta = tx.direction === "negative" ? -tx.amountMinor : tx.amountMinor;
+        add(accountBalances, tx.accountId, delta);
+        for (const allocation of tx.allocations ?? []) {
+          add(bucketBalances, allocation.bucketId, tx.direction === "negative" ? -allocation.amountMinor : allocation.amountMinor);
+        }
+        break;
+      }
     }
   }
 
-  const buckets: BucketView[] = ruleItems.map((item) => ({
+  const visibleWallets = orderedWallets(ruleItems);
+
+  const wallets: WalletView[] = visibleWallets.map((item) => ({
     id: item.id,
     name: item.name,
     icon: item.icon,
     kind: item.kind,
     balanceMinor: bucketBalances[item.id] ?? 0,
+    percentage: item.percentage,
+    archived: Boolean(item.archived),
+    color: item.color,
+    ...walletBehaviour(item),
   }));
 
-  const wealthMinor = Object.values(accountBalances).reduce((a, b) => a + b, 0);
-  const spendableMinor = buckets
-    .filter((b) => b.kind === "life" || b.kind === "free")
-    .reduce((sum, b) => sum + b.balanceMinor, 0);
+  const buckets: BucketView[] = wallets.map(({ id, name, icon, kind, balanceMinor }) => ({
+    id,
+    name,
+    icon,
+    kind,
+    balanceMinor,
+  }));
 
-  return { accountBalances, bucketBalances, buckets, wealthMinor, spendableMinor };
+  // Physical money, grouped per currency: amounts in different currencies are
+  // never added together without a rate the user supplied.
+  const perCurrency = new Map<string, number>();
+  for (const account of openingAccounts) {
+    if (account.archived) continue;
+    if (account.includeInNetWorth === false) continue;
+    const code = account.currencyCode ?? baseCurrency;
+    perCurrency.set(code, (perCurrency.get(code) ?? 0) + (accountBalances[account.id] ?? 0));
+  }
+
+  const totalsByCurrency: CurrencyTotal[] = [...perCurrency.entries()].map(([currencyCode, totalMinor]) => {
+    const rate = findRate(exchangeRates, currencyCode, baseCurrency);
+    return {
+      currencyCode,
+      totalMinor,
+      rate,
+      convertedMinor: rate === null ? null : Math.round(totalMinor * rate),
+    };
+  });
+
+  const wealthMinor = totalsByCurrency.reduce((sum, t) => sum + (t.convertedMinor ?? 0), 0);
+  const unconvertedCurrencies = totalsByCurrency.filter((t) => t.convertedMinor === null).map((t) => t.currencyCode);
+
+  const spendableMinor = wallets
+    .filter((w) => w.includedInAvailable)
+    .reduce((sum, w) => sum + w.balanceMinor, 0);
+  const protectedMinor = wallets
+    .filter((w) => w.protectionLevel !== "normal")
+    .reduce((sum, w) => sum + w.balanceMinor, 0);
+  const purposeTotalMinor = Object.values(bucketBalances).reduce((a, b) => a + b, 0);
+  const unallocatedMinor = wealthMinor - purposeTotalMinor;
+
+  return {
+    accountBalances,
+    bucketBalances,
+    buckets,
+    wallets,
+    wealthMinor,
+    spendableMinor,
+    protectedMinor,
+    purposeTotalMinor,
+    unallocatedMinor,
+    totalsByCurrency,
+    unconvertedCurrencies,
+    businessBalanceMinor,
+  };
+}
+
+/** Factual per-account context for the account detail page. */
+export function accountMonthStats(
+  transactions: Transaction[],
+  accountId: string,
+  year: number,
+  month: number,
+) {
+  let inMinor = 0;
+  let outMinor = 0;
+  let transfersMinor = 0;
+  let count = 0;
+  let lastAt: string | undefined;
+
+  for (const tx of transactions) {
+    const touches =
+      tx.accountId === accountId || tx.fromAccountId === accountId || tx.toAccountId === accountId;
+    if (!touches) continue;
+    if (!lastAt || tx.occurredAt > lastAt) lastAt = tx.occurredAt;
+
+    const date = new Date(tx.occurredAt);
+    if (date.getFullYear() !== year || date.getMonth() !== month) continue;
+    count += 1;
+
+    if (tx.kind === "income" && tx.accountId === accountId) inMinor += tx.amountMinor;
+    if (tx.kind === "expense" && tx.accountId === accountId) outMinor += tx.amountMinor;
+    if (tx.kind === "adjustment" && tx.accountId === accountId) {
+      if (tx.direction === "negative") outMinor += 0;
+      else inMinor += 0;
+    }
+    // Internal transfers are movement, never income or spending.
+    if (tx.kind === "transfer") transfersMinor += tx.amountMinor;
+  }
+
+  return { inMinor, outMinor, transfersMinor, count, lastAt };
+}
+
+/** Factual per-wallet context for the wallet detail page. */
+export function walletMonthStats(
+  transactions: Transaction[],
+  walletId: string,
+  year: number,
+  month: number,
+) {
+  let addedMinor = 0;
+  let usedMinor = 0;
+
+  for (const tx of transactions) {
+    if (tx.moneyType === "business") continue;
+    const date = new Date(tx.occurredAt);
+    if (date.getFullYear() !== year || date.getMonth() !== month) continue;
+
+    if (tx.kind === "income" || tx.kind === "adjustment") {
+      for (const allocation of tx.allocations ?? []) {
+        if (allocation.bucketId !== walletId) continue;
+        if (tx.kind === "adjustment" && tx.direction === "negative") usedMinor += allocation.amountMinor;
+        else addedMinor += allocation.amountMinor;
+      }
+    }
+    if (tx.kind === "expense" && tx.bucketId === walletId) usedMinor += tx.amountMinor;
+    if (tx.kind === "reallocation") {
+      if (tx.toBucketId === walletId) addedMinor += tx.amountMinor;
+      if (tx.fromBucketId === walletId) usedMinor += tx.amountMinor;
+    }
+  }
+
+  return { addedMinor, usedMinor };
+}
+
+/** Every movement that touched a wallet, newest first. */
+export function walletActivity(transactions: Transaction[], walletId: string): Transaction[] {
+  return transactions
+    .filter(
+      (tx) =>
+        tx.moneyType !== "business" &&
+        (tx.bucketId === walletId ||
+          tx.fromBucketId === walletId ||
+          tx.toBucketId === walletId ||
+          (tx.allocations ?? []).some((a) => a.bucketId === walletId)),
+    )
+    .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt));
+}
+
+/** Everything that moved in or out of protected wallets, newest first. */
+export function protectedMoneyHistory(transactions: Transaction[], ruleItems: AllocationRuleItem[]) {
+  const protectedIds = new Set(
+    ruleItems.filter((item) => walletBehaviour(item).protectionLevel !== "normal").map((item) => item.id),
+  );
+  const rows: {
+    tx: Transaction;
+    walletId: string;
+    direction: "in" | "out";
+    amountMinor: number;
+    reason?: string | undefined;
+  }[] = [];
+
+  for (const tx of transactions) {
+    if (tx.moneyType === "business") continue;
+    if (tx.kind === "income" || tx.kind === "adjustment") {
+      for (const allocation of tx.allocations ?? []) {
+        if (!protectedIds.has(allocation.bucketId)) continue;
+        rows.push({
+          tx,
+          walletId: allocation.bucketId,
+          direction: tx.kind === "adjustment" && tx.direction === "negative" ? "out" : "in",
+          amountMinor: allocation.amountMinor,
+          reason: tx.protectedReason,
+        });
+      }
+    }
+    if (tx.kind === "reallocation") {
+      if (tx.toBucketId && protectedIds.has(tx.toBucketId)) {
+        rows.push({ tx, walletId: tx.toBucketId, direction: "in", amountMinor: tx.amountMinor });
+      }
+      if (tx.fromBucketId && protectedIds.has(tx.fromBucketId)) {
+        rows.push({ tx, walletId: tx.fromBucketId, direction: "out", amountMinor: tx.amountMinor, reason: tx.protectedReason });
+      }
+    }
+    if (tx.kind === "expense" && tx.bucketId && protectedIds.has(tx.bucketId)) {
+      rows.push({ tx, walletId: tx.bucketId, direction: "out", amountMinor: tx.amountMinor, reason: tx.protectedReason });
+    }
+  }
+
+  return rows.sort((a, b) => b.tx.occurredAt.localeCompare(a.tx.occurredAt));
+}
+
+/** Share of physical money that already has a purpose. Factual, never a score. */
+export function organisationRatio(snapshot: { wealthMinor: number; purposeTotalMinor: number }): number | null {
+  if (snapshot.wealthMinor <= 0) return null;
+  return Math.min(1, Math.max(0, snapshot.purposeTotalMinor / snapshot.wealthMinor));
 }
 
 /** Default income distribution derived from the active rule. */
