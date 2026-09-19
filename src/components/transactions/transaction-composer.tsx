@@ -555,15 +555,44 @@ export function TransactionComposer({
         </div>
       ) : null}
 
+      {kind === "reservation" ? (
+        <div className="space-y-3">
+          {accountOptions.length === 0 ? (
+            <p className="rounded-xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+              Ainda não tens nenhuma conta. Adiciona uma conta para poderes guardar dinheiro.
+            </p>
+          ) : (
+            <SelectField label="De onde?" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
+          )}
+          {accountId ? (
+            <p className="type-meta">
+              Disponível nesta conta: {formatMoney(snapshot.accountAvailable[accountId] ?? 0, currency)}
+            </p>
+          ) : null}
+          <SelectField label="Para quê?" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          <p className="type-meta">
+            O dinheiro fica onde está. Só passa a ter um propósito.
+          </p>
+        </div>
+      ) : null}
+
+      {kind === "release" ? (
+        <div className="space-y-3">
+          <SelectField label="Libertar de" value={fromBucketId ?? ""} onChange={setFromBucketId} options={purposeOptions} />
+          <p className="type-meta">O dinheiro volta a ficar disponível, na mesma conta onde está.</p>
+        </div>
+      ) : null}
+
       {kind === "reallocation" ? (
         <div className="space-y-2">
-          <SelectField label="De" value={fromBucketId ?? ""} onChange={setFromBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
+          <SelectField label="De" value={fromBucketId ?? ""} onChange={setFromBucketId} options={purposeOptions} />
           <div className="flex justify-center text-muted-foreground" aria-hidden>
             <ArrowRight className="size-4 rotate-90" />
           </div>
-          <SelectField label="Para" value={toBucketId ?? ""} onChange={setToBucketId}
-            options={setup.ruleItems.map((r) => ({ value: r.id, label: r.name }))} />
+          <SelectField label="Para" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          <p className="type-meta">
+            Isto não é uma transferência: as contas não mudam, só muda o propósito do dinheiro.
+          </p>
         </div>
       ) : null}
 
