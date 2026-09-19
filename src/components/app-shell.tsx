@@ -186,7 +186,7 @@ export function AppShell() {
       <PreparedMovementSheet />
 
       {/* The action lives inside the bar, not floating above it. */}
-      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70/70 bg-elevated/92 backdrop-blur-xl lg:hidden">
+      <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border/70 bg-elevated/92 backdrop-blur-xl lg:hidden">
         <div className="mx-auto grid max-w-md grid-cols-5 items-center px-2 pb-[max(env(safe-area-inset-bottom),0.4rem)] pt-1.5">
           {mobileLeft.map((item) => (
             <BottomLink
