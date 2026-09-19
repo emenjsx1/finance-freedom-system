@@ -101,6 +101,31 @@ export function TransactionComposer({
   const position = financialPosition(snapshot);
   const purposes = useMemo(() => listPurposes(setup.ruleItems, snapshot), [setup.ruleItems, snapshot]);
   const purposeOptions = purposes.map((p) => ({ value: p.id, label: p.name }));
+
+  // A purpose can be born right here: never send someone to another screen in
+  // the middle of putting money aside.
+  const [newPurposeName, setNewPurposeName] = useState("");
+  function createPurpose(name: string): string | null {
+    const clean = name.trim();
+    if (!clean) {
+      notifyError("Dá um nome a este propósito.");
+      return null;
+    }
+    const id = newId();
+    update(
+      upsertWallet(setup, {
+        id,
+        name: clean,
+        percentage: 0,
+        icon: "star",
+        kind: "goals",
+        source: "custom",
+        order: setup.ruleItems.length,
+      }),
+    );
+    setNewPurposeName("");
+    return id;
+  }
   const accountOptions = setup.accounts
     .filter((a) => !a.archived)
     .map((a) => ({ value: a.id, label: a.name || "Conta" }));
