@@ -23,6 +23,8 @@ import {
 } from "@/lib/development/engine";
 import { goalPace } from "@/lib/personal/engine";
 import {
+  CONTEXT_CATEGORY_LABELS,
+  CONTEXT_SOURCE_LABELS,
   PLAN_PRIORITY_LABELS,
   PLAN_STATUS_LABELS,
   PLAN_TYPE_LABELS,
