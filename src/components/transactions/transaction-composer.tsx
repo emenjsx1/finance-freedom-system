@@ -17,6 +17,7 @@ import { largeExpenseRatio, suggestFromHistory } from "@/lib/finance/engine";
 import { debitWalletError } from "@/lib/finance/integrity";
 import { financialPosition } from "@/lib/finance/position";
 import { listPurposes } from "@/lib/finance/purposes";
+import { upsertWallet } from "@/lib/finance/setup-ops";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
