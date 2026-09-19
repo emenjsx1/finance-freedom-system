@@ -280,12 +280,8 @@ function Shell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col justify-center bg-background px-6 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-[max(env(safe-area-inset-top),2rem)]">
       <div className="mx-auto w-full max-w-sm">
-        <Link
-          to="/"
-          aria-label="Finance OS"
-          className="mb-8 grid size-10 place-items-center rounded-[var(--r-md)] bg-accent text-accent-foreground"
-        >
-          <span aria-hidden>◈</span>
+        <Link to="/" aria-label="Finance OS" className="mb-8 block">
+          <img src={logoUrl} alt="Finan." className="h-12 w-auto" />
         </Link>
         {children}
       </div>
