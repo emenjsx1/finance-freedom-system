@@ -80,8 +80,8 @@ export function useCloudSync<T>({ state, hydrated, apply, load, save }: Options<
           if (attempt.current >= RETRY_DELAYS.length && !warned.current) {
             warned.current = true;
             notifyError(
-              "Os teus dados não estão a chegar à tua conta",
               "Guardámos tudo neste aparelho e voltamos a tentar assim que houver ligação.",
+              "Os teus dados não estão a chegar à tua conta",
             );
           }
           if (retryTimer.current) clearTimeout(retryTimer.current);
