@@ -51,11 +51,17 @@ function tx(partial: Partial<Transaction> & Pick<Transaction, "id" | "kind" | "a
   } as Transaction;
 }
 
+// Purposes are user-created now, so tests declare the ones they need.
+const ruleItems = [
+  { id: "r1", name: "Construção", kind: "build", percent: 0, icon: "🏗️", order: 0, source: "custom" },
+  { id: "r3", name: "Vida", kind: "life", percent: 0, icon: "🏠", order: 1, source: "custom" },
+] as AnalyticsInput["setup"]["ruleItems"];
+
 function makeInput(transactions: Transaction[]): AnalyticsInput {
-  const setup = { ...EMPTY_SETUP, accounts, currencyCode: "MZN" };
+  const setup = { ...EMPTY_SETUP, accounts, ruleItems, currencyCode: "MZN" };
   const snapshot = buildSnapshot({
     openingAccounts: accounts,
-    ruleItems: DEFAULT_RULE_ITEMS,
+    ruleItems,
     transactions,
     baseCurrency: "MZN",
     exchangeRates: [],
