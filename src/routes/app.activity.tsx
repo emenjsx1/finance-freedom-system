@@ -63,6 +63,22 @@ function ActivityPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selected, setSelected] = useState<Transaction | null>(null);
   const [cursor, setCursor] = useState(new Date());
+  const [cursorTouched, setCursorTouched] = useState(false);
+
+  // Open on the latest month that actually has movements, never an empty month.
+  useEffect(() => {
+    if (cursorTouched || !hydrated || ledger.transactions.length === 0) return;
+    const latest = ledger.transactions.reduce(
+      (max, tx) => (tx.occurredAt > max ? tx.occurredAt : max),
+      ledger.transactions[0]!.occurredAt,
+    );
+    const date = new Date(latest);
+    setCursor((current) =>
+      current.getFullYear() === date.getFullYear() && current.getMonth() === date.getMonth()
+        ? current
+        : new Date(date.getFullYear(), date.getMonth(), 1),
+    );
+  }, [cursorTouched, hydrated, ledger.transactions]);
   const [visible, setVisible] = useState(PAGE_SIZE);
 
   useEffect(() => {
