@@ -439,17 +439,17 @@ function InsightCard() {
   if (!insight) return null;
 
   return (
-    <section className="card-standard">
-      <div className="flex items-center justify-between">
-        <p className="type-section">Observação</p>
-        <BarChart3 className="size-4 text-primary" aria-hidden />
-      </div>
-      <p className="type-body mt-3">{insight.title}</p>
-      {insight.detail ? <p className="type-caption mt-1">{insight.detail}</p> : null}
-      <Button asChild variant="ghost" size="sm" className="mt-3">
-        <Link to="/app/analytics">Ver análise</Link>
-      </Button>
-    </section>
+    <InsightTile
+      eyebrow="Observação"
+      title={insight.title}
+      footer={
+        <Link to="/app/analytics" className="text-[0.8125rem] font-medium text-primary">
+          Ver análise →
+        </Link>
+      }
+    >
+      {insight.detail ?? null}
+    </InsightTile>
   );
 }
 
@@ -460,21 +460,27 @@ function AgentCard() {
   const lines = buildDailyBrief(deps);
 
   return (
-    <section className="card-standard">
-      <div className="flex items-center justify-between">
-        <p className="type-section">{prefs.agentName}</p>
-        <MessageSquare className="size-4 text-primary" aria-hidden />
-      </div>
-      <ul className="mt-3 space-y-1.5">
+    <section>
+      <SectionHeader title={prefs.agentName} />
+      <ul className="space-y-1.5">
         {lines.map((line) => (
           <li key={line} className="type-body">
             {line}
           </li>
         ))}
       </ul>
-      <Button asChild variant="secondary" size="sm" className="mt-4">
-        <Link to="/app/agent">Falar com o {prefs.agentName}</Link>
-      </Button>
+      <Link
+        to="/app/agent"
+        className="mt-4 flex items-center gap-3 rounded-[var(--r-xl)] bg-surface px-4 py-3 shadow-[var(--shadow-soft)]"
+      >
+        <span className="icon-tile size-9 bg-accent text-accent-foreground">
+          <MessageSquare className="size-4" aria-hidden />
+        </span>
+        <span className="type-secondary flex-1">Pergunta ao teu {prefs.agentName}</span>
+        <span aria-hidden className="text-muted-foreground">
+          →
+        </span>
+      </Link>
     </section>
   );
 }
