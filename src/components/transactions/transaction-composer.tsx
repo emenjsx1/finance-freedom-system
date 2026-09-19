@@ -218,6 +218,7 @@ export function TransactionComposer({
     expense: "Nova despesa",
     transfer: "Nova transferência",
     reallocation: "Redistribuição",
+  adjustment: "Ajuste de saldo",
   };
 
   if (stage === "confirm") {

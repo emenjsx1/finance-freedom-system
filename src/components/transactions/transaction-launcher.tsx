@@ -41,6 +41,7 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
     expense: "Nova despesa",
     transfer: "Nova transferência",
     reallocation: "Redistribuição",
+  adjustment: "Ajuste de saldo",
   };
 
   return (
