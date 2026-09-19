@@ -25,6 +25,8 @@ import {
 import { previewAllocation } from "@/lib/finance/engine";
 import { newId, useLedger } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
+import { useNotifications } from "@/hooks/use-notifications";
+import { localTimezone, resolveInstant } from "@/lib/reminders/engine";
 import { useSetup } from "@/hooks/use-setup";
 import { loadCloudAgent, saveCloudAgent } from "@/lib/backend/cloud-store";
 import { useCloudSync } from "@/lib/backend/use-cloud-sync";
@@ -68,6 +70,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
     addContext,
   } = usePersonal();
   const { prefs } = usePrefs();
+  const { addReminder } = useNotifications();
   const [state, setState] = useState<AgentState>(EMPTY_AGENT_STATE);
   const [hydrated, setHydrated] = useState(false);
   const [sending, setSending] = useState(false);
@@ -396,6 +399,19 @@ export function AgentProvider({ children }: { children: ReactNode }) {
               source: "agent_confirmed",
             });
             break;
+          case "create_reminder": {
+            const dateKey = proposal.date ?? todayKey;
+            const time = proposal.time ?? "09:00";
+            addReminder({
+              title: proposal.title ?? proposal.summary,
+              scheduledAt: resolveInstant(dateKey, time).toISOString(),
+              localTime: time,
+              timezone: localTimezone(),
+              source: "agent_confirmed",
+              to: "/app/reminders",
+            });
+            break;
+          }
           case "save_context":
             addContext({
               content: proposal.content ?? proposal.summary,
@@ -427,7 +443,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
         ),
       }));
     },
-    [addAction, addContext, addDecision, addDirection, commit, createProgram, state.conversations],
+    [addAction, addContext, addDecision, addDirection, addReminder, commit, createProgram, state.conversations],
   );
 
   const addMemory = useCallback(

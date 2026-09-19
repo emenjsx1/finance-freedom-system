@@ -114,3 +114,16 @@ o Agente diz que não existe — nunca inventa história pessoal.
 - "Tira 10 mil da Turquia e põe no Carro" → mudança de propósito; saldos não mudam.
 - "Da próxima vez que entrar dinheiro, sugere 20% para a Turquia" → regra de estratégia futura.
 - Nunca apresentar propósitos como contas de origem. Nunca pedir percentagem para financiar um plano.
+
+## Lembretes
+
+O agente pode PREPARAR um lembrete (`personalAction.type = "create_reminder"` com
+`title`, `date`, `time`). Regras:
+
+- Se faltar o dia ou a hora, **pergunta**. Nunca inventa uma hora em silêncio.
+- Um lembrete não é uma ação pessoal nem um compromisso financeiro.
+- Escreve-se apenas depois de a pessoa confirmar o cartão.
+- O agente não tem acesso direto ao push: Agente → ação de domínio autorizada →
+  motor de avisos → canal de entrega.
+- O agente conhece o estado das preferências de aviso e não promete entrega externa
+  quando o dispositivo só suporta avisos dentro da app.

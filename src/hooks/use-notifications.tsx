@@ -14,6 +14,7 @@ import { newId, useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { buildDrafts } from "@/lib/notifications/rules";
 import { personalDrafts } from "@/lib/notifications/personal-rules";
+import { reminderDrafts } from "@/lib/notifications/reminder-rules";
 import {
   EMPTY_NOTIFICATIONS_STATE,
   dismiss as dismissNotification,
@@ -31,6 +32,15 @@ import {
 import type { AppNotification, NotificationPrefs } from "@/lib/notifications/types";
 import { runAutomations } from "@/lib/automations/engine";
 import type { AutomationRule, AutomationRun } from "@/lib/automations/types";
+import {
+  afterDelivery,
+  createReminder,
+  dueReminders,
+  reschedule as rescheduleReminderState,
+  setStatus as setReminderStatus,
+  snooze as snoozeReminderState,
+} from "@/lib/reminders/engine";
+import type { Reminder, ReminderDraft, ReminderStatus } from "@/lib/reminders/types";
 import { loadCloudNotifications, saveCloudNotifications } from "@/lib/backend/cloud-store";
 import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { loadNotifications, saveNotifications } from "@/lib/storage/notifications-store";
@@ -77,6 +87,13 @@ interface NotificationsContextValue {
   deleteAutomation: (id: string) => void;
   retryAutomation: (runId: string) => void;
   enablePush: () => Promise<PushStatus>;
+  reminders: Reminder[];
+  addReminder: (draft: ReminderDraft) => Reminder;
+  updateReminder: (id: string, patch: Partial<Reminder>) => void;
+  setReminderState: (id: string, status: ReminderStatus) => void;
+  snoozeReminder: (id: string, minutes: number) => void;
+  rescheduleReminder: (id: string, at: Date, localTime: string) => void;
+  deleteReminder: (id: string) => void;
   forgetDevice: (id: string) => void;
   recordSecurityEvent: (event: "new_login" | "password_changed" | "settings_changed" | "new_device", detail?: string) => void;
 }
@@ -130,11 +147,22 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     const now = new Date();
     commit((prev) => {
       const { drafts: financial, signals } = buildDrafts(inputRef.current, prev.prefs, prev.cooldowns, now);
-      const drafts = [...financial, ...personalDrafts(developmentRef.current, now)];
+      const due = dueReminders(prev.reminders, now);
+      const drafts = [
+        ...financial,
+        ...personalDrafts(developmentRef.current, now),
+        ...reminderDrafts(prev.reminders, now),
+      ];
       const result = runAutomations({ automations: prev.automations, drafts, signals, now });
       const ingested = ingest({ ...prev, automations: result.automations }, result.drafts, now);
       const runs = result.runs.length ? [...result.runs, ...ingested.state.runs].slice(0, 100) : ingested.state.runs;
-      return { ...ingested.state, runs };
+      const deliveredIds = new Set(due.map((reminder) => reminder.id));
+      const reminders = deliveredIds.size
+        ? ingested.state.reminders.map((reminder) =>
+            deliveredIds.has(reminder.id) ? afterDelivery(reminder, now) : reminder,
+          )
+        : ingested.state.reminders;
+      return { ...ingested.state, runs, reminders };
     });
   }, [commit]);
 
@@ -206,6 +234,23 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
         });
         commit((prev) => markActed(prev, notification.id));
         return;
+      }
+      if (notification.payload.kind === "reminder") {
+        const reminderId = notification.payload.reminderId;
+        const now = new Date();
+        if (action === "complete_action" || action === "remind_later") {
+          commit((prev) => ({
+            ...markActed(prev, notification.id),
+            reminders: prev.reminders.map((reminder) =>
+              reminder.id === reminderId
+                ? action === "complete_action"
+                  ? setReminderStatus(reminder, "completed", now)
+                  : snoozeReminderState(reminder, 60, now)
+                : reminder,
+            ),
+          }));
+          return;
+        }
       }
       if (action === "skip_contribution") {
         commit((prev) => markActed(prev, notification.id));
@@ -335,6 +380,67 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
+  const addReminder = useCallback(
+    (draft: ReminderDraft) => {
+      const reminder = createReminder(draft, newId(), new Date());
+      commit((prev) => ({ ...prev, reminders: [...prev.reminders, reminder] }));
+      return reminder;
+    },
+    [commit],
+  );
+
+  const updateReminder = useCallback(
+    (id: string, patch: Partial<Reminder>) =>
+      commit((prev) => ({
+        ...prev,
+        reminders: prev.reminders.map((reminder) =>
+          reminder.id === id
+            ? { ...reminder, ...patch, updatedAt: new Date().toISOString() }
+            : reminder,
+        ),
+      })),
+    [commit],
+  );
+
+  const setReminderStateFn = useCallback(
+    (id: string, status: ReminderStatus) =>
+      commit((prev) => ({
+        ...prev,
+        reminders: prev.reminders.map((reminder) =>
+          reminder.id === id ? setReminderStatus(reminder, status, new Date()) : reminder,
+        ),
+      })),
+    [commit],
+  );
+
+  const snoozeReminder = useCallback(
+    (id: string, minutes: number) =>
+      commit((prev) => ({
+        ...prev,
+        reminders: prev.reminders.map((reminder) =>
+          reminder.id === id ? snoozeReminderState(reminder, minutes, new Date()) : reminder,
+        ),
+      })),
+    [commit],
+  );
+
+  const rescheduleReminder = useCallback(
+    (id: string, at: Date, localTime: string) =>
+      commit((prev) => ({
+        ...prev,
+        reminders: prev.reminders.map((reminder) =>
+          reminder.id === id ? rescheduleReminderState(reminder, at, localTime, new Date()) : reminder,
+        ),
+      })),
+    [commit],
+  );
+
+  const deleteReminder = useCallback(
+    (id: string) =>
+      commit((prev) => ({ ...prev, reminders: prev.reminders.filter((r) => r.id !== id) })),
+    [commit],
+  );
+
   const value = useMemo(
     () => ({
       state,
@@ -357,6 +463,13 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       enablePush,
       forgetDevice,
       recordSecurityEvent,
+      reminders: state.reminders,
+      addReminder,
+      updateReminder,
+      setReminderState: setReminderStateFn,
+      snoozeReminder,
+      rescheduleReminder,
+      deleteReminder,
     }),
     [
       state,
@@ -379,6 +492,12 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       enablePush,
       forgetDevice,
       recordSecurityEvent,
+      addReminder,
+      updateReminder,
+      setReminderStateFn,
+      snoozeReminder,
+      rescheduleReminder,
+      deleteReminder,
     ],
   );
 

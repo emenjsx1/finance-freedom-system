@@ -8,6 +8,7 @@ const TITLES: Record<PreparedPersonalAction["type"], string> = {
   update_direction: "Juntar à tua direção",
   record_decision: "Guardar esta decisão",
   save_context: "Guardar isto sobre ti",
+  create_reminder: "Lembrete proposto",
 };
 
 /**

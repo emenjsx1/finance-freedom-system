@@ -18,6 +18,9 @@ import { AgentProvider } from "@/hooks/use-agent";
 import { PersonalProvider } from "@/hooks/use-personal";
 import { NotificationsProvider } from "@/hooks/use-notifications";
 import { MoneyModelMigration } from "@/components/system/money-migration";
+import { AppStatus } from "@/components/system/app-status";
+import { PwaProvider } from "@/hooks/use-pwa";
+import { APP_DESCRIPTION, APP_NAME, APP_SHORT_NAME, THEME_COLOR } from "@/lib/brand";
 import { Toaster } from "@/components/ui/sonner";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 
@@ -89,10 +92,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, viewport-fit=cover",
       },
-      { title: "Finance OS" },
-      { name: "description", content: "Sistema pessoal de finanças." },
-      { property: "og:title", content: "Finance OS" },
-      { property: "og:description", content: "Sistema pessoal de finanças." },
+      { title: `${APP_NAME} — ${APP_DESCRIPTION}` },
+      { name: "description", content: APP_DESCRIPTION },
+      { property: "og:title", content: `${APP_NAME} — ${APP_DESCRIPTION}` },
+      { property: "og:description", content: APP_DESCRIPTION },
+      { name: "theme-color", content: THEME_COLOR },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
+      { name: "apple-mobile-web-app-title", content: APP_SHORT_NAME },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },
@@ -103,6 +111,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         href: appCss,
       },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
+      { rel: "manifest", href: "/manifest.webmanifest" },
+      { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -135,14 +145,17 @@ function RootComponent() {
         <PrefsProvider>
           <LedgerProvider>
             <PersonalProvider>
-            <AgentProvider>
-              <NotificationsProvider>
+            <NotificationsProvider>
+              <AgentProvider>
+                <PwaProvider>
                 <MoneyModelMigration />
+                <AppStatus />
                 {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
                 <Outlet />
                 <Toaster position="top-center" />
-              </NotificationsProvider>
-            </AgentProvider>
+                </PwaProvider>
+              </AgentProvider>
+            </NotificationsProvider>
             </PersonalProvider>
           </LedgerProvider>
         </PrefsProvider>

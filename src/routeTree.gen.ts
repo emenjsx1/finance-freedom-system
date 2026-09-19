@@ -48,6 +48,7 @@ import { Route as AppPrivacyRouteImport } from './routes/app.privacy'
 import { Route as AppProfileRouteImport } from './routes/app.profile'
 import { Route as AppProtectedRouteImport } from './routes/app.protected'
 import { Route as AppRecurringRouteImport } from './routes/app.recurring'
+import { Route as AppRemindersRouteImport } from './routes/app.reminders'
 import { Route as AppReportsRouteImport } from './routes/app.reports'
 import { Route as AppReviewRouteImport } from './routes/app.review'
 import { Route as AppSettingsRouteImport } from './routes/app.settings'
@@ -273,6 +274,11 @@ const AppRecurringRoute = AppRecurringRouteImport.update({
   path: '/recurring',
   getParentRoute: () => AppRoute,
 } as any)
+const AppRemindersRoute = AppRemindersRouteImport.update({
+  id: '/reminders',
+  path: '/reminders',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppReportsRoute = AppReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -461,6 +467,7 @@ export interface FileRoutesByFullPath {
   '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
+  '/app/reminders': typeof AppRemindersRoute
   '/app/reports': typeof AppReportsRoute
   '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
@@ -523,6 +530,7 @@ export interface FileRoutesByTo {
   '/app/privacy': typeof AppPrivacyRoute
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
+  '/app/reminders': typeof AppRemindersRoute
   '/app/reports': typeof AppReportsRoute
   '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
@@ -593,6 +601,7 @@ export interface FileRoutesById {
   '/app/profile': typeof AppProfileRouteWithChildren
   '/app/protected': typeof AppProtectedRoute
   '/app/recurring': typeof AppRecurringRoute
+  '/app/reminders': typeof AppRemindersRoute
   '/app/reports': typeof AppReportsRoute
   '/app/review': typeof AppReviewRoute
   '/app/settings': typeof AppSettingsRoute
@@ -665,6 +674,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/protected'
     | '/app/recurring'
+    | '/app/reminders'
     | '/app/reports'
     | '/app/review'
     | '/app/settings'
@@ -727,6 +737,7 @@ export interface FileRouteTypes {
     | '/app/privacy'
     | '/app/protected'
     | '/app/recurring'
+    | '/app/reminders'
     | '/app/reports'
     | '/app/review'
     | '/app/settings'
@@ -796,6 +807,7 @@ export interface FileRouteTypes {
     | '/app/profile'
     | '/app/protected'
     | '/app/recurring'
+    | '/app/reminders'
     | '/app/reports'
     | '/app/review'
     | '/app/settings'
@@ -1115,6 +1127,13 @@ declare module '@tanstack/react-router' {
       path: '/recurring'
       fullPath: '/app/recurring'
       preLoaderRoute: typeof AppRecurringRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/reminders': {
+      id: '/app/reminders'
+      path: '/reminders'
+      fullPath: '/app/reminders'
+      preLoaderRoute: typeof AppRemindersRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/reports': {
@@ -1477,6 +1496,7 @@ interface AppRouteChildren {
   AppProfileRoute: typeof AppProfileRouteWithChildren
   AppProtectedRoute: typeof AppProtectedRoute
   AppRecurringRoute: typeof AppRecurringRoute
+  AppRemindersRoute: typeof AppRemindersRoute
   AppReportsRoute: typeof AppReportsRoute
   AppReviewRoute: typeof AppReviewRoute
   AppSettingsRoute: typeof AppSettingsRoute
@@ -1514,6 +1534,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppProfileRoute: AppProfileRouteWithChildren,
   AppProtectedRoute: AppProtectedRoute,
   AppRecurringRoute: AppRecurringRoute,
+  AppRemindersRoute: AppRemindersRoute,
   AppReportsRoute: AppReportsRoute,
   AppReviewRoute: AppReviewRoute,
   AppSettingsRoute: AppSettingsRoute,

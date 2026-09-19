@@ -521,6 +521,51 @@ export type Database = {
         }
         Relationships: []
       }
+      push_subscriptions: {
+        Row: {
+          auth: string
+          created_at: string
+          endpoint: string
+          id: string
+          label: string | null
+          last_error: string | null
+          last_success_at: string | null
+          p256dh: string
+          status: string
+          updated_at: string
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          auth: string
+          created_at?: string
+          endpoint: string
+          id?: string
+          label?: string | null
+          last_error?: string | null
+          last_success_at?: string | null
+          p256dh: string
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Update: {
+          auth?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+          label?: string | null
+          last_error?: string | null
+          last_success_at?: string | null
+          p256dh?: string
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       recurring_transactions: {
         Row: {
           created_at: string
@@ -564,6 +609,48 @@ export type Database = {
           created_at?: string
           id?: string
           payload?: Json
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      reminders: {
+        Row: {
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          payload: Json
+          scheduled_at: string | null
+          status: string
+          timezone: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id: string
+          payload: Json
+          scheduled_at?: string | null
+          status?: string
+          timezone?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          payload?: Json
+          scheduled_at?: string | null
+          status?: string
+          timezone?: string
+          title?: string
           updated_at?: string
           user_id?: string
         }

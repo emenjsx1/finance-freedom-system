@@ -97,7 +97,8 @@ export type PreparedPersonalActionType =
   | "create_action"
   | "update_direction"
   | "record_decision"
-  | "save_context";
+  | "save_context"
+  | "create_reminder";
 
 export interface PreparedPersonalAction {
   type: PreparedPersonalActionType;
