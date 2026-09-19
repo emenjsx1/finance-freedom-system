@@ -13,7 +13,7 @@ export interface QuickActionItem {
 /** Compact rounded action controls — never full-width CTAs. */
 export function QuickActions({ items, className }: { items: QuickActionItem[]; className?: string }) {
   return (
-    <div className={cn("grid grid-cols-4 gap-3", className)}>
+    <div className={cn("grid max-w-md grid-cols-4 gap-3", className)}>
       {items.map((item) => (
         <button
           key={item.label}
