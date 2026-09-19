@@ -20,6 +20,8 @@ export const Route = createFileRoute("/app/accounts/")({
       { name: "description", content: "Onde o teu dinheiro existe fisicamente: banco, carteira móvel e numerário." },
       { property: "og:title", content: "Minhas contas — Norte" },
       { property: "og:description", content: "Onde o teu dinheiro existe fisicamente." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: AccountsPage,
@@ -85,11 +87,20 @@ function AccountsPage() {
                       : ""}
                   </span>
                 </span>
-                <Money
-                  minor={snapshot.accountBalances[account.id] ?? 0}
-                  currency={account.currencyCode ?? setup.currencyCode}
-                  className="numeric text-[0.9375rem] font-semibold"
-                />
+                <span className="shrink-0 text-right">
+                  <Money
+                    minor={snapshot.accountBalances[account.id] ?? 0}
+                    currency={account.currencyCode ?? setup.currencyCode}
+                    className="block text-[0.9375rem] font-semibold"
+                  />
+                  <span className="type-meta block">
+                    <Money
+                      minor={snapshot.accountAvailable[account.id] ?? 0}
+                      currency={account.currencyCode ?? setup.currencyCode}
+                    />{" "}
+                    disponível
+                  </span>
+                </span>
               </Link>
               <div className="flex flex-col">
                 <button
