@@ -28,6 +28,8 @@ export interface SetupState {
   /** Hides every monetary value across the app. */
   privacyMode: boolean;
   onboardingCompleted: boolean;
+  /** Set once the old fixed-wallet architecture has been cleaned up. */
+  moneyModelMigratedAt?: string | undefined;
 }
 
 /**
