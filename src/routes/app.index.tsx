@@ -160,7 +160,24 @@ function HomePage() {
         </div>
       </header>
 
-      {editing ? (
+      {/* A calm warning instead of impossible numbers — nothing is ever fabricated to balance. */}
+      {hydrated && !integrity.ok ? (
+        <Link to="/app/integrity" className="card-interactive flex items-start gap-3">
+          <span className="icon-tile size-9 text-destructive">
+            <TriangleAlert className="size-4" />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block text-[0.9375rem] font-semibold">As contas não estão a fechar.</span>
+            <span className="type-meta mt-0.5 block">
+              Um registo antigo deixou um propósito num estado impossível. Toca para verificar e corrigir.
+            </span>
+          </span>
+        </Link>
+      ) : null}
+
+      {!hydrated ? (
+        <HomeSkeleton />
+      ) : editing ? (
         <EditPanel
           modules={modules}
           onToggle={toggleModule}
