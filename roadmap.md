@@ -168,4 +168,6 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 ## Money model QA (Sep 19)
 - [x] Guardar: criar propósito ali mesmo; despesa sem propósito permitida
 - [x] Eliminações deixam de voltar da cloud (adoção única por aparelho)
-- [ ] Teste ponta a ponta: entrada, guardar, plano, apagar plano, agente
+- [x] Teste ponta a ponta: entrada, guardar, plano, apagar plano, agente
+- [x] Apagar plano retira também o propósito ligado
+- [x] Um nome = um propósito (sem duplicados)
