@@ -11,10 +11,10 @@ export interface TxFilters {
   categoryIds: string[];
   accountIds: string[];
   bucketIds: string[];
-  from?: string;
-  to?: string;
-  minMinor?: number;
-  maxMinor?: number;
+  from?: string | undefined;
+  to?: string | undefined;
+  minMinor?: number | undefined;
+  maxMinor?: number | undefined;
   tags: string[];
 }
 
