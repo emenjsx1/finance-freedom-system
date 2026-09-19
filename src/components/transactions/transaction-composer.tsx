@@ -249,8 +249,10 @@ export function TransactionComposer({
     income: "Nova entrada",
     expense: "Nova despesa",
     transfer: "Nova transferência",
-    reallocation: "Redistribuição",
-  adjustment: "Ajuste de saldo",
+    reservation: "Guardar dinheiro",
+    release: "Libertar dinheiro",
+    reallocation: "Mudar propósito",
+    adjustment: "Ajuste de saldo",
   };
 
   if (stage === "confirm") {
