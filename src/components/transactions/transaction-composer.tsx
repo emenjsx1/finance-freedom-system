@@ -246,6 +246,13 @@ export function TransactionComposer({
       const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
       toast.success(`${formatMoney(tx.amountMinor, currency)} adicionados ao ${accountName}`, {
         description: "O dinheiro está disponível.",
+        // Organising is always the person's choice, never automatic.
+        action: {
+          label: "Organizar esta entrada",
+          onClick: () => {
+            window.location.assign("/app/organize");
+          },
+        },
       });
       return;
     }
