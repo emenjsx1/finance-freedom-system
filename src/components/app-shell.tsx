@@ -50,7 +50,7 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
     title: "Diário",
     items: [
       { to: "/app", label: "Início", icon: Home },
-      { to: "/app/transactions", label: "Atividade", icon: ArrowLeftRight },
+      { to: "/app/activity", label: "Atividade", icon: ArrowLeftRight },
       { to: "/app/agent", label: "Agente", icon: MessageSquare },
     ],
   },
