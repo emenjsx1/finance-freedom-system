@@ -22,7 +22,7 @@ export function LegalPage({
       <h1 className="type-display mt-8">{title}</h1>
       <p className="type-meta mt-2">Atualizado em {updated}</p>
 
-      <div className="legal-prose mt-8 space-y-6">{children}</div>
+      <div className="mt-8 space-y-6">{children}</div>
 
       <nav className="mt-12 flex flex-wrap gap-4 border-t border-border/70 pt-6 text-sm">
         <Link to="/privacy" className="text-primary underline">
@@ -55,6 +55,6 @@ export function Section({ title, children }: { title: string; children: ReactNod
 
 export function Placeholder({ children }: { children: ReactNode }) {
   return (
-    <mark className="rounded bg-warning-soft px-1 text-foreground">[a definir: {children}]</mark>
+    <mark className="rounded bg-accent px-1 text-foreground">[a definir: {children}]</mark>
   );
 }
