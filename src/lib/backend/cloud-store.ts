@@ -93,6 +93,17 @@ async function mergeSettingsBlob(userId: string, patch: Partial<SettingsBlob>): 
   await writeSettings(userId, { appearance: { ...(current?.settings ?? {}), ...patch } });
 }
 
+/**
+ * The cloud copy wins, but nothing that only exists on this device is thrown
+ * away. Dropping a purpose that a recorded movement still points at is what
+ * produced "movimento sem propósito válido", so local-only rows are kept and
+ * re-uploaded on the next save.
+ */
+function unionById<T extends { id: string }>(cloud: T[], local: T[]): T[] {
+  const seen = new Set(cloud.map((row) => row.id));
+  return [...cloud, ...local.filter((row) => !seen.has(row.id))];
+}
+
 // --------------------------------------------------------------------- setup
 
 export async function loadCloudSetup(base: SetupState): Promise<SetupState | null> {
@@ -118,7 +129,8 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
       (profile.data?.["full_name"] as string | null) ??
       base.fullName,
     currencyCode: (profile.data?.["base_currency"] as string | null) ?? base.currencyCode,
-    accounts: (accounts ?? []).map(
+    accounts: unionById(
+      (accounts ?? []).map(
       (row): Account => ({
         id: row["id"] as string,
         name: row["name"] as string,
@@ -140,8 +152,11 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
             ? undefined
             : Number(row["low_balance_threshold_minor"]),
       }),
+      ),
+      base.accounts,
     ),
-    ruleItems: (purposes ?? []).map(
+    ruleItems: unionById(
+      (purposes ?? []).map(
       (row): AllocationRuleItem => ({
         id: row["id"] as string,
         name: row["name"] as string,
@@ -167,8 +182,11 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
             : Number(row["low_balance_threshold_minor"]),
         coverImageUrl: (row["cover_image_url"] as string) ?? undefined,
       }),
+      ),
+      base.ruleItems,
     ),
-    exchangeRates: (rates.data ?? []).map(
+    exchangeRates: unionById(
+      (rates.data ?? []).map(
       (row): ExchangeRate => ({
         id: row["id"] as string,
         baseCurrency: row["base_currency"] as string,
@@ -177,6 +195,8 @@ export async function loadCloudSetup(base: SetupState): Promise<SetupState | nul
         source: row["source"] as ExchangeRate["source"],
         effectiveAt: row["effective_at"] as string,
       }),
+      ),
+      base.exchangeRates,
     ),
     notifications: settings?.notificationPreferences ?? base.notifications,
     privacyMode: settings?.privacyMode ?? base.privacyMode,
@@ -280,9 +300,11 @@ export async function loadCloudLedger(base: LedgerState): Promise<LedgerState | 
   ]);
   if (!transactions.length && !categories.length && !recurring.length) return null;
   return {
-    transactions: transactions.sort((a, b) => b.occurredAt.localeCompare(a.occurredAt)),
-    categories: categories.length ? categories : base.categories,
-    recurring,
+    transactions: unionById(transactions, base.transactions).sort((a, b) =>
+      b.occurredAt.localeCompare(a.occurredAt),
+    ),
+    categories: categories.length ? unionById(categories, base.categories) : base.categories,
+    recurring: unionById(recurring, base.recurring),
   };
 }
 

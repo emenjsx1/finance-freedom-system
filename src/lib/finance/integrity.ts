@@ -124,6 +124,16 @@ export function checkIntegrity(input: LedgerInput, snapshot: LedgerSnapshot): In
     }
   }
 
+  /** One card per missing purpose, not one per movement. */
+  const orphanPurposes = new Map<string, { movements: number; amountMinor: number }>();
+  const noteOrphan = (walletId: string, amountMinor: number) => {
+    const current = orphanPurposes.get(walletId) ?? { movements: 0, amountMinor: 0 };
+    orphanPurposes.set(walletId, {
+      movements: current.movements + 1,
+      amountMinor: current.amountMinor + amountMinor,
+    });
+  };
+
   for (const tx of input.transactions) {
     const refs: Array<string | undefined> = [tx.accountId, tx.fromAccountId, tx.toAccountId];
     for (const ref of refs) {
@@ -141,29 +151,12 @@ export function checkIntegrity(input: LedgerInput, snapshot: LedgerSnapshot): In
 
     const walletRefs: Array<string | undefined> = [tx.bucketId, tx.fromBucketId, tx.toBucketId];
     for (const ref of walletRefs) {
-      if (ref && !walletById.has(ref)) {
-        issues.push({
-          code: "missing_wallet",
-          severity: "error",
-          title: "Movimento sem propósito válido",
-          detail: "Este movimento aponta para um propósito que já não existe.",
-          transactionId: tx.id,
-          walletId: ref,
-        });
-      }
+      if (ref && !walletById.has(ref)) noteOrphan(ref, Math.abs(tx.amountMinor));
     }
 
     for (const allocation of tx.allocations ?? []) {
       if (!walletById.has(allocation.bucketId)) {
-        issues.push({
-          code: "orphan_allocation",
-          severity: "error",
-          title: "Distribuição órfã",
-          detail: "Parte deste movimento foi atribuída a um propósito que já não existe.",
-          transactionId: tx.id,
-          walletId: allocation.bucketId,
-          amountMinor: Math.abs(allocation.amountMinor),
-        });
+        noteOrphan(allocation.bucketId, Math.abs(allocation.amountMinor));
       }
     }
 
@@ -180,6 +173,20 @@ export function checkIntegrity(input: LedgerInput, snapshot: LedgerSnapshot): In
         });
       }
     }
+  }
+
+  for (const [walletId, info] of orphanPurposes) {
+    issues.push({
+      code: "missing_wallet",
+      severity: "error",
+      title: "Um propósito que usaste já não existe",
+      detail:
+        info.movements === 1
+          ? "Há 1 movimento guardado com um propósito que foi apagado. Podes repor o propósito — o dinheiro não se move."
+          : `Há ${info.movements} movimentos guardados com um propósito que foi apagado. Podes repor o propósito — o dinheiro não se move.`,
+      walletId,
+      amountMinor: snapshot.bucketBalances[walletId] ?? 0,
+    });
   }
 
   for (const code of snapshot.unconvertedCurrencies) {

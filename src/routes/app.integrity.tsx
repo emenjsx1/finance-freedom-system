@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { PageHeader } from "@/components/page-header";
 import { Money } from "@/components/money";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -16,6 +17,7 @@ import {
 import { haptic, newId, useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { correctionSources } from "@/lib/finance/integrity";
+import { financialPosition } from "@/lib/finance/position";
 import type { Transaction } from "@/lib/finance/ledger-types";
 import { Symbol } from "@/lib/icons/symbols";
 
@@ -37,9 +39,10 @@ export const Route = createFileRoute("/app/integrity")({
 });
 
 function IntegrityPage() {
-  const { setup } = useSetup();
+  const { setup, update } = useSetup();
   const { snapshot, integrity, addTransaction } = useLedger();
 
+  const position = financialPosition(snapshot);
   const errors = integrity.issues.filter((i) => i.severity === "error");
   const warnings = integrity.issues.filter((i) => i.severity === "warning");
 
@@ -75,7 +78,7 @@ function IntegrityPage() {
           <Line label="Total" minor={snapshot.wealthMinor} />
           <Line label="Com propósito" minor={snapshot.purposeTotalMinor} />
           <Line label="Por distribuir" minor={snapshot.unallocatedMinor} />
-          <Line label="Disponível para gastar" minor={snapshot.spendableMinor} />
+          <Line label="Disponível" minor={position.availableMinor} />
           <Line label="Protegido" minor={snapshot.protectedMinor} />
         </dl>
       </section>
@@ -99,6 +102,28 @@ function IntegrityPage() {
                         haptic("success");
                         toast.success("Correção registada no histórico.");
                       }
+                    }}
+                  />
+                ) : issue.code === "missing_wallet" && issue.walletId ? (
+                  <RestorePurpose
+                    walletId={issue.walletId}
+                    onRestore={(name) => {
+                      update({
+                        ruleItems: [
+                          ...setup.ruleItems,
+                          {
+                            id: issue.walletId!,
+                            name,
+                            percentage: 0,
+                            icon: "star",
+                            kind: "goals",
+                            source: "custom",
+                            order: setup.ruleItems.length,
+                          },
+                        ],
+                      });
+                      haptic("success");
+                      toast.success("Propósito reposto. Os movimentos voltaram a ter sentido.");
                     }}
                   />
                 ) : null
@@ -207,6 +232,34 @@ function IssueCard({
       </div>
       {fix ? <div className="mt-4">{fix}</div> : null}
     </article>
+  );
+}
+
+/**
+ * A purpose was deleted while movements still pointed at it. Restoring it with
+ * the same identity puts the money back under a name — no movement changes.
+ */
+function RestorePurpose({
+  walletId,
+  onRestore,
+}: {
+  walletId: string;
+  onRestore: (name: string) => void;
+}) {
+  const [name, setName] = useState("");
+  return (
+    <div className="space-y-3">
+      <p className="type-meta">Dá-lhe um nome para o veres outra vez nas tuas listas.</p>
+      <Input
+        value={name}
+        onChange={(event) => setName(event.target.value)}
+        placeholder="Nome do propósito"
+        aria-label={`Nome do propósito ${walletId}`}
+      />
+      <Button disabled={name.trim().length === 0} onClick={() => onRestore(name.trim())}>
+        Repor propósito
+      </Button>
+    </div>
   );
 }
 
