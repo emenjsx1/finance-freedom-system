@@ -1,0 +1,131 @@
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMemo } from "react";
+
+import { SectionHeader } from "@/components/design/section-header";
+import { Money } from "@/components/money";
+import { PageHeader } from "@/components/page-header";
+import { PlanCard } from "@/components/personal/plan-card";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import { useLedger } from "@/hooks/use-ledger";
+import { usePersonal } from "@/hooks/use-personal";
+import { goalPace, planConflicts } from "@/lib/personal/engine";
+import { DIRECTION_HORIZON_LABELS } from "@/lib/personal/types";
+
+export const Route = createFileRoute("/app/me")({
+  head: () => ({
+    meta: [
+      { title: "Eu — Finan." },
+      { name: "description", content: "Direção, planos, estratégia e o que o Agente sabe sobre ti." },
+      { property: "og:title", content: "Eu — Finan." },
+      { property: "og:description", content: "O teu espaço pessoal dentro da aplicação." },
+    ],
+  }),
+  component: MePage,
+});
+
+function MePage() {
+  const { state } = usePersonal();
+  const { profile } = useAuth();
+  const { snapshot } = useLedger();
+
+  const activePlans = state.plans.filter((p) => p.status === "active");
+
+  const savedFor = (walletId?: string) =>
+    walletId ? (snapshot.wallets.find((w) => w.id === walletId)?.balanceMinor ?? 0) : 0;
+
+  /** Capacity is only what is genuinely free today — never a projection. */
+  const conflict = useMemo(
+    () =>
+      planConflicts(
+        activePlans.map((plan) => ({
+          id: plan.id,
+          name: plan.name,
+          requiredMonthlyMinor: goalPace(plan, savedFor(plan.walletId))?.requiredMonthlyMinor ?? null,
+        })),
+        snapshot.spendableMinor,
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [activePlans, snapshot.spendableMinor, snapshot.wallets],
+  );
+
+  return (
+    <div className="space-y-8">
+      <PageHeader
+        title={profile?.preferred_name ? profile.preferred_name : "Eu"}
+        subtitle={state.headline ?? "O teu espaço: direção, planos e o que o Agente sabe."}
+      />
+
+      <section className="list-group">
+        <Link to="/app/direction" className="list-row justify-between">
+          <span>Direção</span>
+          <span className="type-meta">
+            {state.direction.length ? `${state.direction.length} notas` : "Por escrever"}
+          </span>
+        </Link>
+        <Link to="/app/plans" className="list-row justify-between">
+          <span>Planos</span>
+          <span className="type-meta">{state.plans.length || "Nenhum"}</span>
+        </Link>
+        <Link to="/app/strategy" className="list-row justify-between">
+          <span>Estratégia</span>
+          <span className="type-meta">{state.strategy?.name ?? "Sem regra"}</span>
+        </Link>
+        <Link to="/app/context" className="list-row justify-between">
+          <span>O que o Agente sabe</span>
+          <span className="type-meta">{state.context.length || "Nada"}</span>
+        </Link>
+        <Link to="/app/review" className="list-row justify-between">
+          <span>Revisão</span>
+          <span className="type-meta">Sem pontuações</span>
+        </Link>
+      </section>
+
+      {state.direction.length ? (
+        <section>
+          <SectionHeader title="A tua direção" />
+          <div className="list-group">
+            {state.direction.slice(0, 4).map((item) => (
+              <div key={item.id} className="list-row justify-between">
+                <span className="text-sm">{item.content}</span>
+                <span className="type-meta">{DIRECTION_HORIZON_LABELS[item.horizon]}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {activePlans.length ? (
+        <section>
+          <SectionHeader title="Planos ativos" actionLabel="Ver todos" to="/app/plans" />
+          <div className="space-y-3">
+            {activePlans.slice(0, 3).map((plan) => (
+              <PlanCard key={plan.id} plan={plan} savedMinor={savedFor(plan.walletId)} />
+            ))}
+          </div>
+        </section>
+      ) : (
+        <section className="card-standard text-center">
+          <p className="type-secondary">Ainda não há planos. Não há pressa.</p>
+          <Button className="mt-4" asChild>
+            <Link to="/app/plans">Criar o primeiro plano</Link>
+          </Button>
+        </section>
+      )}
+
+      {conflict ? (
+        <section className="card-standard">
+          <SectionHeader title="Os teus planos não cabem todos ao mesmo tempo" />
+          <p className="type-secondary mt-1">
+            Para cumprir todas as datas precisarias de{" "}
+            <Money minor={conflict.requiredMinor} options={{ compactDecimals: true }} /> por mês e tens{" "}
+            <Money minor={conflict.monthlyCapacityMinor} options={{ compactDecimals: true }} /> disponíveis.
+          </p>
+          <p className="type-meta mt-2">
+            Isto não é um erro. Podes adiar uma data, baixar um valor ou deixar um plano em pausa.
+          </p>
+        </section>
+      ) : null}
+    </div>
+  );
+}

@@ -40,11 +40,11 @@ interface NavItem {
 /** Mobile: five deliberate destinations, the middle one is the action. */
 const mobileLeft: NavItem[] = [
   { to: "/app", label: "Início", icon: Home },
-  { to: "/app/activity", label: "Atividade", icon: ArrowLeftRight },
+  { to: "/app/plans", label: "Planos", icon: Target },
 ];
 const mobileRight: NavItem[] = [
-  { to: "/app/analytics", label: "Análise", icon: BarChart3 },
-  { to: "/app/profile", label: "Mais", icon: LayoutGrid },
+  { to: "/app/agent", label: "Agente", icon: MessageSquare },
+  { to: "/app/me", label: "Eu", icon: User },
 ];
 
 const desktopGroups: { title: string; items: NavItem[] }[] = [
@@ -63,6 +63,17 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
       { to: "/app/wallets", label: "Carteiras", icon: Wallet },
       { to: "/app/money-map", label: "Mapa do dinheiro", icon: Map },
       { to: "/app/protected", label: "Protegido", icon: Lock },
+    ],
+  },
+  {
+    title: "Pessoal",
+    items: [
+      { to: "/app/me", label: "Eu", icon: User },
+      { to: "/app/plans", label: "Planos", icon: Target },
+      { to: "/app/strategy", label: "Estratégia", icon: Sliders },
+      { to: "/app/direction", label: "Direção", icon: Map },
+      { to: "/app/context", label: "O que o Agente sabe", icon: MessageSquare },
+      { to: "/app/review", label: "Revisão", icon: PieChart },
     ],
   },
   {

@@ -29,6 +29,8 @@ import { EmptyState } from "@/components/empty-state";
 import { MoneyHero } from "@/components/design/money-hero";
 import { QuickActions } from "@/components/design/quick-actions";
 import { GoalCard } from "@/components/design/goal-card";
+import { PlanCard } from "@/components/personal/plan-card";
+import { usePersonal } from "@/hooks/use-personal";
 import { InsightTile } from "@/components/design/insight-card";
 import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
@@ -308,6 +310,7 @@ function EditPanel({
 
 function ModuleView({ id }: { id: HomeModuleId }) {
   const { setup } = useSetup();
+  const { state: personal } = usePersonal();
   const { ledger, snapshot } = useLedger();
   const { term } = usePrefs();
   const { openComposer, openQuickActions } = useTransactionLauncher();
@@ -382,6 +385,28 @@ function ModuleView({ id }: { id: HomeModuleId }) {
       );
 
     case "goals": {
+      // Plans are the person's own words, so they come first when they exist.
+      const activePlans = personal.plans.filter((p) => p.status === "active").slice(0, 2);
+      if (activePlans.length > 0) {
+        return (
+          <section>
+            <SectionHeader title="O que estás a construir" actionLabel="Ver todos" to="/app/plans" />
+            <div className="space-y-3">
+              {activePlans.map((plan) => (
+                <PlanCard
+                  key={plan.id}
+                  plan={plan}
+                  savedMinor={
+                    plan.walletId
+                      ? (snapshot.wallets.find((w) => w.id === plan.walletId)?.balanceMinor ?? 0)
+                      : 0
+                  }
+                />
+              ))}
+            </div>
+          </section>
+        );
+      }
       const goals = snapshot.wallets.filter((w) => w.kind === "goals" && !w.archived).slice(0, 2);
       if (goals.length === 0) return null;
       return (
