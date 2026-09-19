@@ -61,7 +61,18 @@ function MePage() {
         const agora = state.direction.filter((d) => d.horizon === "now");
         const questoes = state.direction.filter((d) => d.horizon === "exploring");
         const prioridades = activePlans.filter((p) => p.priority === "now");
-        if (!agora.length && !questoes.length && !prioridades.length) return null;
+        /* What the person wrote in "O que o sistema sabe sobre mim". */
+        const ctxActive = state.context.filter((c) => c.state === "active");
+        const ctxPrioridades = ctxActive.filter((c) => c.category === "priorities");
+        const ctxSobre = ctxActive.filter((c) => c.category === "about");
+        if (
+          !agora.length &&
+          !questoes.length &&
+          !prioridades.length &&
+          !ctxPrioridades.length &&
+          !ctxSobre.length
+        )
+          return null;
         return (
           <section className="card-standard space-y-4">
             <p className="type-meta">Meu momento</p>
