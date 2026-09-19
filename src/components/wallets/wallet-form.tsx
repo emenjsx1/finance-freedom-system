@@ -16,7 +16,6 @@ import {
   walletBehaviour,
 } from "@/lib/finance/wallet-config";
 import type { AllocationRuleItem, BucketKind, ProtectionLevel } from "@/lib/finance/types";
-import { cn } from "@/lib/utils";
 
 const KIND_LABELS: Partial<Record<BucketKind, string>> = {
   protected: "Proteção",
@@ -64,11 +63,6 @@ export function WalletForm({
     onOpenChange(false);
   }
 
-  const totalPercent =
-    setup.ruleItems
-      .filter((item) => item.id !== wallet?.id && !item.archived)
-      .reduce((sum, item) => sum + item.percentage, 0) + (Number(form.percentage) || 0);
-
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-3xl lg:max-w-lg">
@@ -109,10 +103,9 @@ export function WalletForm({
                   aria-label={`Ícone ${symbolLabel(icon)}`}
                   aria-pressed={form.icon === icon}
                   onClick={() => setForm((f) => ({ ...f, icon }))}
-                  className={cn(
-                    "flex size-10 items-center justify-center rounded-xl border",
-                    form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70",
-                  )}
+                    className={`flex size-10 items-center justify-center rounded-xl border ${
+                      form.icon === icon ? "border-primary bg-primary-soft" : "border-border/70"
+                    }`}
                 >
                   <Symbol name={icon} />
                 </button>
@@ -129,10 +122,9 @@ export function WalletForm({
                   aria-label={`Cor ${color}`}
                   aria-pressed={form.color === color}
                   onClick={() => setForm((f) => ({ ...f, color }))}
-                  className={cn(
-                    "size-8 rounded-full border-2",
-                    form.color === color ? "border-foreground" : "border-transparent",
-                  )}
+                    className={`size-8 rounded-full border-2 ${
+                      form.color === color ? "border-foreground" : "border-transparent"
+                    }`}
                   style={{ backgroundColor: color }}
                 />
               ))}
