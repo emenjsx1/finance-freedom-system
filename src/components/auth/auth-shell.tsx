@@ -5,14 +5,14 @@ import type { ReactNode } from "react";
 import { AppleMark, GoogleMark } from "@/components/auth/provider-marks";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import logoUrl from "@/assets/finan-logo.png";
+import { BrandMark } from "@/components/brand/brand-mark";
 
 export function AuthShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col justify-center overflow-y-auto bg-background px-5 pb-[max(env(safe-area-inset-bottom),1.5rem)] pt-[max(env(safe-area-inset-top),1.5rem)] sm:px-6">
       <div className="mx-auto w-full max-w-sm">
         <Link to="/" aria-label="Norte" className="mb-8 block">
-          <img src={logoUrl} alt="Norte" className="h-12 w-auto" />
+          <BrandMark size="lg" />
         </Link>
         {children}
       </div>
