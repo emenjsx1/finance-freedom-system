@@ -141,7 +141,7 @@ function AccountDetailPage() {
                 accounts={setup.accounts}
                 buckets={setup.ruleItems}
                 currencyCode={setup.currencyCode}
-                onOpen={() => navigate({ to: "/app/transactions" })}
+                onOpen={() => navigate({ to: "/app/activity" })}
               />
             ))}
           </div>

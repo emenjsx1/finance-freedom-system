@@ -42,6 +42,9 @@ import { buildDailyBrief } from "@/lib/agent/context-builder";
 import { buildInsights } from "@/lib/analytics/insights";
 import { resolvePeriod } from "@/lib/analytics/periods";
 import { periodSummary } from "@/lib/analytics/service";
+import { homeMessage } from "@/lib/home/message";
+import { useAuth } from "@/hooks/use-auth";
+import { UserAvatar } from "@/components/design/user-avatar";
 import { greetingFor } from "@/lib/finance/greeting";
 import { nextOccurrence } from "@/lib/finance/engine";
 import { DEFAULT_HOME_MODULES, HOME_MODULES, type HomeModuleId } from "@/lib/prefs/types";
@@ -64,13 +67,38 @@ export const Route = createFileRoute("/app/")({
 
 function HomePage() {
   const { setup } = useSetup();
-  const { ledger } = useLedger();
+  const { ledger, snapshot } = useLedger();
   const { prefs, update } = usePrefs();
+  const { profile, user } = useAuth();
   const { openQuickActions } = useTransactionLauncher();
   const [editing, setEditing] = useState(false);
 
-  const firstName = setup.fullName.trim().split(" ")[0] ?? "";
+  const preferredName = (profile?.preferred_name ?? "").trim();
+  const firstName = preferredName || (setup.fullName.trim().split(" ")[0] ?? "");
   const modules = prefs.homeModules;
+
+  // Deterministic, context-aware supporting line. No model call on Home.
+  const analyticsInput = useAnalyticsInput();
+  const supportingLine = useMemo(() => {
+    const summary = periodSummary(analyticsInput, resolvePeriod("this_month"));
+    const goals = snapshot.wallets.filter((w) => w.kind === "goals" && !w.archived);
+    const withProgress = goals
+      .map((goal) => {
+        const target = setup.ruleItems.find((r) => r.id === goal.id)?.targetMinor;
+        return target && target > 0
+          ? { name: goal.name, progress: goal.balanceMinor / target }
+          : null;
+      })
+      .filter((g): g is { name: string; progress: number } => g !== null)
+      .sort((a, b) => b.progress - a.progress);
+
+    return homeMessage({
+      isNewUser: setup.accounts.length === 0 || ledger.transactions.length === 0,
+      nearestGoal: withProgress[0],
+      builtThisMonthMinor: summary.builtMinor,
+      hasActivityThisMonth: summary.incomeMinor > 0 || summary.expensesMinor > 0,
+    });
+  }, [analyticsInput, snapshot.wallets, setup.ruleItems, setup.accounts.length, ledger.transactions.length]);
 
   function toggleModule(id: HomeModuleId) {
     update({
@@ -112,18 +140,28 @@ function HomePage() {
                   </>
                 ) : null}
               </h1>
-              <p className="type-secondary mt-3">Disciplina hoje. Liberdade amanhã.</p>
+              <p className="type-secondary mt-3">{supportingLine}</p>
             </>
           )}
         </div>
-        <Button
-          variant={editing ? "default" : "ghost"}
-          size="icon-sm"
-          aria-label={editing ? "Concluir personalização" : "Personalizar painel"}
-          onClick={() => setEditing((v) => !v)}
-        >
-          {editing ? <Check /> : <Pencil />}
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant={editing ? "default" : "ghost"}
+            size="icon-sm"
+            aria-label={editing ? "Concluir personalização" : "Personalizar painel"}
+            onClick={() => setEditing((v) => !v)}
+          >
+            {editing ? <Check /> : <Pencil />}
+          </Button>
+          <Link to="/app/profile" aria-label="Abrir o teu perfil" className="rounded-full">
+            <UserAvatar
+              name={preferredName || profile?.full_name || setup.fullName}
+              email={user?.email ?? null}
+              imageUrl={profile?.avatar_url ?? null}
+              size="sm"
+            />
+          </Link>
+        </div>
       </header>
 
       {editing ? (
@@ -358,11 +396,12 @@ function ModuleView({ id }: { id: HomeModuleId }) {
     case "recent": {
       const recent = [...ledger.transactions]
         .sort((a, b) => b.occurredAt.localeCompare(a.occurredAt))
-        .slice(0, 4);
+        .slice(0, 3);
       if (recent.length === 0) return null;
       return (
         <section>
-          <SectionHeader title="Atividade recente" actionLabel="Ver tudo" to="/app/transactions" />
+          {/* Preview only: search, filters and detail live on /app/activity. */}
+          <SectionHeader title="Atividade recente" actionLabel="Ver todas" to="/app/activity" />
           <div className="list-group">
             {recent.map((tx) => (
               <TransactionRow

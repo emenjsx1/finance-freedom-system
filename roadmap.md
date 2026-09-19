@@ -93,3 +93,5 @@
 - [ ] Preserve all engine, agent, analytics, notification and security behaviour
 
 ## Migração visual completa (referência iPhone) — done
+
+## Correção UI/UX — perfil, autenticação, atividade, header pessoal — done

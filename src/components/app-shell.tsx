@@ -16,6 +16,7 @@ import {
   Target,
   Lock,
   Sliders,
+  User,
   Bell,
   Zap,
 } from "lucide-react";
@@ -38,11 +39,11 @@ interface NavItem {
 /** Mobile: five deliberate destinations, the middle one is the action. */
 const mobileLeft: NavItem[] = [
   { to: "/app", label: "Início", icon: Home },
-  { to: "/app/analytics", label: "Análise", icon: BarChart3 },
+  { to: "/app/activity", label: "Atividade", icon: ArrowLeftRight },
 ];
 const mobileRight: NavItem[] = [
-  { to: "/app/goals", label: "Objetivos", icon: Target },
-  { to: "/app/settings", label: "Mais", icon: LayoutGrid },
+  { to: "/app/analytics", label: "Análise", icon: BarChart3 },
+  { to: "/app/profile", label: "Mais", icon: LayoutGrid },
 ];
 
 const desktopGroups: { title: string; items: NavItem[] }[] = [
@@ -50,7 +51,7 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
     title: "Diário",
     items: [
       { to: "/app", label: "Início", icon: Home },
-      { to: "/app/transactions", label: "Atividade", icon: ArrowLeftRight },
+      { to: "/app/activity", label: "Atividade", icon: ArrowLeftRight },
       { to: "/app/agent", label: "Agente", icon: MessageSquare },
     ],
   },
@@ -78,6 +79,7 @@ const desktopGroups: { title: string; items: NavItem[] }[] = [
       { to: "/app/notifications", label: "Notificações", icon: Bell },
       { to: "/app/automations", label: "Automações", icon: Zap },
       { to: "/app/personalization", label: "Personalização", icon: Sliders },
+      { to: "/app/profile", label: "Perfil e conta", icon: User },
       { to: "/app/settings", label: "Definições", icon: Settings },
     ],
   },

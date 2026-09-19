@@ -115,7 +115,7 @@ export const TERMINOLOGY_DEFAULTS: Record<TerminologyKey, string> = {
 
 export const DEFAULT_PAGES = [
   { to: "/app", label: "Início" },
-  { to: "/app/transactions", label: "Atividade" },
+  { to: "/app/activity", label: "Atividade" },
   { to: "/app/plan", label: "Plano" },
   { to: "/app/analytics", label: "Análise" },
   { to: "/app/agent", label: "Agente" },
@@ -137,6 +137,9 @@ export interface UserPreferences {
   agentProactiveSummaries: boolean;
   agentInsights: boolean;
   language: "pt";
+  /** Ask for the device passcode/biometrics when the app opens. */
+  appLock: boolean;
+  appLockBiometrics: boolean;
 }
 
 export const DEFAULT_PREFERENCES: UserPreferences = {
@@ -154,4 +157,6 @@ export const DEFAULT_PREFERENCES: UserPreferences = {
   agentProactiveSummaries: true,
   agentInsights: true,
   language: "pt",
+  appLock: false,
+  appLockBiometrics: false,
 };
