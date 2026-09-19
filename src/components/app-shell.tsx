@@ -29,6 +29,7 @@ import { PreparedMovementSheet } from "@/components/notifications/prepared-movem
 import { haptic } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
+import logoUrl from "@/assets/finan-logo.png";
 
 interface NavItem {
   to: string;
