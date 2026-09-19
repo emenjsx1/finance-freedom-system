@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import type { AgentState } from "@/lib/agent/types";
 import type { Account, AllocationRuleItem, ExchangeRate } from "@/lib/finance/types";
 import type { NotificationsState } from "@/lib/notifications/service";
+import type { Reminder } from "@/lib/reminders/types";
 import type { PersonalState } from "@/lib/personal/types";
 import type { UserPreferences } from "@/lib/prefs/types";
 import type { LedgerState } from "@/lib/storage/ledger-store";
@@ -387,17 +388,55 @@ export async function saveCloudPreferences(userId: string, prefs: UserPreference
 }
 
 export async function loadCloudNotifications(): Promise<NotificationsState | null> {
-  const settings = await readSettings();
-  return settings?.settings.notifications ?? null;
+  const [settings, reminders] = await Promise.all([readSettings(), pullReminders()]);
+  const stored = settings?.settings.notifications;
+  if (!stored) return null;
+  return { ...stored, reminders };
+}
+
+/** Reminders live in their own table: the server scheduler reads them directly. */
+async function pullReminders(): Promise<Reminder[]> {
+  const { data, error } = await db.from("reminders").select("id, payload");
+  if (error) throw error;
+  return (data ?? []).map((row) => ({
+    ...(row["payload"] as Reminder),
+    id: row["id"] as string,
+  }));
+}
+
+async function pushReminders(userId: string, reminders: Reminder[]): Promise<void> {
+  if (reminders.length > 0) {
+    const rows = reminders.map((reminder) => ({
+      id: reminder.id,
+      user_id: userId,
+      payload: reminder,
+      title: reminder.title,
+      scheduled_at: reminder.snoozedUntil ?? reminder.scheduledAt,
+      timezone: reminder.timezone,
+      status: reminder.status,
+      entity_type: reminder.entityType,
+      entity_id: reminder.entityId ?? null,
+    }));
+    const { error } = await db.from("reminders").upsert(rows, { onConflict: "id" });
+    if (error) throw error;
+  }
+  const keep = reminders.map((reminder) => reminder.id);
+  const query = db.from("reminders").delete().eq("user_id", userId);
+  const { error } = keep.length
+    ? await query.not("id", "in", `(${keep.map((id) => `"${id}"`).join(",")})`)
+    : await query;
+  if (error) throw error;
 }
 
 export async function saveCloudNotifications(
   userId: string,
   state: NotificationsState,
 ): Promise<void> {
+  await pushReminders(userId, state.reminders);
   await mergeSettingsBlob(userId, {
     notifications: {
       ...state,
+      reminders: [],
       notifications: state.notifications.slice(0, 100),
       runs: state.runs.slice(0, 50),
     },
