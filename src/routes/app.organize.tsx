@@ -611,7 +611,8 @@ function OrganizePage() {
               label="Manter sempre disponível pelo menos"
             />
             <p className="mt-2 text-sm text-muted-foreground">
-              Este limite nunca é ultrapassado pelas opções.
+              Se não souberes, deixa em zero. As opções mostram níveis diferentes e nenhum limite
+              que indiques é ultrapassado.
             </p>
           </div>
           <StepNav onBack={back} onNext={next} nextLabel="Ver opções" />
@@ -636,7 +637,14 @@ function OrganizePage() {
                     <span className={line.kind === "available" ? "text-muted-foreground" : ""}>
                       {line.label}
                     </span>
-                    <Money minor={line.amountMinor} className="font-medium" />
+                    <span className="text-right">
+                      <Money minor={line.amountMinor} className="font-medium" />
+                      {totalMinor > 0 ? (
+                        <span className="block text-xs text-muted-foreground">
+                          {Math.round((line.amountMinor / totalMinor) * 100)}% do teu dinheiro
+                        </span>
+                      ) : null}
+                    </span>
                   </li>
                 ))}
               </ul>
