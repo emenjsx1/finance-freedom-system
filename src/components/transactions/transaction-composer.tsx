@@ -141,9 +141,19 @@ export function TransactionComposer({
     }
     if (kind === "income") {
       if (!accountId) return "Escolhe a conta que recebeu o dinheiro.";
-      if (moneyType === "personal" && allocationsTotal(allocations) !== amountMinor) {
-        return "A distribuição tem de somar exatamente o valor recebido.";
-      }
+    }
+    if (kind === "reservation") {
+      if (!accountId) return "Escolhe a conta de onde vem o dinheiro.";
+      if (!toBucketId) return "Escolhe para que é este dinheiro.";
+      // Only money that is not already reserved can receive a new purpose.
+      if ((snapshot.accountAvailable[accountId] ?? 0) < amountMinor)
+        return "Essa conta não tem dinheiro disponível suficiente.";
+    }
+    if (kind === "release") {
+      if (!fromBucketId) return "Escolhe o propósito de onde queres libertar dinheiro.";
+      const walletName = setup.ruleItems.find((r) => r.id === fromBucketId)?.name;
+      const error = debitWalletError(snapshot, fromBucketId, amountMinor, walletName, creditBackFor(fromBucketId));
+      if (error) return error;
     }
     if (kind === "transfer") {
       if (!fromAccountId || !toAccountId) return "Escolhe as duas contas.";
