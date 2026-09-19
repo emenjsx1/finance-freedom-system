@@ -30,3 +30,11 @@ for every entry.
   signed URLs owned by the uploading user.
 - Account deletion removes the profile row and the auth user; attachments cascade
   with the user row.
+
+## Desenvolvimento pessoal — o que fica onde
+
+- Conversa: fica na conversa. Não vira contexto persistente sem confirmação.
+- Contexto pessoal: só o que a pessoa aprovou; vê, edita, arquiva e apaga a qualquer momento.
+- Widgets: só ações, planos e programas escolhidos pela pessoa; nunca reflexões nem texto de conversa.
+- Notificações: assunto útil e neutro ("Revisão semanal pronta"), nunca conteúdo emocional sensível no ecrã bloqueado.
+- Exportar e apagar: conversas, contexto guardado e dados de desenvolvimento seguem os mesmos controlos do resto da app.

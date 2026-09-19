@@ -75,3 +75,24 @@ Server operations:
 Invariants revalidated server-side on every apply: `total = available + reserved`,
 `reserved >= 0`, allocations never exceed eligible money, business money excluded unless
 explicitly classified as personal, and future income never counted as current money.
+
+## Desenvolvimento pessoal (contrato de backend)
+
+Tabelas: `programs`, `program_items`, `actions`, `reminders`, `reviews`,
+`direction_items`, `priorities`, `decisions`, `personal_context`,
+`evolution_events`, `reflections`, `notification_preferences`, `widget_snapshots`.
+
+- `programs`: id, user_id, title, description, purpose, status (draft|active|paused|completed|cancelled), start_date, end_date, duration_days, created_source, linked_plan_id, created_at, updated_at, completed_at.
+- `program_items`: id, program_id, type (action|reflection|checkin|review|milestone), title, description, day, scheduled_date, scheduled_time, status, order, reminder, linked_action_id.
+- `actions`: id, user_id, title, description, status (pending|done|skipped), priority (now|important|later), scheduled_date, scheduled_time, due_date, linked_plan_id, linked_program_id, reminder, created_source, completed_at.
+- `decisions`: statement, reason, date, status (active|revisit|changed), linked_plan_id, linked_direction_id, source.
+- `personal_context`: content, category, source, state (active|needs_review|archived), created_at, updated_at, reviewed_at.
+- `evolution_events`: kind, title, at, hidden.
+- `reviews`: type (weekly|monthly|program|plan), period_start, period_end, facts (jsonb), user_notes, approved_changes.
+
+Regras:
+- Todas as escritas do Agente passam por ações de domínio autorizadas; o Agente nunca recebe acesso livre à base de dados.
+- Agendamento com timezone do utilizador; viajar não pode corromper horários.
+- Passar a hora nunca muda o estado para "falhada": fica pendente/atrasada com Completar, Remarcar, Ignorar, Remover.
+- RLS por user_id em todas as tabelas, com GRANT explícito para authenticated e service_role.
+- Nada de dados semeados: nenhuma vida, prioridade ou programa de exemplo é criado pelo sistema.

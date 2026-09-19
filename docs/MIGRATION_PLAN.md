@@ -47,3 +47,12 @@ the product. Illustrative figures exist only in documentation.
 - Whether goals ever become visible as a separate concept in the UI, or stay internal.
 - Multi-currency conversion source and refresh cadence for accounts outside the base currency.
 - Retention window for agent threads.
+
+## Desenvolvimento pessoal — migração
+
+- `personal.development` é criado vazio em dispositivos existentes. Nada é reescrito nem apagado.
+- Planos, direção, contexto e conversas existentes mantêm-se como estão; a direção ganhou o horizonte "Ainda estou a descobrir" sem alterar itens já guardados.
+- A evolução só regista acontecimentos a partir de agora — não é reconstruída retroativamente, para não inventar história.
+
+Decisões por resolver: nomes finais das rotas no backend, retenção de conversas do Agente,
+se os check-ins de programa geram notificação push por defeito, e detalhe dos snapshots de widget.

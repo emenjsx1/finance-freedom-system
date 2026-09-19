@@ -80,3 +80,28 @@ Rules:
 - A repeated preference ("quero sempre 100.000 disponíveis") is only stored after the
   person says yes.
 - The Agent has no direct database access; it only calls the tools above.
+
+## Conversa profunda ("Conversar")
+
+Modo ativado pela pessoa no compositor do chat (`mode: "conversar"`).
+- Ouve primeiro. Uma pergunta de cada vez, escolhida no momento — nunca "pergunta 1/25".
+- Só usa o que a pessoa disse. Não diagnostica, não atribui traços psicológicos, não afirma conhecer a pessoa melhor do que ela.
+- Pode desafiar contradições com respeito e separar problema de sintoma.
+- Não força ação no fim. Às vezes o resultado certo é apenas uma boa conversa.
+- Pode oferecer: "Queres que eu organize o que saiu desta conversa?" → resumo com O QUE PARECE IMPORTAR AGORA / QUESTÕES EM ABERTO / POSSÍVEIS PRÓXIMOS PASSOS, sempre como rascunho editável.
+- Nada da conversa vira contexto persistente sem confirmação explícita.
+
+## Ferramentas de leitura pessoais
+
+`get_today`, `get_programs`, `get_actions`, `get_decisions`, `get_development_snapshot`,
+além das financeiras já existentes. Todas leem o estado real. Se não existir contexto,
+o Agente diz que não existe — nunca inventa história pessoal.
+
+## Ações pessoais preparadas
+
+`personalAction` na resposta, com tipos: `create_program`, `create_action`,
+`update_direction`, `record_decision`, `save_context`.
+- O Agente propõe; a aplicação escreve só depois de "Confirmar" no cartão.
+- O Agente nunca diz que criou algo antes da confirmação.
+- Escrita pessoal é proporcional à consequência; escrita financeira mantém-se mais estrita (PREPARE → CONFIRM → engine EXECUTE).
+- Programas: 3/7/14/30/90 dias ou personalizado, com pré-visualização (nome, propósito, duração, itens) antes de criar.

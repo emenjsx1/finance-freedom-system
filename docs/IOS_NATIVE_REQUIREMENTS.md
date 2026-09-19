@@ -19,3 +19,24 @@ must provide later.
 | Safe areas | `env(safe-area-inset-*)` throughout | Respect notch and home indicator |
 | Accessibility | Semantic labels, contrast, reduced motion | Dynamic Type and VoiceOver pass on every screen |
 | Dark mode | Intentionally adapted, never inverted | Match system appearance setting |
+
+## Desenvolvimento pessoal — requisitos nativos
+
+Widgets (a implementar e validar em Xcode; a web só define os contratos):
+- HOJE: 1 a 3 próximas ações.
+- DINHEIRO: Disponível/Reservado, com modo "valores escondidos" escolhido pela pessoa.
+- PLANO: um plano fixado pela pessoa.
+- FOCO: AGORA + próxima ação.
+- PROGRAMA: dia atual + próxima ação.
+Nenhum widget mostra texto de conversas ou reflexões.
+
+Notificações: categorias Ações pessoais, Programas, Seguimentos do Agente, além das financeiras;
+ações rápidas Marcar como feita, Remarcar, Ver; deep links para ação, programa, plano, compromisso, revisão e conversa.
+Pré-visualizações sensíveis escondidas por defeito.
+
+App Intents / Atalhos: registar despesa, registar receita, perguntar ao Agente, abrir Hoje, criar ação, abrir plano.
+Live Activities só para sessões limitadas no tempo — nunca um painel permanente de património.
+
+Privacidade nativa: Face ID, ecrã de privacidade no multitarefa, conteúdo sensível escondido em notificações.
+
+Nada disto é dado como feito antes da fase nativa: a web modela UX e contratos, o comportamento real é validado no Xcode.
