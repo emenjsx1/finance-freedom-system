@@ -72,7 +72,7 @@ function MePage() {
           <span className="type-meta">{state.strategy?.name ?? "Sem regra"}</span>
         </Link>
         <Link to="/app/context" className="list-row justify-between">
-          <span>O que o Agente sabe</span>
+          <span>O que o sistema sabe sobre mim</span>
           <span className="type-meta">{state.context.length || "Nada"}</span>
         </Link>
         <Link to="/app/review" className="list-row justify-between">
@@ -128,10 +128,10 @@ function MePage() {
       ) : null}
 
       <div className="border-t border-border/60 pt-6">
-        <SectionHeader title="Definições" />
+        <SectionHeader title="Conta" />
         <section className="list-group">
           <Link to="/app/profile/personal" className="list-row justify-between">
-            <span>Conta</span>
+            <span>Perfil e dados pessoais</span>
             <span className="type-meta">{profile?.preferred_name ?? "Informação pessoal"}</span>
           </Link>
           <Link to="/app/profile/security" className="list-row justify-between">
@@ -165,7 +165,7 @@ function MePage() {
             </span>
           </Link>
           <Link to="/app/profile" className="list-row justify-between">
-            <span>Todas as definições</span>
+            <span>Conta e definições</span>
             <span className="type-meta" aria-hidden>
               ›
             </span>

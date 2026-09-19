@@ -72,3 +72,18 @@ Compromisso · Direção · Revisão · Agente.
 ## Product freeze
 
 The architecture above is frozen. Open decisions are listed in `MIGRATION_PLAN.md`.
+
+## Correção — planos, organização e "Eu"
+
+- Separar dinheiro para um plano: "Começar a guardar" (ou "Adicionar dinheiro") abre uma folha com
+  quanto e de que conta, seguida de uma revisão. A conta mantém o saldo; muda só o propósito, e a
+  reserva guarda a conta de origem.
+- Percentagem de progresso (reservado ÷ alvo) é automática. Percentagem de regra só existe na
+  Estratégia, para dinheiro futuro, e nunca é obrigatória.
+- Organizar dinheiro existente trabalha sempre com valores reais; a percentagem aparece apenas como
+  informação secundária.
+- Dinheiro: Total, Disponível, Reservado, Livre após compromissos, Onde está, Para quê, Património.
+- Património (/app/networth): dinheiro do motor financeiro mais bens e dívidas indicados pela pessoa.
+  Dinheiro de negócio nunca entra como património pessoal.
+- "Eu" é o único destino pessoal. Perfil e definições vivem dentro de Eu; o avatar abre Eu e a
+  navegação lateral deixou de ter uma entrada de perfil concorrente.
