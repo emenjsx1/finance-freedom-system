@@ -19,6 +19,7 @@ import { PersonalProvider } from "@/hooks/use-personal";
 import { NotificationsProvider } from "@/hooks/use-notifications";
 import { MoneyModelMigration } from "@/components/system/money-migration";
 import { AppStatus } from "@/components/system/app-status";
+import { AppAlertHost } from "@/components/system/app-alert";
 import { PwaProvider } from "@/hooks/use-pwa";
 import { APP_DESCRIPTION, APP_NAME, APP_SHORT_NAME, THEME_COLOR } from "@/lib/brand";
 import { Toaster } from "@/components/ui/sonner";
