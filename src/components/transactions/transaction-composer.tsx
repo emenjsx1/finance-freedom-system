@@ -20,6 +20,7 @@ import { listPurposes } from "@/lib/finance/purposes";
 import { isProtectedWallet } from "@/lib/finance/wallet-config";
 import type { Allocation, Attachment, MoneyType, Transaction, TxKind } from "@/lib/finance/ledger-types";
 import { cn } from "@/lib/utils";
+import { notifyError } from "@/lib/ui/feedback";
 
 export interface ComposerOptions {
   kind: TxKind;
@@ -180,7 +181,7 @@ export function TransactionComposer({
   function goConfirm() {
     const error = validate();
     if (error) {
-      toast.error(error);
+      notifyError(error);
       haptic("warning");
       return;
     }
@@ -191,7 +192,7 @@ export function TransactionComposer({
     if (submitting) return; // double-submit protection
     const error = validate();
     if (error) {
-      toast.error(error);
+      notifyError(error);
       return;
     }
     setSubmitting(true);
@@ -229,7 +230,7 @@ export function TransactionComposer({
       haptic("success");
       onDone();
     } catch {
-      toast.error("Não foi possível guardar a transação. Verifica e tenta novamente.");
+      notifyError("Não foi possível guardar a transação. Verifica e tenta novamente.");
       setSubmitting(false);
     }
   }

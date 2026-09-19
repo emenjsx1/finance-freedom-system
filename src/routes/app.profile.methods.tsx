@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth, type ProviderId } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/profile/methods")({
   head: () => ({
@@ -56,7 +57,7 @@ function MethodsPage() {
       });
       if (error) throw error;
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(null);
     }
@@ -65,7 +66,7 @@ function MethodsPage() {
   async function disconnect(provider: ProviderId) {
     // Never let anyone remove their only way back in.
     if (providers.length <= 1) {
-      toast.error("Não podes remover o teu único método de acesso.");
+      notifyError("Não podes remover o teu único método de acesso.");
       return;
     }
     setBusy(provider);
@@ -78,7 +79,7 @@ function MethodsPage() {
       await refreshProfile();
       await supabase.auth.refreshSession();
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(null);
     }

@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/hooks/use-auth";
 import { useSetup } from "@/hooks/use-setup";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/profile/personal")({
   head: () => ({
@@ -71,7 +72,7 @@ function PersonalInfoPage() {
 
   async function handlePhoto(file: File) {
     if (file.size > 3_000_000) {
-      toast.error("Escolhe uma imagem com menos de 3 MB.");
+      notifyError("Escolhe uma imagem com menos de 3 MB.");
       return;
     }
     const dataUrl = await resizeToDataUrl(file, 320);
@@ -94,7 +95,7 @@ function PersonalInfoPage() {
       updateSetup({ fullName: fullName.trim() || preferredName.trim() });
       toast.success("Informação atualizada.");
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setSaving(false);
     }

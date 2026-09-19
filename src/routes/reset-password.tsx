@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { getSignedInDestination } from "@/lib/auth/destination";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/reset-password")({
   ssr: false,
@@ -51,7 +52,7 @@ function ResetPasswordPage() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     if (password !== confirm) {
-      toast.error("As palavras-passe não coincidem.");
+      notifyError("As palavras-passe não coincidem.");
       return;
     }
     setBusy(true);
@@ -63,7 +64,7 @@ function ResetPasswordPage() {
       const to = await getSignedInDestination();
       setTimeout(() => void navigate({ to, replace: true }), 1200);
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }

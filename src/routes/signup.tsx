@@ -11,6 +11,7 @@ import { lovable } from "@/integrations/lovable";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { getSignedInDestination } from "@/lib/auth/destination";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/signup")({
   head: () => ({
@@ -50,14 +51,14 @@ function SignupPage() {
         redirect_uri: window.location.origin,
       });
       if (result.error) {
-        toast.error(authErrorMessage(result.error));
+        notifyError(authErrorMessage(result.error));
         return;
       }
       if (result.redirected) return;
       const to = await getSignedInDestination();
       void navigate({ to, replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(null);
     }
@@ -66,7 +67,7 @@ function SignupPage() {
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     if (password !== confirm) {
-      toast.error("As palavras-passe não coincidem.");
+      notifyError("As palavras-passe não coincidem.");
       return;
     }
     setBusy("email");
@@ -86,7 +87,7 @@ function SignupPage() {
       }
       setVerifyFor(email);
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(null);
     }
@@ -96,7 +97,7 @@ function SignupPage() {
     if (!verifyFor) return;
     const { error } = await supabase.auth.resend({ type: "signup", email: verifyFor });
     if (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
       return;
     }
     toast.success("Enviámos outro email de confirmação.");

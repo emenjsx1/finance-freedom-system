@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
-import { toast } from "sonner";
 
 import { AuthShell, Field } from "@/components/auth/auth-shell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/forgot-password")({
   head: () => ({
@@ -39,7 +39,7 @@ function ForgotPasswordPage() {
       // Never reveal whether the address belongs to an account.
       setSent(true);
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }

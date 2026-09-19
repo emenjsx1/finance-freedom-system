@@ -9,7 +9,6 @@ import {
   type ReactNode,
 } from "react";
 
-import { toast } from "sonner";
 
 import { useSetup } from "@/hooks/use-setup";
 import { buildSnapshot, type LedgerSnapshot } from "@/lib/finance/engine";
@@ -19,6 +18,7 @@ import type { NotificationEvent, RecurringRule, Transaction } from "@/lib/financ
 import { loadCloudLedger, saveCloudLedger } from "@/lib/backend/cloud-store";
 import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { EMPTY_LEDGER, loadLedger, saveLedger, type LedgerState } from "@/lib/storage/ledger-store";
+import { notifyError } from "@/lib/ui/feedback";
 
 export function newId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) return crypto.randomUUID();
@@ -135,7 +135,7 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
     (tx: Transaction) => {
       const error = guard(tx);
       if (error) {
-        toast.error(error);
+        notifyError(error);
         return false;
       }
       // Idempotency: an identical movement recorded twice within a few seconds
@@ -164,7 +164,7 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       if (current) {
         const error = guard({ ...current, ...patch } as Transaction, id);
         if (error) {
-          toast.error(error);
+          notifyError(error);
           return false;
         }
       }

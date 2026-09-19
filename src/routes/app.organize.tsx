@@ -7,7 +7,6 @@
  */
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { toast } from "sonner";
 
 import { NativeSheet } from "@/components/design/native-sheet";
 import { SectionHeader } from "@/components/design/section-header";
@@ -34,6 +33,7 @@ import {
   type ScenarioLine,
 } from "@/lib/organize/types";
 import { PLAN_PRIORITY_LABELS, type PlanPriority } from "@/lib/personal/types";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/organize")({
   head: () => ({
@@ -340,7 +340,7 @@ function OrganizePage() {
     }
 
     if (failures > 0) {
-      toast.error("Parte da organização não foi aplicada. Revê os valores.");
+      notifyError("Parte da organização não foi aplicada. Revê os valores.");
       return;
     }
 

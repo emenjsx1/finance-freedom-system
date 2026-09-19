@@ -24,6 +24,7 @@ import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { authErrorMessage } from "@/lib/auth/errors";
 import { deleteMyAccount } from "@/lib/account/account.functions";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/privacy")({
   head: () => ({
@@ -86,7 +87,7 @@ function PrivacyPage() {
       toast.success("A conta foi eliminada.");
       void navigate({ to: "/", replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
       setConfirmOpen(false);

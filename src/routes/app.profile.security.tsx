@@ -11,6 +11,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { usePrefs } from "@/hooks/use-prefs";
 import { supabase } from "@/integrations/supabase/client";
 import { authErrorMessage } from "@/lib/auth/errors";
+import { notifyError } from "@/lib/ui/feedback";
 
 export const Route = createFileRoute("/app/profile/security")({
   head: () => ({
@@ -65,7 +66,7 @@ function SecurityPage() {
       toast.success("Sessão terminada em todos os dispositivos.");
       void navigate({ to: "/auth", replace: true });
     } catch (error) {
-      toast.error(authErrorMessage(error));
+      notifyError(authErrorMessage(error));
     } finally {
       setBusy(false);
     }
