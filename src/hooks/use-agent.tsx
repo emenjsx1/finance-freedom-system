@@ -53,6 +53,7 @@ const AgentCtx = createContext<AgentContextValue | null>(null);
 export function AgentProvider({ children }: { children: ReactNode }) {
   const { setup } = useSetup();
   const { ledger, snapshot, addTransaction } = useLedger();
+  const { state: personal } = usePersonal();
   const { prefs } = usePrefs();
   const [state, setState] = useState<AgentState>(EMPTY_AGENT_STATE);
   const [hydrated, setHydrated] = useState(false);
