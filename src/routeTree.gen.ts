@@ -16,6 +16,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAccountsRouteImport } from './routes/app.accounts'
+import { Route as AppActivityRouteImport } from './routes/app.activity'
 import { Route as AppAgentRouteImport } from './routes/app.agent'
 import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-settings'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
@@ -81,6 +82,11 @@ const AppIndexRoute = AppIndexRouteImport.update({
 const AppAccountsRoute = AppAccountsRouteImport.update({
   id: '/accounts',
   path: '/accounts',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppActivityRoute = AppActivityRouteImport.update({
+  id: '/activity',
+  path: '/activity',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAgentRoute = AppAgentRouteImport.update({
@@ -247,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
+  '/app/activity': typeof AppActivityRoute
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
@@ -285,6 +292,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/app/activity': typeof AppActivityRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/goals': typeof AppGoalsRoute
@@ -322,6 +330,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/reset-password': typeof ResetPasswordRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
+  '/app/activity': typeof AppActivityRoute
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
@@ -364,6 +373,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/reset-password'
     | '/app/accounts'
+    | '/app/activity'
     | '/app/agent'
     | '/app/agent-settings'
     | '/app/analytics'
@@ -402,6 +412,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/onboarding'
     | '/reset-password'
+    | '/app/activity'
     | '/app/agent-settings'
     | '/app/automations'
     | '/app/goals'
@@ -438,6 +449,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/reset-password'
     | '/app/accounts'
+    | '/app/activity'
     | '/app/agent'
     | '/app/agent-settings'
     | '/app/analytics'
@@ -529,6 +541,13 @@ declare module '@tanstack/react-router' {
       path: '/accounts'
       fullPath: '/app/accounts'
       preLoaderRoute: typeof AppAccountsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/activity': {
+      id: '/app/activity'
+      path: '/activity'
+      fullPath: '/app/activity'
+      preLoaderRoute: typeof AppActivityRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/agent': {
@@ -829,6 +848,7 @@ const AppWalletsRouteWithChildren = AppWalletsRoute._addFileChildren(
 
 interface AppRouteChildren {
   AppAccountsRoute: typeof AppAccountsRouteWithChildren
+  AppActivityRoute: typeof AppActivityRoute
   AppAgentRoute: typeof AppAgentRouteWithChildren
   AppAgentSettingsRoute: typeof AppAgentSettingsRoute
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
@@ -852,6 +872,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAccountsRoute: AppAccountsRouteWithChildren,
+  AppActivityRoute: AppActivityRoute,
   AppAgentRoute: AppAgentRouteWithChildren,
   AppAgentSettingsRoute: AppAgentSettingsRoute,
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
