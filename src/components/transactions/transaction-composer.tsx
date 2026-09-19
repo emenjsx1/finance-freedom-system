@@ -240,7 +240,7 @@ export function TransactionComposer({
         ...(description ? { description } : {}),
         ...(note ? { note } : {}),
         ...(kind === "expense" || kind === "income" || kind === "reservation" ? { accountId } : {}),
-        ...(kind === "expense" ? { bucketId } : {}),
+        ...(kind === "expense" && bucketId ? { bucketId } : {}),
         ...(kind === "income" && allocations.length ? { allocations } : {}),
         ...(kind === "transfer" ? { fromAccountId, toAccountId } : {}),
         ...(kind === "reservation" ? { toBucketId } : {}),
