@@ -126,6 +126,52 @@ function MePage() {
           </p>
         </section>
       ) : null}
+
+      <div className="border-t border-border/60 pt-6">
+        <SectionHeader title="Definições" />
+        <section className="list-group">
+          <Link to="/app/profile/personal" className="list-row justify-between">
+            <span>Conta</span>
+            <span className="type-meta">{profile?.preferred_name ?? "Informação pessoal"}</span>
+          </Link>
+          <Link to="/app/profile/security" className="list-row justify-between">
+            <span>Acesso e segurança</span>
+            <span className="type-meta" aria-hidden>
+              ›
+            </span>
+          </Link>
+          <Link to="/app/personalization" className="list-row justify-between">
+            <span>Aparência</span>
+            <span className="type-meta" aria-hidden>
+              ›
+            </span>
+          </Link>
+          <Link to="/app/notification-settings" className="list-row justify-between">
+            <span>Notificações</span>
+            <span className="type-meta" aria-hidden>
+              ›
+            </span>
+          </Link>
+          <Link to="/app/privacy" className="list-row justify-between">
+            <span>Privacidade e dados</span>
+            <span className="type-meta" aria-hidden>
+              ›
+            </span>
+          </Link>
+          <Link to="/app/help" className="list-row justify-between">
+            <span>Ajuda e legal</span>
+            <span className="type-meta" aria-hidden>
+              ›
+            </span>
+          </Link>
+          <Link to="/app/profile" className="list-row justify-between">
+            <span>Todas as definições</span>
+            <span className="type-meta" aria-hidden>
+              ›
+            </span>
+          </Link>
+        </section>
+      </div>
     </div>
   );
 }
