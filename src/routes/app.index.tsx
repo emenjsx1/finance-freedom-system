@@ -34,7 +34,6 @@ import { usePersonal } from "@/hooks/use-personal";
 import { toDateKey, todayFeed } from "@/lib/development/engine";
 import { InsightTile } from "@/components/design/insight-card";
 import { SectionHeader } from "@/components/design/section-header";
-import { APP_QUOTE } from "@/lib/brand";
 import { BrandQuote } from "@/components/brand-quote";
 import { Money } from "@/components/money";
 import { Button } from "@/components/ui/button";
