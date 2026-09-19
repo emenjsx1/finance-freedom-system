@@ -29,7 +29,7 @@ export interface ComposerOptions {
   base?: Transaction;
   editingId?: string;
   /** Prefill from context, e.g. saving straight into a specific goal. */
-  preset?: { toBucketId?: string; bucketId?: string; accountId?: string };
+  preset?: { toBucketId?: string; fromBucketId?: string; bucketId?: string; accountId?: string };
 }
 
 function localInputValue(iso: string) {
