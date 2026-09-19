@@ -222,7 +222,7 @@ function ActivityPage() {
           </Button>
         </div>
 
-        <div className="-mx-5 flex gap-2 overflow-x-auto px-5 pb-1 [scrollbar-width:none] lg:mx-0 lg:px-0">
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:mx-0 lg:px-0">
           {QUICK_FILTERS.map((filter) => (
             <button
               key={filter.id}
@@ -279,7 +279,7 @@ function ActivityPage() {
         <div className="space-y-7">
           {groups.map((group) => (
             <section key={group.key}>
-              <div className="sticky top-0 z-10 -mx-5 mb-2 flex items-baseline justify-between bg-background/90 px-5 py-1.5 backdrop-blur lg:mx-0 lg:px-0">
+              <div className="sticky top-0 z-10 -mx-4 mb-2 flex items-baseline justify-between bg-background/90 px-4 py-1.5 backdrop-blur lg:mx-0 lg:px-0">
                 <h2 className="type-section uppercase">{group.label}</h2>
                 {group.spent > 0 ? (
                   <p className="numeric type-meta">
