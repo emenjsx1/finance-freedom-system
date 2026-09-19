@@ -4,8 +4,8 @@
  * Every surface that names the product — manifest, install prompts, document
  * titles, push notifications — reads from here. Nothing hardcodes the name.
  */
-export const APP_NAME = "Finan.";
-export const APP_SHORT_NAME = "Finan";
+export const APP_NAME = "Norte";
+export const APP_SHORT_NAME = "Norte";
 export const APP_TAGLINE = "A minha vida, organizada.";
 export const APP_DESCRIPTION =
   "Dinheiro, planos e desenvolvimento pessoal no mesmo sistema.";
