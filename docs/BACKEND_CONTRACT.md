@@ -108,3 +108,28 @@ Regras:
   reallocation | adjustment.
 - `strategies.mode` — none | manual | suggest | automatic | paused. Deleting a
   strategy stops future suggestions and never rewrites historical reservations.
+
+## reminders
+
+`id text pk`, `user_id uuid`, `payload jsonb` (objeto Reminder completo), `title text`,
+`scheduled_at timestamptz` (instante efetivo: `snoozed_until ?? scheduled_at`),
+`timezone text`, `status text`, `entity_type text`, `entity_id text`,
+`created_at`, `updated_at`. RLS por `user_id`; GRANT authenticated + service_role.
+Índice `(user_id, scheduled_at)`.
+
+## push_subscriptions
+
+`id uuid pk`, `user_id uuid`, `endpoint text`, `p256dh text`, `auth text`,
+`user_agent text`, `label text`, `status text` (`active` | `invalid`),
+`last_success_at timestamptz`, `last_error text`, `created_at`, `updated_at`,
+`UNIQUE (user_id, endpoint)`. RLS por `user_id`.
+
+## Por implementar no servidor (não fingido na app)
+
+1. Guardar a chave privada VAPID como segredo do servidor.
+2. Trabalho agendado que lê `reminders` com `scheduled_at <= now()` e estado
+   `scheduled`, aplica preferências/horas de silêncio/deduplicação e envia Web Push.
+3. Registo de tentativas de entrega e marcação de subscrições 404/410 como `invalid`.
+4. Eventos de domínio do lado do servidor (compromissos a vencer, revisões prontas).
+
+Enquanto isto não existir, a app declara «só dentro da app» e nunca promete entrega externa.

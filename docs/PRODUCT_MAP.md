@@ -124,3 +124,17 @@ Regras de produto:
 - Guardar = conta → propósito (Quanto? De onde? Para quê?). Mudar propósito =
   propósito → propósito. Transferência = conta → conta. Três fluxos distintos.
 - Detalhe em docs/FINANCIAL_ENGINE.md.
+
+## Avisos, lembretes e app instalável (fase web/PWA)
+
+- `/app/notifications` — centro de notificações (Hoje, Esta semana, Anterior; ler,
+  marcar tudo lido, abrir a entidade, apagar). Existe mesmo sem push.
+- `/app/notification-settings` — geral, categorias por canal, horas de silêncio,
+  pré-visualização, limite diário e **Avisos neste dispositivo** (permissão,
+  subscrição, instalação, aviso de teste).
+- `/app/reminders` — lembretes da pessoa: criar, adiar, remarcar, concluir, cancelar.
+  Também acessível em Eu › Os meus lembretes e no «+» › Criar lembrete.
+- App instalável no telemóvel (manifest, service worker, ícones, atalhos), banner de
+  «Sem ligação» e de «Nova versão disponível».
+
+Detalhe: docs/PWA_REQUIREMENTS.md, docs/NOTIFICATION_SYSTEM.md, docs/MOBILE_WEB_REQUIREMENTS.md.
