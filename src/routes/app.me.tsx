@@ -56,6 +56,43 @@ function MePage() {
         subtitle={state.headline ?? "O teu espaço: direção, planos e o que o Agente sabe."}
       />
 
+      {(() => {
+        /* Meu momento: only what the person has written themselves. */
+        const agora = state.direction.filter((d) => d.horizon === "now");
+        const questoes = state.direction.filter((d) => d.horizon === "exploring");
+        const prioridades = activePlans.filter((p) => p.priority === "high");
+        if (!agora.length && !questoes.length && !prioridades.length) return null;
+        return (
+          <section className="card-standard space-y-4">
+            <p className="type-meta">Meu momento</p>
+            {agora.length ? (
+              <div>
+                <p className="type-meta">Agora</p>
+                {agora.slice(0, 2).map((item) => (
+                  <p key={item.id} className="type-heading mt-1">{item.content}</p>
+                ))}
+              </div>
+            ) : null}
+            {prioridades.length ? (
+              <div>
+                <p className="type-meta">Prioridades atuais</p>
+                {prioridades.slice(0, 3).map((plan) => (
+                  <p key={plan.id} className="type-secondary mt-1">{plan.name}</p>
+                ))}
+              </div>
+            ) : null}
+            {questoes.length ? (
+              <div>
+                <p className="type-meta">Questões em aberto</p>
+                {questoes.slice(0, 3).map((item) => (
+                  <p key={item.id} className="type-secondary mt-1">{item.content}</p>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        );
+      })()}
+
       <section className="list-group">
         <Link to="/app/direction" className="list-row justify-between">
           <span>Direção</span>
