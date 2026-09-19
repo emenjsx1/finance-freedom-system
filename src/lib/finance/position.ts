@@ -3,8 +3,7 @@
  *
  * Invariant, always: TOTAL = AVAILABLE + RESERVED.
  *
- * AVAILABLE is money with no reservation on it: purpose wallets that behave as
- * spendable, plus money that has no purpose yet.
+ * AVAILABLE is physical money with no purpose/reservation attached to it.
  * RESERVED is a classification of the same money (protection, plans,
  * commitments). It never creates or destroys money.
  */
@@ -20,14 +19,14 @@ export interface FinancialPosition {
 }
 
 export function financialPosition(snapshot: LedgerSnapshot): FinancialPosition {
-  const totalMinor = snapshot.wealthMinor;
-  const unassignedMinor = snapshot.unallocatedMinor;
-  const availableMinor = snapshot.spendableMinor + unassignedMinor;
+  const totalMinor = Math.max(0, snapshot.wealthMinor);
+  const reservedMinor = Math.min(totalMinor, Math.max(0, snapshot.purposeTotalMinor));
+  const availableMinor = totalMinor - reservedMinor;
   return {
     totalMinor,
     availableMinor,
-    reservedMinor: totalMinor - availableMinor,
-    protectedMinor: snapshot.protectedMinor,
-    unassignedMinor,
+    reservedMinor,
+    protectedMinor: Math.min(reservedMinor, Math.max(0, snapshot.protectedMinor)),
+    unassignedMinor: availableMinor,
   };
 }

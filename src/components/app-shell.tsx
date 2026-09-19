@@ -191,8 +191,8 @@ export function AppShell() {
 
       <main className="pb-[calc(6.75rem+env(safe-area-inset-bottom))] lg:ml-64 lg:pb-12">
         <div className="mx-auto w-full max-w-2xl px-4 pt-[max(env(safe-area-inset-top),0.75rem)] sm:px-5 lg:max-w-4xl lg:px-10 lg:pt-6">
-          <div className="mb-1 flex justify-end">
-            <NotificationBell />
+          <div className="sticky top-[max(env(safe-area-inset-top),0.75rem)] z-30 mb-2 flex h-11 justify-end pointer-events-none">
+            <NotificationBell className="pointer-events-auto" />
           </div>
           <Outlet />
         </div>

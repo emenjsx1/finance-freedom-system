@@ -33,7 +33,7 @@ function WalletsPage() {
 
   return (
     <div>
-      <PageHeader title="Carteiras" subtitle="Para que serve o teu dinheiro." />
+      <PageHeader title="Propósitos" subtitle="O dinheiro que reservaste e para quê." />
 
       <div className="mb-4 grid grid-cols-2 gap-2">
         <div className="rounded-2xl border border-border/70 bg-surface p-4">
@@ -49,9 +49,9 @@ function WalletsPage() {
       {wallets.length === 0 ? (
         <EmptyState
           icon={Wallet}
-          title="Organiza o teu dinheiro por propósito."
-          description="Cada carteira diz para que serve uma parte do teu dinheiro."
-          action={<Button onClick={() => setFormOpen(true)}>Criar primeira carteira</Button>}
+          title="Ainda não tens dinheiro reservado."
+          description="Cria um propósito teu e depois escolhe quanto queres guardar para ele."
+          action={<Button onClick={() => setFormOpen(true)}>Criar primeiro propósito</Button>}
         />
       ) : (
         <ul className="space-y-2">
@@ -78,8 +78,7 @@ function WalletsPage() {
                       ) : null}
                     </span>
                     <span className="block text-xs text-muted-foreground">
-                      {wallet.percentage}% da regra •{" "}
-                      {wallet.includedInAvailable ? "disponível para gastar" : "fora do disponível"}
+                      {wallet.balanceMinor > 0 ? "Dinheiro reservado" : "Ainda sem dinheiro guardado"}
                     </span>
                   </span>
                 </span>
@@ -113,7 +112,7 @@ function WalletsPage() {
       {wallets.length > 0 ? (
         <Button variant="outline" className="mt-4 w-full" onClick={() => setFormOpen(true)}>
           <Plus className="size-4" />
-          Nova carteira
+          Novo propósito
         </Button>
       ) : null}
 

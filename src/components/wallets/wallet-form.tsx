@@ -18,13 +18,10 @@ import {
 import type { AllocationRuleItem, BucketKind, ProtectionLevel } from "@/lib/finance/types";
 import { cn } from "@/lib/utils";
 
-const KIND_LABELS: Record<BucketKind, string> = {
-  protected: "Protegido",
-  wealth: "Construção de património",
-  goals: "Objetivos",
-  life: "Vida",
-  family: "Família",
-  free: "Livre",
+const KIND_LABELS: Partial<Record<BucketKind, string>> = {
+  protected: "Proteção",
+  wealth: "Património",
+  goals: "Plano ou objetivo",
 };
 
 export function WalletForm({
@@ -76,7 +73,7 @@ export function WalletForm({
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="bottom" className="max-h-[92vh] overflow-y-auto rounded-t-3xl lg:max-w-lg">
         <SheetHeader className="px-0">
-          <SheetTitle>{wallet ? "Editar carteira" : "Nova carteira"}</SheetTitle>
+          <SheetTitle>{wallet ? "Editar propósito" : "Novo propósito"}</SheetTitle>
         </SheetHeader>
 
         <div className="space-y-4 pb-6">
@@ -101,19 +98,6 @@ export function WalletForm({
                 </option>
               ))}
             </select>
-          </Field>
-
-          <Field label="Percentagem da regra" htmlFor="w-pct">
-            <Input
-              id="w-pct"
-              inputMode="decimal"
-              value={form.percentage}
-              onChange={(e) => setForm((f) => ({ ...f, percentage: e.target.value.replace(/[^\d.,]/g, "") }))}
-            />
-            <p className={cn("mt-1 text-xs", totalPercent === 100 ? "text-muted-foreground" : "text-warning")}>
-              Total da regra: {totalPercent.toFixed(0)}%
-              {totalPercent === 100 ? "" : " — a regra só distribui entradas quando soma 100%."}
-            </p>
           </Field>
 
           <Field label="Ícone">
@@ -234,7 +218,7 @@ export function WalletForm({
           />
 
           <Button className="w-full" onClick={save} disabled={!form.name.trim()}>
-            {wallet ? "Guardar alterações" : "Criar carteira"}
+            {wallet ? "Guardar alterações" : "Criar propósito"}
           </Button>
         </div>
       </SheetContent>
