@@ -2,6 +2,10 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   BarChart3,
   ArrowDownLeft,
+  ArrowLeftRight,
+  MoreHorizontal,
+  PiggyBank,
+  Plus,
   ArrowUpRight,
   Check,
   Eye,
@@ -20,6 +24,11 @@ import { useMemo, useState } from "react";
 import type { ComponentType } from "react";
 
 import { EmptyState } from "@/components/empty-state";
+import { MoneyHero } from "@/components/design/money-hero";
+import { QuickActions } from "@/components/design/quick-actions";
+import { GoalCard } from "@/components/design/goal-card";
+import { InsightTile } from "@/components/design/insight-card";
+import { SectionHeader } from "@/components/design/section-header";
 import { Money } from "@/components/money";
 import { Button } from "@/components/ui/button";
 import { TransactionRow } from "@/components/transactions/transaction-row";
@@ -245,7 +254,7 @@ function ModuleView({ id }: { id: HomeModuleId }) {
   const { setup } = useSetup();
   const { ledger, snapshot } = useLedger();
   const { term } = usePrefs();
-  const { openComposer } = useTransactionLauncher();
+  const { openComposer, openQuickActions } = useTransactionLauncher();
 
   // One definition of the month's figures: the analytics service (business money excluded).
   const analyticsInput = useAnalyticsInput();
