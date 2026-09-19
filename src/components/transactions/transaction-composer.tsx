@@ -636,9 +636,37 @@ export function TransactionComposer({
               Disponível nesta conta: {formatMoney(snapshot.accountAvailable[accountId] ?? 0, currency)}
             </p>
           ) : null}
-          <SelectField label="Para quê?" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          {purposeOptions.length > 0 ? (
+            <SelectField label="Para quê?" value={toBucketId ?? ""} onChange={setToBucketId} options={purposeOptions} />
+          ) : null}
+          <div className="space-y-1.5">
+            <Label htmlFor="new-purpose">
+              {purposeOptions.length > 0 ? "Ou cria um propósito novo" : "Para quê?"}
+            </Label>
+            <div className="flex gap-2">
+              <Input
+                id="new-purpose"
+                value={newPurposeName}
+                maxLength={40}
+                placeholder="Ex.: Viagem, Carro, Emergência"
+                onChange={(e) => setNewPurposeName(e.target.value)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                className="shrink-0"
+                onClick={() => {
+                  const id = createPurpose(newPurposeName);
+                  if (id) setToBucketId(id);
+                }}
+              >
+                Criar
+              </Button>
+            </div>
+          </div>
           <p className="type-meta">
-            O dinheiro fica onde está. Só passa a ter um propósito.
+            Guardar não move dinheiro nenhum: ele fica na mesma conta, só deixa de estar disponível
+            para gastar porque passou a ter um destino.
           </p>
         </div>
       ) : null}
