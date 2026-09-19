@@ -47,14 +47,12 @@ export const HOME_MODULES: { id: HomeModuleId; label: string; description: strin
   { id: "insight", label: "Observação do mês", description: "Um facto relevante calculado a partir dos teus dados." },
 ];
 
+/** Home stays focused: money card, actions, goals, one agent note, recent activity. */
 export const DEFAULT_HOME_MODULES: HomeModuleId[] = [
   "available",
-  "position",
-  "agent",
-  "insight",
   "goals",
+  "agent",
   "recent",
-  "month_spending",
 ];
 
 /** Analytics modules the user can show or hide. */
