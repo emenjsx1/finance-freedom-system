@@ -50,6 +50,9 @@ export function TransactionComposer({
   const { setup } = useSetup();
   const { ledger, snapshot, addTransaction, updateTransaction } = useLedger();
   const currency = setup.currencyCode;
+  /** "25 000 MZN" — the same shape the screens use, in every confirmation. */
+  const amountLabel = (minor: number) =>
+    `${formatMoney(minor, currency, { withSymbol: false, compactDecimals: true })} ${currency}`;
 
   const suggestions = useMemo(
     () => suggestFromHistory(ledger.transactions, kind === "income" ? "income" : "expense"),
@@ -239,13 +242,13 @@ export function TransactionComposer({
     if (tx.kind === "expense") {
       const before = bucketBalance;
       toast.success("Despesa registada", {
-        description: `${bucket?.name ?? ""} · ${formatMoney(before, currency)} → ${formatMoney(before - tx.amountMinor, currency)}`,
+        description: `${bucket?.name ?? ""} · ${amountLabel(before)} → ${amountLabel(before - tx.amountMinor)}`,
       });
       return;
     }
     if (tx.kind === "income") {
       const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
-      toast.success(`${formatMoney(tx.amountMinor, currency)} adicionados ao ${accountName}`, {
+      toast.success(`${amountLabel(tx.amountMinor)} adicionados ao ${accountName}`, {
         description: "O dinheiro está disponível.",
         // Organising is always the person's choice, never automatic.
         action: {
@@ -260,7 +263,7 @@ export function TransactionComposer({
     if (tx.kind === "reservation") {
       const accountName = setup.accounts.find((a) => a.id === tx.accountId)?.name ?? "conta";
       const purposeName = setup.ruleItems.find((r) => r.id === tx.toBucketId)?.name ?? "";
-      toast.success(`${formatMoney(tx.amountMinor, currency)} guardados para ${purposeName}`, {
+      toast.success(`${amountLabel(tx.amountMinor)} guardados para ${purposeName}`, {
         description: `O dinheiro continua em ${accountName}.`,
       });
       return;

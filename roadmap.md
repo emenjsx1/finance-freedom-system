@@ -159,3 +159,8 @@ Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de
 
 ## Frase da marca
 - "Ter ambição não é o mesmo que ter direção…" no signup e na Home.
+
+## Bugs reportados (prints 19/09)
+- [ ] Banner de confirmação no topo da Home sobrepõe a barra de estado e corta "Organizar esta entrada".
+- [ ] Linha de "Atividade recente": texto da categoria ("business") sai por cima do ícone.
+- [ ] Rever todas as secções com um valor de teste real.

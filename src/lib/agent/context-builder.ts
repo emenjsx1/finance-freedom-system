@@ -7,6 +7,7 @@
  * the question are included, and every list is capped.
  */
 import { activeCategories, findCategory, type Category } from "@/lib/finance/categories";
+import { financialPosition } from "@/lib/finance/position";
 import { formatMoney } from "@/lib/finance/currency";
 import { monthTotals, nextOccurrence, type LedgerSnapshot } from "@/lib/finance/engine";
 import type { RecurringRule, Transaction } from "@/lib/finance/ledger-types";
@@ -82,7 +83,9 @@ export function getFinancialSummary(d: AgentDeps) {
   const c = d.setup.currencyCode;
   return {
     patrimonio: money(s.wealthMinor, c),
-    disponivel_para_gastar: money(s.spendableMinor, c),
+    // AVAILABLE is the same number the screens show: spendable purposes plus
+    // money that has no purpose yet.
+    disponivel_para_gastar: money(financialPosition(s).availableMinor, c),
     protegido: money(s.protectedMinor, c),
     com_proposito: money(s.purposeTotalMinor, c),
     por_distribuir: money(s.unallocatedMinor, c),
@@ -93,7 +96,7 @@ export function getFinancialSummary(d: AgentDeps) {
 export function getAvailableToSpend(d: AgentDeps) {
   const c = d.setup.currencyCode;
   return {
-    valor: money(d.snapshot.spendableMinor, c),
+    valor: money(financialPosition(d.snapshot).availableMinor, c),
     composto_por: d.snapshot.wallets
       .filter((w) => w.includedInAvailable && !w.archived)
       .map((w) => ({ carteira: w.name, saldo: money(w.balanceMinor, c) })),
@@ -588,7 +591,7 @@ export function buildAgentContext(question: string, d: AgentDeps): AgentContext 
 export function buildDailyBrief(d: AgentDeps): string[] {
   const c = d.setup.currencyCode;
   const lines: string[] = [];
-  lines.push(`Hoje tens ${money(d.snapshot.spendableMinor, c)} disponíveis para gastar.`);
+  lines.push(`Hoje tens ${money(financialPosition(d.snapshot).availableMinor, c)} disponíveis para gastar.`);
   if (d.snapshot.unallocatedMinor > 0)
     lines.push(`${money(d.snapshot.unallocatedMinor, c)} ainda não têm propósito.`);
   const upcoming = getUpcomingTransactions(d)[0];

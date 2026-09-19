@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { activeCategories, type Category } from "@/lib/finance/categories";
 import type { TxKind } from "@/lib/finance/ledger-types";
 import type { Account, AllocationRuleItem } from "@/lib/finance/types";
+import { Symbol } from "@/lib/icons/symbols";
 import { cn } from "@/lib/utils";
 
 export interface TxFilters {
@@ -157,7 +158,7 @@ export function FilterSheet({
             active={filters.categoryIds.includes(category.id)}
             onClick={() => set({ categoryIds: toggle(filters.categoryIds, category.id) })}
           >
-            <span aria-hidden>{category.icon}</span> {category.name}
+            <Symbol name={category.icon} className="size-4" /> {category.name}
           </Chip>
         ))}
       </Block>
@@ -181,7 +182,7 @@ export function FilterSheet({
             active={filters.bucketIds.includes(bucket.id)}
             onClick={() => set({ bucketIds: toggle(filters.bucketIds, bucket.id) })}
           >
-            <span aria-hidden>{bucket.icon}</span> {bucket.name}
+            <Symbol name={bucket.icon} className="size-4" /> {bucket.name}
           </Chip>
         ))}
       </Block>
