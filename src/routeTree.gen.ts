@@ -10,10 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AiDataRouteImport } from './routes/ai-data'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SupportRouteImport } from './routes/support'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppActivityRouteImport } from './routes/app.activity'
@@ -41,6 +45,8 @@ import { Route as AppAccountsAccountIdRouteImport } from './routes/app.accounts.
 import { Route as AppAgentIndexRouteImport } from './routes/app.agent.index'
 import { Route as AppAgentConversationIdRouteImport } from './routes/app.agent.$conversationId'
 import { Route as AppAnalyticsIndexRouteImport } from './routes/app.analytics.index'
+import { Route as AppGoalsIndexRouteImport } from './routes/app.goals.index'
+import { Route as AppGoalsGoalIdRouteImport } from './routes/app.goals.$goalId'
 import { Route as AppProfileIndexRouteImport } from './routes/app.profile.index'
 import { Route as AppProfileMethodsRouteImport } from './routes/app.profile.methods'
 import { Route as AppProfilePasswordRouteImport } from './routes/app.profile.password'
@@ -53,6 +59,11 @@ import { Route as AppAnalyticsCategoryCategoryIdRouteImport } from './routes/app
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AiDataRoute = AiDataRouteImport.update({
+  id: '/ai-data',
+  path: '/ai-data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -70,9 +81,24 @@ const OnboardingRoute = OnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SupportRoute = SupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppIndexRoute = AppIndexRouteImport.update({
@@ -210,6 +236,16 @@ const AppAnalyticsIndexRoute = AppAnalyticsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AppAnalyticsRoute,
 } as any)
+const AppGoalsIndexRoute = AppGoalsIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppGoalsRoute,
+} as any)
+const AppGoalsGoalIdRoute = AppGoalsGoalIdRouteImport.update({
+  id: '/$goalId',
+  path: '/$goalId',
+  getParentRoute: () => AppGoalsRoute,
+} as any)
 const AppProfileIndexRoute = AppProfileIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -254,17 +290,21 @@ const AppAnalyticsCategoryCategoryIdRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ai-data': typeof AiDataRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/activity': typeof AppActivityRoute
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
-  '/app/goals': typeof AppGoalsRoute
+  '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
@@ -282,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
   '/app/profile/methods': typeof AppProfileMethodsRoute
   '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
@@ -290,19 +331,23 @@ export interface FileRoutesByFullPath {
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
   '/app/analytics/': typeof AppAnalyticsIndexRoute
+  '/app/goals/': typeof AppGoalsIndexRoute
   '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ai-data': typeof AiDataRoute
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/app/activity': typeof AppActivityRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/automations': typeof AppAutomationsRoute
-  '/app/goals': typeof AppGoalsRoute
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
@@ -318,6 +363,7 @@ export interface FileRoutesByTo {
   '/app': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
   '/app/profile/methods': typeof AppProfileMethodsRoute
   '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
@@ -326,6 +372,7 @@ export interface FileRoutesByTo {
   '/app/accounts': typeof AppAccountsIndexRoute
   '/app/agent': typeof AppAgentIndexRoute
   '/app/analytics': typeof AppAnalyticsIndexRoute
+  '/app/goals': typeof AppGoalsIndexRoute
   '/app/profile': typeof AppProfileIndexRoute
   '/app/wallets': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
@@ -333,17 +380,21 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ai-data': typeof AiDataRoute
   '/app': typeof AppRouteWithChildren
   '/auth': typeof AuthRoute
   '/onboarding': typeof OnboardingRoute
+  '/privacy': typeof PrivacyRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/support': typeof SupportRoute
+  '/terms': typeof TermsRoute
   '/app/accounts': typeof AppAccountsRouteWithChildren
   '/app/activity': typeof AppActivityRoute
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
-  '/app/goals': typeof AppGoalsRoute
+  '/app/goals': typeof AppGoalsRouteWithChildren
   '/app/integrity': typeof AppIntegrityRoute
   '/app/money-map': typeof AppMoneyMapRoute
   '/app/notification-settings': typeof AppNotificationSettingsRoute
@@ -361,6 +412,7 @@ export interface FileRoutesById {
   '/app/': typeof AppIndexRoute
   '/app/accounts/$accountId': typeof AppAccountsAccountIdRoute
   '/app/agent/$conversationId': typeof AppAgentConversationIdRoute
+  '/app/goals/$goalId': typeof AppGoalsGoalIdRoute
   '/app/profile/methods': typeof AppProfileMethodsRoute
   '/app/profile/password': typeof AppProfilePasswordRoute
   '/app/profile/personal': typeof AppProfilePersonalRoute
@@ -369,6 +421,7 @@ export interface FileRoutesById {
   '/app/accounts/': typeof AppAccountsIndexRoute
   '/app/agent/': typeof AppAgentIndexRoute
   '/app/analytics/': typeof AppAnalyticsIndexRoute
+  '/app/goals/': typeof AppGoalsIndexRoute
   '/app/profile/': typeof AppProfileIndexRoute
   '/app/wallets/': typeof AppWalletsIndexRoute
   '/app/analytics/category/$categoryId': typeof AppAnalyticsCategoryCategoryIdRoute
@@ -377,10 +430,14 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/ai-data'
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/privacy'
     | '/reset-password'
+    | '/support'
+    | '/terms'
     | '/app/accounts'
     | '/app/activity'
     | '/app/agent'
@@ -405,6 +462,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/goals/$goalId'
     | '/app/profile/methods'
     | '/app/profile/password'
     | '/app/profile/personal'
@@ -413,19 +471,23 @@ export interface FileRouteTypes {
     | '/app/accounts/'
     | '/app/agent/'
     | '/app/analytics/'
+    | '/app/goals/'
     | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/ai-data'
     | '/auth'
     | '/onboarding'
+    | '/privacy'
     | '/reset-password'
+    | '/support'
+    | '/terms'
     | '/app/activity'
     | '/app/agent-settings'
     | '/app/automations'
-    | '/app/goals'
     | '/app/integrity'
     | '/app/money-map'
     | '/app/notification-settings'
@@ -441,6 +503,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/goals/$goalId'
     | '/app/profile/methods'
     | '/app/profile/password'
     | '/app/profile/personal'
@@ -449,16 +512,21 @@ export interface FileRouteTypes {
     | '/app/accounts'
     | '/app/agent'
     | '/app/analytics'
+    | '/app/goals'
     | '/app/profile'
     | '/app/wallets'
     | '/app/analytics/category/$categoryId'
   id:
     | '__root__'
     | '/'
+    | '/ai-data'
     | '/app'
     | '/auth'
     | '/onboarding'
+    | '/privacy'
     | '/reset-password'
+    | '/support'
+    | '/terms'
     | '/app/accounts'
     | '/app/activity'
     | '/app/agent'
@@ -483,6 +551,7 @@ export interface FileRouteTypes {
     | '/app/'
     | '/app/accounts/$accountId'
     | '/app/agent/$conversationId'
+    | '/app/goals/$goalId'
     | '/app/profile/methods'
     | '/app/profile/password'
     | '/app/profile/personal'
@@ -491,6 +560,7 @@ export interface FileRouteTypes {
     | '/app/accounts/'
     | '/app/agent/'
     | '/app/analytics/'
+    | '/app/goals/'
     | '/app/profile/'
     | '/app/wallets/'
     | '/app/analytics/category/$categoryId'
@@ -498,10 +568,14 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AiDataRoute: typeof AiDataRoute
   AppRoute: typeof AppRouteWithChildren
   AuthRoute: typeof AuthRoute
   OnboardingRoute: typeof OnboardingRoute
+  PrivacyRoute: typeof PrivacyRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SupportRoute: typeof SupportRoute
+  TermsRoute: typeof TermsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -511,6 +585,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/ai-data': {
+      id: '/ai-data'
+      path: '/ai-data'
+      fullPath: '/ai-data'
+      preLoaderRoute: typeof AiDataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -534,11 +615,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/support': {
+      id: '/support'
+      path: '/support'
+      fullPath: '/support'
+      preLoaderRoute: typeof SupportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app/': {
@@ -730,6 +832,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAnalyticsIndexRouteImport
       parentRoute: typeof AppAnalyticsRoute
     }
+    '/app/goals/': {
+      id: '/app/goals/'
+      path: '/'
+      fullPath: '/app/goals/'
+      preLoaderRoute: typeof AppGoalsIndexRouteImport
+      parentRoute: typeof AppGoalsRoute
+    }
+    '/app/goals/$goalId': {
+      id: '/app/goals/$goalId'
+      path: '/$goalId'
+      fullPath: '/app/goals/$goalId'
+      preLoaderRoute: typeof AppGoalsGoalIdRouteImport
+      parentRoute: typeof AppGoalsRoute
+    }
     '/app/profile/': {
       id: '/app/profile/'
       path: '/'
@@ -831,6 +947,20 @@ const AppAnalyticsRouteWithChildren = AppAnalyticsRoute._addFileChildren(
   AppAnalyticsRouteChildren,
 )
 
+interface AppGoalsRouteChildren {
+  AppGoalsGoalIdRoute: typeof AppGoalsGoalIdRoute
+  AppGoalsIndexRoute: typeof AppGoalsIndexRoute
+}
+
+const AppGoalsRouteChildren: AppGoalsRouteChildren = {
+  AppGoalsGoalIdRoute: AppGoalsGoalIdRoute,
+  AppGoalsIndexRoute: AppGoalsIndexRoute,
+}
+
+const AppGoalsRouteWithChildren = AppGoalsRoute._addFileChildren(
+  AppGoalsRouteChildren,
+)
+
 interface AppProfileRouteChildren {
   AppProfileMethodsRoute: typeof AppProfileMethodsRoute
   AppProfilePasswordRoute: typeof AppProfilePasswordRoute
@@ -872,7 +1002,7 @@ interface AppRouteChildren {
   AppAgentSettingsRoute: typeof AppAgentSettingsRoute
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
   AppAutomationsRoute: typeof AppAutomationsRoute
-  AppGoalsRoute: typeof AppGoalsRoute
+  AppGoalsRoute: typeof AppGoalsRouteWithChildren
   AppIntegrityRoute: typeof AppIntegrityRoute
   AppMoneyMapRoute: typeof AppMoneyMapRoute
   AppNotificationSettingsRoute: typeof AppNotificationSettingsRoute
@@ -897,7 +1027,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppAgentSettingsRoute: AppAgentSettingsRoute,
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
   AppAutomationsRoute: AppAutomationsRoute,
-  AppGoalsRoute: AppGoalsRoute,
+  AppGoalsRoute: AppGoalsRouteWithChildren,
   AppIntegrityRoute: AppIntegrityRoute,
   AppMoneyMapRoute: AppMoneyMapRoute,
   AppNotificationSettingsRoute: AppNotificationSettingsRoute,
@@ -919,10 +1049,14 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AiDataRoute: AiDataRoute,
   AppRoute: AppRouteWithChildren,
   AuthRoute: AuthRoute,
   OnboardingRoute: OnboardingRoute,
+  PrivacyRoute: PrivacyRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SupportRoute: SupportRoute,
+  TermsRoute: TermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

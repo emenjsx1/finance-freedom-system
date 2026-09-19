@@ -23,6 +23,7 @@ import { useSetup } from "@/hooks/use-setup";
 import { walletActivity, walletMonthStats } from "@/lib/finance/engine";
 import { setWalletArchived } from "@/lib/finance/setup-ops";
 import { PROTECTION_LEVEL_LABELS } from "@/lib/finance/wallet-config";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/wallets/$walletId")({
   head: () => ({
@@ -83,7 +84,7 @@ function WalletDetailPage() {
             className="flex size-11 items-center justify-center rounded-xl text-xl"
             style={{ backgroundColor: `${wallet.color ?? "#34d399"}1f` }}
           >
-            {wallet.icon}
+            <Symbol name={wallet.icon} />
           </span>
           <div>
             <h1 className="flex items-center gap-2 text-lg font-semibold">

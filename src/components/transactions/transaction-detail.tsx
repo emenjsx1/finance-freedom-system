@@ -11,12 +11,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { AttachmentThumb } from "@/components/transactions/attachment-thumb";
+import { AttachmentViewer } from "@/components/transactions/attachment-viewer";
 import { Button } from "@/components/ui/button";
 import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { findCategory } from "@/lib/finance/categories";
 import { formatMoney } from "@/lib/finance/currency";
-import type { Transaction } from "@/lib/finance/ledger-types";
+import type { Attachment, Transaction } from "@/lib/finance/ledger-types";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +27,7 @@ export function TransactionDetail({ tx, onClose }: { tx: Transaction; onClose: (
   const { ledger, deleteTransaction } = useLedger();
   const { openComposer } = useTransactionLauncher();
   const [confirming, setConfirming] = useState(false);
+  const [viewing, setViewing] = useState<Attachment | null>(null);
   const currency = setup.currencyCode;
 
   const category = findCategory(ledger.categories, tx.categoryId);
@@ -89,18 +92,25 @@ export function TransactionDetail({ tx, onClose }: { tx: Transaction; onClose: (
       ) : null}
 
       {tx.attachments.length ? (
-        <div className="grid grid-cols-3 gap-2">
-          {tx.attachments.map((attachment) =>
-            attachment.mime.startsWith("image/") && attachment.dataUrl ? (
-              <img key={attachment.id} src={attachment.dataUrl} alt={attachment.name} className="h-24 w-full rounded-xl object-cover" />
-            ) : (
-              <span key={attachment.id} className="flex h-24 items-center justify-center rounded-xl bg-muted p-2 text-center text-xs">
-                {attachment.name}
-              </span>
-            ),
-          )}
+        <div>
+          <p className="type-caption mb-2">Comprovativos</p>
+          <div className="grid grid-cols-3 gap-2">
+            {tx.attachments.map((attachment) => (
+              <button
+                key={attachment.id}
+                type="button"
+                onClick={() => setViewing(attachment)}
+                aria-label={`Abrir ${attachment.name}`}
+                className="overflow-hidden rounded-xl"
+              >
+                <AttachmentThumb attachment={attachment} className="h-24 w-full object-cover" />
+              </button>
+            ))}
+          </div>
+          <AttachmentViewer attachment={viewing} onClose={() => setViewing(null)} />
         </div>
       ) : null}
+
 
       <div className="grid grid-cols-3 gap-2">
         <Button

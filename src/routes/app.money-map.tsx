@@ -12,6 +12,7 @@ import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { organisationRatio } from "@/lib/finance/engine";
 import { ACCOUNT_TYPE_LABELS } from "@/lib/finance/types";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/money-map")({
   head: () => ({
@@ -63,7 +64,7 @@ function MoneyMapPage() {
                   className="flex items-center justify-between rounded-xl px-2 py-2 text-sm transition-colors hover:bg-muted/40"
                 >
                   <span className="flex items-center gap-2">
-                    <span aria-hidden>{account.icon ?? "🏦"}</span>
+                    <Symbol name={account.icon ?? "bank"} className="size-4" />
                     <span>
                       {account.name}
                       <span className="block text-xs text-muted-foreground">
@@ -97,7 +98,7 @@ function MoneyMapPage() {
                   className="flex items-center justify-between rounded-xl px-2 py-2 text-sm transition-colors hover:bg-muted/40"
                 >
                   <span className="flex items-center gap-2">
-                    <span aria-hidden>{wallet.icon}</span>
+                    <Symbol name={wallet.icon} className="size-4" />
                     {wallet.name}
                   </span>
                   <Money minor={wallet.balanceMinor} className="font-medium" />

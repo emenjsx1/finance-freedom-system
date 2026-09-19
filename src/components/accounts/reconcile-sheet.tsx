@@ -14,6 +14,7 @@ import { toMinorUnits } from "@/lib/finance/currency";
 import type { Allocation, Transaction } from "@/lib/finance/ledger-types";
 import type { Account } from "@/lib/finance/types";
 import { cn } from "@/lib/utils";
+import { Symbol } from "@/lib/icons/symbols";
 
 type Mode = "rule" | "manual" | "single";
 
@@ -166,7 +167,7 @@ export function ReconcileSheet({
                   <option value="">Escolher carteira</option>
                   {wallets.map((w) => (
                     <option key={w.id} value={w.id}>
-                      {w.icon} {w.name}
+                      {w.name}
                     </option>
                   ))}
                 </select>
@@ -177,7 +178,7 @@ export function ReconcileSheet({
                   {wallets.map((w) => (
                     <div key={w.id} className="flex items-center gap-3">
                       <span className="w-32 shrink-0 truncate text-sm">
-                        {w.icon} {w.name}
+                        {w.name}
                       </span>
                       <Input
                         aria-label={w.name}
@@ -204,7 +205,7 @@ export function ReconcileSheet({
                     return (
                       <li key={a.bucketId} className="flex justify-between text-sm">
                         <span>
-                          {wallet?.icon} {wallet?.name}
+                          <span className="inline-flex items-center gap-1.5"><Symbol name={wallet?.icon} className="size-4 text-muted-foreground" /> {wallet?.name}</span>
                         </span>
                         <Money minor={a.amountMinor} currency={currency} className="text-muted-foreground" />
                       </li>

@@ -1,9 +1,11 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
-import { ArrowLeftRight, Minus, PiggyBank, Plus, Shuffle } from "lucide-react";
+import { ArrowDown, ArrowLeftRight, ArrowUp, Diamond, Plus } from "lucide-react";
+
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { NativeSheet } from "@/components/design/native-sheet";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { haptic } from "@/lib/ios/haptics";
 import {
   TransactionComposer,
   type ComposerOptions,
@@ -18,11 +20,12 @@ interface LauncherContextValue {
 const LauncherContext = createContext<LauncherContextValue | null>(null);
 
 const ACTIONS: { kind: TxKind; label: string; hint: string; icon: typeof Plus; tone: string }[] = [
-  { kind: "income", label: "Entrada", hint: "Dinheiro que recebeste", icon: Plus, tone: "text-income" },
-  { kind: "expense", label: "Despesa", hint: "Dinheiro que gastaste", icon: Minus, tone: "text-expense" },
-  { kind: "transfer", label: "Transferência", hint: "Mover dinheiro entre contas", icon: ArrowLeftRight, tone: "text-info" },
-  { kind: "reallocation", label: "Guardar", hint: "Reservar dinheiro para um propósito", icon: PiggyBank, tone: "text-wealth" },
+  { kind: "income", label: "Entrada", hint: "Dinheiro que recebeste", icon: ArrowUp, tone: "text-income" },
+  { kind: "expense", label: "Despesa", hint: "Dinheiro que gastaste", icon: ArrowDown, tone: "text-expense" },
+  { kind: "transfer", label: "Transferência", hint: "Entre contas", icon: ArrowLeftRight, tone: "text-info" },
+  { kind: "reallocation", label: "Guardar", hint: "Reservar com propósito", icon: Diamond, tone: "text-wealth" },
 ];
+
 
 export function TransactionLauncherProvider({ children }: { children: ReactNode }) {
   const isMobile = useIsMobile();
@@ -49,40 +52,35 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
     <LauncherContext.Provider value={value}>
       {children}
 
-      <NativeSheet open={quickOpen} onOpenChange={setQuickOpen} title="O que queres fazer?">
-        <div className="list-group mt-3">
+      <NativeSheet open={quickOpen} onOpenChange={setQuickOpen} title="Novo movimento">
+        <div className="grid grid-cols-2 gap-3 pt-1">
           {ACTIONS.map((action) => (
             <button
               key={action.kind}
               type="button"
-              onClick={() => openComposer({ kind: action.kind })}
-              className="list-row"
+              onClick={() => {
+                haptic("confirm");
+                openComposer({ kind: action.kind });
+              }}
+              className="card-interactive flex flex-col items-start gap-3 p-4 text-left"
             >
               <span className={`icon-tile ${action.tone}`}>
                 <action.icon className="size-5" aria-hidden />
               </span>
               <span className="min-w-0">
                 <span className="block text-[0.9375rem] font-semibold">{action.label}</span>
-                <span className="type-meta block">{action.hint}</span>
+                <span className="type-meta block truncate">{action.hint}</span>
               </span>
             </button>
           ))}
         </div>
-        <div className="mt-3 flex gap-2 pb-2">
+        <div className="pb-2 pt-3">
           <button
             type="button"
             onClick={() => openComposer({ kind: "adjustment" })}
-            className="flex-1 rounded-[var(--r-lg)] bg-subtle px-4 py-3 text-sm font-medium"
+            className="w-full rounded-[var(--r-lg)] bg-subtle px-4 py-3 text-sm font-medium"
           >
-            Ajustar saldo
-          </button>
-          <button
-            type="button"
-            onClick={() => openComposer({ kind: "expense", quick: true })}
-            className="flex flex-1 items-center justify-center gap-2 rounded-[var(--r-lg)] bg-subtle px-4 py-3 text-sm font-medium"
-          >
-            <Shuffle className="size-4" aria-hidden />
-            Registo rápido
+            Ajustar saldo de uma conta
           </button>
         </div>
       </NativeSheet>
@@ -90,7 +88,7 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
       <Sheet open={composer !== null} onOpenChange={(open) => !open && setComposer(null)}>
         <SheetContent
           side={isMobile ? "bottom" : "right"}
-          className="overflow-y-auto rounded-t-3xl border-border/70 bg-background sm:max-w-lg"
+          className="max-h-[92dvh] overflow-y-auto overscroll-contain rounded-t-3xl border-border/70 bg-background sm:max-w-lg"
         >
           <SheetHeader className="px-4">
             <SheetTitle>{composer ? titles[composer.kind] : ""}</SheetTitle>
@@ -102,6 +100,7 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
           </div>
         </SheetContent>
       </Sheet>
+
     </LauncherContext.Provider>
   );
 }

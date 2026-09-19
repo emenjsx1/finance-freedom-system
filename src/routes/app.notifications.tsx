@@ -1,3 +1,17 @@
+import {
+  BookOpen,
+  CalendarDays,
+  CalendarRange,
+  Compass,
+  Lock,
+  Receipt,
+  ShieldCheck,
+  Sparkles,
+  Sun,
+  Target,
+  TriangleAlert,
+  type LucideIcon,
+} from "lucide-react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
@@ -52,24 +66,24 @@ const FILTERS: { key: NotificationFilter; label: string }[] = [
   { key: "agent", label: "Agente" },
 ];
 
-const ICONS: Record<string, string> = {
-  upcoming_payment: "📅",
-  payments_digest: "📅",
-  goal_milestone: "🎯",
-  goal_funded: "🎯",
-  goal_deadline: "🎯",
-  goal_contribution: "🎯",
-  unallocated_money: "🧭",
-  protected_withdrawal: "🔒",
-  large_expense: "🧾",
-  low_wallet_balance: "⚠️",
-  low_account_balance: "⚠️",
-  insight: "◈",
-  daily_brief: "☀️",
-  weekly_review: "🗓️",
-  monthly_review: "📘",
-  security: "🛡️",
-  system: "✳️",
+const ICONS: Record<string, LucideIcon> = {
+  upcoming_payment: CalendarDays,
+  payments_digest: CalendarDays,
+  goal_milestone: Target,
+  goal_funded: Target,
+  goal_deadline: Target,
+  goal_contribution: Target,
+  unallocated_money: Compass,
+  protected_withdrawal: Lock,
+  large_expense: Receipt,
+  low_wallet_balance: TriangleAlert,
+  low_account_balance: TriangleAlert,
+  insight: Sparkles,
+  daily_brief: Sun,
+  weekly_review: CalendarRange,
+  monthly_review: BookOpen,
+  security: ShieldCheck,
+  system: Settings2,
 };
 
 function NotificationsPage() {
@@ -150,8 +164,11 @@ function NotificationsPage() {
               )}
             >
               <div className="flex gap-3">
-                <span aria-hidden className="mt-0.5 text-lg leading-none">
-                  {ICONS[notification.payload.kind] ?? "•"}
+                <span aria-hidden className="icon-tile mt-0.5 size-9 shrink-0">
+                  {(() => {
+                    const Icon = ICONS[notification.payload.kind] ?? Sparkles;
+                    return <Icon className="size-4 text-muted-foreground" />;
+                  })()}
                 </span>
                 <button
                   type="button"

@@ -4,6 +4,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { activeCategories, type Category } from "@/lib/finance/categories";
 import { cn } from "@/lib/utils";
+import { Symbol } from "@/lib/icons/symbols";
 
 export function CategoryPicker({
   categories,
@@ -87,7 +88,7 @@ function Group({
                 : "border-border/70 bg-surface text-foreground hover:border-muted-foreground/40",
             )}
           >
-            <span aria-hidden>{category.icon}</span>
+            <Symbol name={category.icon} className="size-4" />
             {category.name}
           </button>
         ))}

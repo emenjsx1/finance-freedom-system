@@ -13,12 +13,15 @@ export function AmountInput({
   currencyCode,
   label,
   tone = "neutral",
+  autoFocus = false,
 }: {
   valueMinor: number;
   onChange: (minor: number) => void;
   currencyCode: string;
   label: string;
   tone?: "neutral" | "income" | "expense";
+  /** Money-first sheets focus the amount immediately, like native iOS. */
+  autoFocus?: boolean;
 }) {
   const currency = getCurrency(currencyCode);
 
@@ -45,6 +48,8 @@ export function AmountInput({
         <input
           aria-label={label}
           inputMode="numeric"
+          enterKeyHint="done"
+          autoFocus={autoFocus}
           autoComplete="off"
           value={display}
           onChange={(e) => handleChange(e.target.value)}

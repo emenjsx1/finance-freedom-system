@@ -7,6 +7,7 @@ import { PageHeader } from "@/components/page-header";
 import { useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { protectedMoneyHistory } from "@/lib/finance/engine";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/protected")({
   head: () => ({
@@ -55,7 +56,7 @@ function ProtectedMoneyPage() {
               >
                 <div>
                   <p className="text-sm font-medium">
-                    {wallet?.icon} {wallet?.name}
+                    <span className="inline-flex items-center gap-1.5"><Symbol name={wallet?.icon} className="size-4 text-muted-foreground" /> {wallet?.name}</span>
                   </p>
                   <p className="text-xs text-muted-foreground">
                     {new Date(row.tx.occurredAt).toLocaleDateString("pt-PT", { day: "2-digit", month: "short" })}

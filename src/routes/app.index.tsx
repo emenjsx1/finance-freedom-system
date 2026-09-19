@@ -1,3 +1,4 @@
+import { symbolLabel } from "@/lib/icons/symbols";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   BarChart3,
@@ -398,7 +399,8 @@ function ModuleView({ id }: { id: HomeModuleId }) {
                   targetDate={item?.targetDate}
                   coverImageUrl={item?.coverImageUrl}
                   icon={goal.icon}
-                  to={{ to: "/app/wallets/$walletId", params: { walletId: goal.id } }}
+                  kindLabel={symbolLabel(goal.icon)}
+                  to={{ to: "/app/goals/$goalId", params: { goalId: goal.id } }}
                 />
               );
             })}

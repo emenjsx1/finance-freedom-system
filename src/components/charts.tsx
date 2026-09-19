@@ -1,3 +1,4 @@
+import { Symbol } from "@/lib/icons/symbols";
 /**
  * Reusable chart primitives (Phase 07).
  *
@@ -97,7 +98,7 @@ export function CategoryBreakdown({
           <>
             <div className="flex items-baseline justify-between gap-3">
               <span className="text-sm">
-                {row.icon ? <span className="mr-2">{row.icon}</span> : null}
+                {row.icon ? <Symbol name={row.icon} className="mr-2 inline size-4 text-muted-foreground" /> : null}
                 {row.name}
               </span>
               <span className="type-body tabular-nums">

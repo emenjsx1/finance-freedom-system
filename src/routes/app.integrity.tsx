@@ -17,6 +17,7 @@ import { haptic, newId, useLedger } from "@/hooks/use-ledger";
 import { useSetup } from "@/hooks/use-setup";
 import { correctionSources } from "@/lib/finance/integrity";
 import type { Transaction } from "@/lib/finance/ledger-types";
+import { Symbol } from "@/lib/icons/symbols";
 
 export const Route = createFileRoute("/app/integrity")({
   head: () => ({
@@ -248,7 +249,7 @@ function FixNegativeWallet({
         <SelectContent>
           {sources.map((wallet) => (
             <SelectItem key={wallet.id} value={wallet.id}>
-              {wallet.icon} {wallet.name}
+              <span className="inline-flex items-center gap-1.5"><Symbol name={wallet.icon} className="size-4 text-muted-foreground" /> {wallet.name}</span>
             </SelectItem>
           ))}
         </SelectContent>
