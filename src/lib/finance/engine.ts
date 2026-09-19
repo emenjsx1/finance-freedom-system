@@ -95,7 +95,41 @@ export function buildSnapshot({
     map[key] = (map[key] ?? 0) + delta;
   };
 
-  for (const tx of transactions) {
+  /** purposeId → accountId → amount. `UNKNOWN_ACCOUNT` holds pre-cleanup rows. */
+  const purposeByAccount: Record<string, Record<string, number>> = {};
+  const attribute = (purposeId: string | undefined, accountId: string, delta: number) => {
+    if (!purposeId) return;
+    const row = (purposeByAccount[purposeId] ??= {});
+    row[accountId] = (row[accountId] ?? 0) + delta;
+    if (row[accountId] === 0) delete row[accountId];
+  };
+  /** Takes `amount` out of a purpose, proportionally to where it physically is. */
+  const detach = (purposeId: string | undefined, amount: number): Record<string, number> => {
+    if (!purposeId) return {};
+    const row = purposeByAccount[purposeId] ?? {};
+    const entries = Object.entries(row).filter(([, value]) => value > 0);
+    const total = entries.reduce((sum, [, value]) => sum + value, 0);
+    if (total <= 0) return { [UNKNOWN_ACCOUNT]: amount };
+    const take = Math.min(amount, total);
+    const shares = splitAmount(
+      take,
+      entries.map(([id, value]) => ({ id, percentage: (value / total) * 100 })),
+    );
+    for (const [accountId, value] of Object.entries(shares)) attribute(purposeId, accountId, -value);
+    if (take < amount) {
+      shares[UNKNOWN_ACCOUNT] = (shares[UNKNOWN_ACCOUNT] ?? 0) + (amount - take);
+    }
+    return shares;
+  };
+
+  // Attribution depends on the order money actually moved, not on insert order.
+  const ordered = [...transactions].sort((a, b) =>
+    a.occurredAt === b.occurredAt
+      ? a.createdAt.localeCompare(b.createdAt)
+      : a.occurredAt.localeCompare(b.occurredAt),
+  );
+
+  for (const tx of ordered) {
     // Business money is tracked apart so it never contaminates personal totals.
     if (tx.moneyType === "business") {
       if (tx.kind === "income") businessBalanceMinor += tx.amountMinor;
