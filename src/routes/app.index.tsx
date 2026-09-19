@@ -140,18 +140,28 @@ function HomePage() {
                   </>
                 ) : null}
               </h1>
-              <p className="type-secondary mt-3">Disciplina hoje. Liberdade amanhã.</p>
+              <p className="type-secondary mt-3">{supportingLine}</p>
             </>
           )}
         </div>
-        <Button
-          variant={editing ? "default" : "ghost"}
-          size="icon-sm"
-          aria-label={editing ? "Concluir personalização" : "Personalizar painel"}
-          onClick={() => setEditing((v) => !v)}
-        >
-          {editing ? <Check /> : <Pencil />}
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Button
+            variant={editing ? "default" : "ghost"}
+            size="icon-sm"
+            aria-label={editing ? "Concluir personalização" : "Personalizar painel"}
+            onClick={() => setEditing((v) => !v)}
+          >
+            {editing ? <Check /> : <Pencil />}
+          </Button>
+          <Link to="/app/profile" aria-label="Abrir o teu perfil" className="rounded-full">
+            <UserAvatar
+              name={preferredName || profile?.full_name || setup.fullName}
+              email={user?.email ?? null}
+              imageUrl={profile?.avatar_url ?? null}
+              size="sm"
+            />
+          </Link>
+        </div>
       </header>
 
       {editing ? (
