@@ -8,9 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useSetup } from "@/hooks/use-setup";
 import { cn } from "@/lib/utils";
-import { isRuleValid, totalPercentage } from "@/lib/finance/allocation";
 import { searchCurrencies, toMinorUnits, fromMinorUnits, getCurrency } from "@/lib/finance/currency";
-import { DEFAULT_RULE_ITEMS } from "@/lib/storage/local-setup-store";
 import { pt } from "@/lib/i18n/pt";
 import type { Account, AccountType, AllocationRuleItem } from "@/lib/finance/types";
 
@@ -27,7 +25,7 @@ export const Route = createFileRoute("/onboarding")({
   component: Onboarding,
 });
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 6;
 
 const ACCOUNT_TYPES: { value: AccountType; label: string }[] = [
   { value: "bank", label: "Conta bancária" },
@@ -53,11 +51,11 @@ function Onboarding() {
   const [name, setName] = useState(setup.fullName);
   const [currencyCode, setCurrencyCode] = useState(setup.currencyCode);
   const [query, setQuery] = useState("");
-  const [items, setItems] = useState<AllocationRuleItem[]>(setup.ruleItems.length ? setup.ruleItems : DEFAULT_RULE_ITEMS);
+  // New people start with no fixed organisation. Money is organised later,
+  // with real numbers, in "Ajuda-me a organizar".
+  const [items] = useState<AllocationRuleItem[]>(setup.ruleItems);
   const [accounts, setAccounts] = useState<Account[]>(setup.accounts);
 
-  const total = totalPercentage(items);
-  const ruleOk = isRuleValid(items);
   const currency = getCurrency(currencyCode);
 
   function next() {
@@ -146,18 +144,22 @@ function Onboarding() {
           ) : null}
 
           {step === 3 ? (
-            <StepShell title={pt.onboarding.philosophy} subtitle="É por isso que separamos duas coisas.">
+            <StepShell
+              title="Duas coisas diferentes"
+              subtitle="É isto que mantém tudo simples."
+            >
               <div className="space-y-3">
                 <div className="rounded-2xl border border-border/70 bg-surface p-4">
                   <p className="text-sm font-semibold">Contas</p>
                   <p className="mt-1 text-sm text-muted-foreground">
-                    Onde o dinheiro está fisicamente: banco, carteira móvel, numerário.
+                    Onde o dinheiro está: banco, carteira móvel, numerário.
                   </p>
                 </div>
                 <div className="rounded-2xl border border-primary/30 bg-primary-soft p-4">
-                  <p className="text-sm font-semibold text-primary">Potes</p>
+                  <p className="text-sm font-semibold text-primary">Planos</p>
                   <p className="mt-1 text-sm text-primary/80">
-                    Para que serve cada parte do dinheiro: construção, objetivos, vida, família, livre.
+                    O que estás a construir. Depois decides quanto proteger, quanto reservar e
+                    quanto fica disponível — sem percentagens impostas.
                   </p>
                 </div>
               </div>
@@ -165,97 +167,6 @@ function Onboarding() {
           ) : null}
 
           {step === 4 ? (
-            <StepShell
-              title="A tua primeira regra de distribuição"
-              subtitle="Cada entrada será dividida assim. O total tem de ser 100%."
-            >
-              <div className="space-y-2">
-                {items.map((item, index) => (
-                  <div key={item.id} className="rounded-xl border border-border/70 bg-surface p-3">
-                    <div className="flex items-center gap-2">
-                      <select
-                        aria-label="Ícone"
-                        value={item.icon}
-                        onChange={(e) =>
-                          setItems((prev) =>
-                            prev.map((it, i) => (i === index ? { ...it, icon: e.target.value } : it)),
-                          )
-                        }
-                        className="h-10 w-28 rounded-lg border border-input bg-background px-2 text-sm"
-                      >
-                        {ICONS.map((icon) => (
-                          <option key={icon} value={icon}>
-                            {symbolLabel(icon)}
-                          </option>
-                        ))}
-                      </select>
-                      <Input
-                        value={item.name}
-                        onChange={(e) =>
-                          setItems((prev) =>
-                            prev.map((it, i) => (i === index ? { ...it, name: e.target.value } : it)),
-                          )
-                        }
-                      />
-                      <div className="flex items-center gap-1">
-                        <Input
-                          type="number"
-                          min={0}
-                          max={100}
-                          className="w-20 text-right"
-                          value={item.percentage}
-                          onChange={(e) =>
-                            setItems((prev) =>
-                              prev.map((it, i) =>
-                                i === index ? { ...it, percentage: Number(e.target.value) } : it,
-                              ),
-                            )
-                          }
-                        />
-                        <span className="text-sm text-muted-foreground">%</span>
-                      </div>
-                      <button
-                        aria-label="Remover"
-                        onClick={() => setItems((prev) => prev.filter((_, i) => i !== index))}
-                        className="text-muted-foreground transition-colors hover:text-destructive"
-                      >
-                        <Trash2 className="size-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <button
-                onClick={() =>
-                  setItems((prev) => [
-                    ...prev,
-                    { id: uid(), name: "Novo pote", percentage: 0, icon: "✨", kind: "free" },
-                  ])
-                }
-                className="mt-3 w-full rounded-xl border border-dashed border-border/70 py-2.5 text-sm text-muted-foreground"
-              >
-                Adicionar pote
-              </button>
-
-              <div
-                className={cn(
-                  "mt-4 flex items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold",
-                  ruleOk ? "bg-primary-soft text-primary" : "bg-muted text-muted-foreground",
-                )}
-              >
-                <span>Total</span>
-                <span className="numeric">{total}%</span>
-              </div>
-              {!ruleOk ? (
-                <p className="mt-2 text-xs text-muted-foreground">
-                  O total tem de ser exatamente 100% para continuares.
-                </p>
-              ) : null}
-            </StepShell>
-          ) : null}
-
-          {step === 5 ? (
             <StepShell
               title="Onde está o teu dinheiro?"
               subtitle="Adiciona as contas reais, com o nome que usas no dia a dia (BIM, Moza, M-Pesa)."
@@ -320,10 +231,10 @@ function Onboarding() {
             </StepShell>
           ) : null}
 
-          {step === 6 ? (
+          {step === 5 ? (
             <StepShell
               title="Saldos iniciais"
-              subtitle="Opcional. Lembra-te: a conta é o lugar físico, o pote é o propósito."
+              subtitle="Opcional. A conta é o lugar onde o dinheiro está."
             >
               {accounts.length === 0 ? (
                 <p className="text-sm text-muted-foreground">Não adicionaste contas — podes fazê-lo mais tarde.</p>
@@ -357,14 +268,13 @@ function Onboarding() {
             </StepShell>
           ) : null}
 
-          {step === 7 ? (
+          {step === 6 ? (
             <StepShell title={pt.onboarding.readyTitle} subtitle="Está tudo pronto para começares.">
               <div className="flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
                 <Check className="size-7" />
               </div>
               <ul className="mt-6 space-y-2 text-sm text-muted-foreground">
                 <li>Moeda: {currency.code}</li>
-                <li>Potes: {items.length}</li>
                 <li>Contas: {accounts.length}</li>
               </ul>
             </StepShell>
@@ -378,7 +288,7 @@ function Onboarding() {
             </Button>
           ) : null}
           {step < TOTAL_STEPS ? (
-            <Button onClick={next} disabled={step === 4 && !ruleOk} className="flex-1">
+            <Button onClick={next} className="flex-1">
               {pt.common.continue}
             </Button>
           ) : (
