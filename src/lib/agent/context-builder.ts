@@ -13,6 +13,13 @@ import type { RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import type { SetupState } from "@/lib/storage/local-setup-store";
 import type { Memory, AgentProfile } from "@/lib/agent/types";
 import { generateScenarios } from "@/lib/organize/engine";
+import {
+  actionState,
+  programProgress,
+  sortActions,
+  toDateKey,
+  todayFeed,
+} from "@/lib/development/engine";
 import { goalPace } from "@/lib/personal/engine";
 import {
   PLAN_PRIORITY_LABELS,
@@ -57,6 +64,11 @@ export const AGENT_READ_TOOLS = [
   "get_direction",
   "get_strategy",
   "simulate_organization",
+  "get_today",
+  "get_programs",
+  "get_actions",
+  "get_decisions",
+  "get_development_snapshot",
 ] as const;
 
 export type AgentReadTool = (typeof AGENT_READ_TOOLS)[number];
@@ -323,6 +335,106 @@ export function simulateOrganization(d: AgentDeps) {
   };
 }
 
+/* ------------------------- personal development reads ------------------------ */
+
+/**
+ * Development facts. These are the person's own words and choices — nothing is
+ * inferred, scored or predicted, and the Agent may only read what exists.
+ */
+function devState(d: AgentDeps) {
+  return d.personal?.development;
+}
+
+export function getToday(d: AgentDeps) {
+  const dev = devState(d);
+  if (!dev) return { acesso: "sem_dados" };
+  const today = toDateKey(new Date());
+  const feed = todayFeed({ actions: dev.actions, programs: dev.programs }, today, 6);
+  return {
+    data: today,
+    vazio: feed.empty,
+    itens: feed.entries.map((entry) => ({
+      titulo: entry.title,
+      tipo: entry.kind === "program" ? "programa" : "ação",
+      estado: entry.state,
+      hora: entry.time,
+      detalhe: entry.detail,
+    })),
+  };
+}
+
+export function getPrograms(d: AgentDeps) {
+  const dev = devState(d);
+  if (!dev) return { acesso: "sem_dados" };
+  const today = toDateKey(new Date());
+  return dev.programs.slice(0, 10).map((program) => {
+    const progress = programProgress(program, today);
+    return {
+      id: program.id,
+      titulo: program.title,
+      proposito: program.purpose,
+      estado: program.status,
+      dias: program.durationDays,
+      dia_atual: progress.currentDay,
+      feitos: progress.done,
+      deixados: progress.skipped,
+      por_fazer: progress.pending,
+      proximo: progress.nextItem?.title,
+    };
+  });
+}
+
+export function getActions(d: AgentDeps) {
+  const dev = devState(d);
+  if (!dev) return { acesso: "sem_dados" };
+  const today = toDateKey(new Date());
+  return sortActions(
+    dev.actions.filter((a) => a.status === "pending"),
+    today,
+  )
+    .slice(0, 12)
+    .map((action) => ({
+      id: action.id,
+      titulo: action.title,
+      estado: actionState(action, today),
+      data: action.scheduledDate,
+      hora: action.scheduledTime,
+      prioridade: action.priority,
+      plano_id: action.planId,
+    }));
+}
+
+export function getDecisions(d: AgentDeps) {
+  const dev = devState(d);
+  if (!dev) return { acesso: "sem_dados" };
+  return dev.decisions.slice(0, 12).map((decision) => ({
+    decisao: decision.statement,
+    razao: decision.reason,
+    data: decision.date,
+    estado: decision.status,
+  }));
+}
+
+export function getDevelopmentSnapshot(d: AgentDeps) {
+  const dev = devState(d);
+  if (!dev) return { acesso: "sem_dados" };
+  const today = toDateKey(new Date());
+  return {
+    nota: "Factos criados ou confirmados pela pessoa. Não existe pontuação nem avaliação.",
+    direcao_agora: (d.personal?.direction ?? [])
+      .filter((item) => item.horizon === "now")
+      .map((item) => item.content),
+    programas_ativos: dev.programs.filter((p) => p.status === "active").length,
+    acoes_por_fazer: dev.actions.filter((a) => a.status === "pending").length,
+    acoes_hoje: todayFeed({ actions: dev.actions, programs: dev.programs }, today, 6).entries.length,
+    decisoes: dev.decisions.length,
+    mudancas_recentes: dev.evolution
+      .filter((e) => !e.hidden)
+      .slice(0, 5)
+      .map((e) => ({ tipo: e.kind, titulo: e.title, quando: e.at.slice(0, 10) })),
+  };
+}
+
 /** Keyword routing — only the relevant tools run, so context stays small. */
 export function selectTools(question: string): AgentReadTool[] {
   const q = question.toLowerCase();
@@ -352,6 +464,27 @@ export function selectTools(question: string): AgentReadTool[] {
   if (has("organizar", "não sei como", "nao sei como", "reservar", "proteger", "dividir"))
     tools.add("simulate_organization");
   if (has("regra", "distribui", "percentagem", "%")) tools.add("get_financial_rule");
+  if (has("hoje", "agora", "próxima ação", "proxima acao", "o que faço", "o que faco"))
+    tools.add("get_today");
+  if (has("programa", "dias", "7 dias", "30 dias", "rotina", "reset")) tools.add("get_programs");
+  if (has("ação", "acao", "ações", "acoes", "tarefa", "lembra", "marcar", "remarcar"))
+    tools.add("get_actions");
+  if (has("decidi", "decisão", "decisao", "decisões", "decisoes")) tools.add("get_decisions");
+  if (
+    has(
+      "vida",
+      "direção",
+      "direcao",
+      "não sei o que quero",
+      "nao sei o que quero",
+      "mudar",
+      "evolu",
+      "crescer",
+      "sentido",
+      "medo",
+    )
+  )
+    tools.add("get_development_snapshot");
   if (has("mês", "mes", "mensal", "este mês", "fecho", "resumo")) tools.add("get_month_summary");
 
   // A short or generic question still deserves a useful picture.
@@ -394,6 +527,16 @@ export function runTool(tool: AgentReadTool, d: AgentDeps): unknown {
       return getStrategy(d);
     case "simulate_organization":
       return simulateOrganization(d);
+    case "get_today":
+      return getToday(d);
+    case "get_programs":
+      return getPrograms(d);
+    case "get_actions":
+      return getActions(d);
+    case "get_decisions":
+      return getDecisions(d);
+    case "get_development_snapshot":
+      return getDevelopmentSnapshot(d);
   }
 }
 
