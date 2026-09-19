@@ -42,7 +42,9 @@ const KIND_LABELS: Record<TxKind, string> = {
   income: "Entrada",
   expense: "Despesa",
   transfer: "Transferência",
-  reallocation: "Redistribuição",
+  reservation: "Dinheiro guardado",
+  release: "Dinheiro libertado",
+  reallocation: "Mudança de propósito",
   adjustment: "Ajuste de saldo",
 };
 
