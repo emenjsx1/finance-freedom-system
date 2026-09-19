@@ -17,6 +17,7 @@ export type NotificationCategory =
   | "protected"
   | "reports"
   | "agent"
+  | "personal"
   | "system";
 
 export const CATEGORY_LABELS: Record<NotificationCategory, string> = {
@@ -27,6 +28,7 @@ export const CATEGORY_LABELS: Record<NotificationCategory, string> = {
   protected: "Dinheiro protegido",
   reports: "Resumos",
   agent: "Agente",
+  personal: "Pessoal",
   system: "Sistema",
 };
 
@@ -51,6 +53,9 @@ export type PrefKey =
   | "category_insights"
   | "large_expense"
   | "low_balance"
+  | "personal_actions"
+  | "program_checkins"
+  | "agent_followups"
   | "security"
   | "system";
 
@@ -70,6 +75,9 @@ export const PREF_LABELS: Record<PrefKey, { label: string; description: string }
   large_expense: { label: "Despesas grandes", description: "Contexto depois de uma despesa fora do comum." },
   low_balance: { label: "Limites que definiste", description: "Carteiras e contas abaixo do teu limite." },
   security: { label: "Segurança", description: "Sessões, palavra-passe e definições sensíveis." },
+  personal_actions: { label: "Ações pessoais", description: "Lembretes das ações que marcaste." },
+  program_checkins: { label: "Programas", description: "Check-ins e fim de programa." },
+  agent_followups: { label: "Seguimentos do Agente", description: "Só quando pedes ao Agente para voltar ao assunto." },
   system: { label: "Sistema e produto", description: "Novidades e avisos da aplicação." },
 };
 
@@ -92,7 +100,7 @@ export const FREQUENCY_LABELS: Record<FrequencyPreset, { label: string; descript
 
 /** Frequency presets narrow what is allowed. They never widen a category the user turned off. */
 export const FREQUENCY_ALLOWED: Record<Exclude<FrequencyPreset, "custom">, PrefKey[]> = {
-  minimal: ["upcoming_payments", "goal_deadlines", "monthly_review", "security", "low_balance"],
+  minimal: ["upcoming_payments", "goal_deadlines", "monthly_review", "security", "low_balance", "personal_actions"],
   balanced: [
     "upcoming_payments",
     "transaction_reminders",
@@ -104,6 +112,9 @@ export const FREQUENCY_ALLOWED: Record<Exclude<FrequencyPreset, "custom">, PrefK
     "weekly_review",
     "monthly_review",
     "daily_brief",
+    "personal_actions",
+    "program_checkins",
+    "agent_followups",
     "low_balance",
     "security",
     "system",
@@ -176,6 +187,9 @@ export const DEFAULT_NOTIFICATION_PREFS: NotificationPrefs = {
     goal_milestones: channels(true),
     goal_deadlines: channels(true),
     protected_money: channels(true),
+    personal_actions: channels(true, true),
+    program_checkins: channels(true),
+    agent_followups: channels(true),
     unallocated_money: channels(true),
     weekly_review: channels(true, false, false),
     monthly_review: channels(true, false, false),
@@ -218,6 +232,10 @@ export type NotificationPayload =
   | { kind: "weekly_review"; startISO: string; endISO: string; incomeMinor: number; expensesMinor: number; builtMinor: number; goalsMinor: number; topCategory?: string; upcoming?: string }
   | { kind: "monthly_review"; monthLabel: string; incomeMinor: number; expensesMinor: number; builtMinor: number; goalsMinor: number; netWorthChangeMinor: number }
   | { kind: "security"; event: "new_login" | "password_changed" | "settings_changed" | "new_device"; detail?: string }
+  | { kind: "personal_action"; actionId: string; title: string; whenISO: string; overdue: boolean }
+  | { kind: "program_checkin"; programId: string; title: string; itemTitle: string; day: number }
+  | { kind: "program_review"; programId: string; title: string; days: number }
+  | { kind: "agent_followup"; conversationId: string; subject: string }
   | { kind: "system"; message: string };
 
 export interface BriefLine {
@@ -246,6 +264,10 @@ export const PAYLOAD_PREF: Record<PayloadKind, PrefKey> = {
   daily_brief: "daily_brief",
   weekly_review: "weekly_review",
   monthly_review: "monthly_review",
+  personal_action: "personal_actions",
+  program_checkin: "program_checkins",
+  program_review: "program_checkins",
+  agent_followup: "agent_followups",
   security: "security",
   system: "system",
 };
@@ -258,7 +280,9 @@ export type NotificationActionId =
   | "skip_contribution"
   | "distribute"
   | "open_report"
-  | "ask_agent";
+  | "ask_agent"
+  | "reschedule"
+  | "complete_action";
 
 export const ACTION_LABELS: Record<NotificationActionId, string> = {
   view: "Ver",
@@ -269,6 +293,8 @@ export const ACTION_LABELS: Record<NotificationActionId, string> = {
   distribute: "Distribuir",
   open_report: "Ver resumo completo",
   ask_agent: "Perguntar ao Agente",
+  reschedule: "Remarcar",
+  complete_action: "Marcar como feita",
 };
 
 export type DeliveryStatus = "created" | "queued" | "sent" | "delivered" | "failed" | "read" | "acted_on";
