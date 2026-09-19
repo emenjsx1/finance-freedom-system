@@ -61,6 +61,7 @@ function SettingsPage() {
       <Section title="Conta">
         <Row icon={User} label="Perfil e conta" value={setup.fullName || "Por definir"} to="/app/profile" />
         <Row icon={Lock} label="Privacidade e dados" to="/app/privacy" />
+        <Row icon={ShieldCheck} label="Verificação financeira" to="/app/integrity" />
         <Row icon={Landmark} label="As minhas contas" value={`${setup.accounts.length}`} to="/app/accounts" />
         <Row icon={Wallet} label="Carteiras" value={`${setup.ruleItems.length}`} to="/app/wallets" />
         <Row icon={Map} label="Mapa do dinheiro" to="/app/money-map" />
@@ -157,6 +158,7 @@ function Row({
     | "/app/personalization"
     | "/app/agent-settings"
     | "/app/profile"
+    | "/app/integrity"
     | "/app/privacy";
 }) {
   const content = (

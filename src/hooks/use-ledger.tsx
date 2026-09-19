@@ -8,8 +8,11 @@ import {
   type ReactNode,
 } from "react";
 
+import { toast } from "sonner";
+
 import { useSetup } from "@/hooks/use-setup";
 import { buildSnapshot, type LedgerSnapshot } from "@/lib/finance/engine";
+import { checkIntegrity, debitWalletError, type IntegrityReport } from "@/lib/finance/integrity";
 import type { Category } from "@/lib/finance/categories";
 import type { NotificationEvent, RecurringRule, Transaction } from "@/lib/finance/ledger-types";
 import { EMPTY_LEDGER, loadLedger, saveLedger, type LedgerState } from "@/lib/storage/ledger-store";
@@ -41,8 +44,10 @@ interface LedgerContextValue {
   ledger: LedgerState;
   hydrated: boolean;
   snapshot: LedgerSnapshot;
-  addTransaction: (tx: Transaction) => void;
-  updateTransaction: (id: string, patch: Partial<Transaction>) => void;
+  integrity: IntegrityReport;
+  /** Returns false when the domain guards rejected the movement. */
+  addTransaction: (tx: Transaction) => boolean;
+  updateTransaction: (id: string, patch: Partial<Transaction>) => boolean;
   deleteTransaction: (id: string) => void;
   upsertCategory: (category: Category) => void;
   archiveCategory: (id: string, archived: boolean) => void;
@@ -70,16 +75,82 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
+  /**
+   * Single domain guard for every writer (composer, agent, recurring,
+   * reconciliation). A purpose wallet can never end up below zero, so the
+   * impossible "reserved = -2.000" state cannot be created at all.
+   */
+  const guard = useCallback(
+    (tx: Transaction, ignoreId?: string): string | null => {
+      if (tx.moneyType === "business") return null;
+      const transactions = ignoreId
+        ? ledger.transactions.filter((t) => t.id !== ignoreId)
+        : ledger.transactions;
+      const base = buildSnapshot({
+        openingAccounts: setup.accounts,
+        ruleItems: setup.ruleItems,
+        transactions,
+      });
+      const walletName = (id?: string) => setup.ruleItems.find((r) => r.id === id)?.name;
+      if (tx.kind === "expense") {
+        return debitWalletError(base, tx.bucketId, tx.amountMinor, walletName(tx.bucketId));
+      }
+      if (tx.kind === "reallocation") {
+        return debitWalletError(base, tx.fromBucketId, tx.amountMinor, walletName(tx.fromBucketId));
+      }
+      if (tx.kind === "adjustment" && tx.direction === "negative") {
+        for (const allocation of tx.allocations ?? []) {
+          const error = debitWalletError(
+            base,
+            allocation.bucketId,
+            allocation.amountMinor,
+            walletName(allocation.bucketId),
+          );
+          if (error) return error;
+        }
+      }
+      return null;
+    },
+    [ledger.transactions, setup.accounts, setup.ruleItems],
+  );
+
   const addTransaction = useCallback(
     (tx: Transaction) => {
+      const error = guard(tx);
+      if (error) {
+        toast.error(error);
+        return false;
+      }
+      // Idempotency: an identical movement recorded twice within a few seconds
+      // is a double tap, never two real movements.
+      const duplicate = ledger.transactions.some(
+        (t) =>
+          t.id === tx.id ||
+          (t.kind === tx.kind &&
+            t.amountMinor === tx.amountMinor &&
+            t.occurredAt === tx.occurredAt &&
+            t.accountId === tx.accountId &&
+            t.bucketId === tx.bucketId &&
+            Math.abs(Date.parse(t.createdAt) - Date.parse(tx.createdAt)) < 3000),
+      );
+      if (duplicate) return false;
       commit((prev) => ({ ...prev, transactions: [tx, ...prev.transactions] }));
       emitNotificationEvent("transaction_created", { id: tx.id, kind: tx.kind });
+      return true;
     },
-    [commit],
+    [commit, guard, ledger.transactions],
   );
 
   const updateTransaction = useCallback(
     (id: string, patch: Partial<Transaction>) => {
+      const current = ledger.transactions.find((t) => t.id === id);
+      if (current) {
+        const error = guard({ ...current, ...patch } as Transaction, id);
+        if (error) {
+          toast.error(error);
+          return false;
+        }
+      }
       // Balances are derived, so replacing the row reverses the old effect and
       // applies the new one in one atomic state update.
       commit((prev) => ({
@@ -87,8 +158,9 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
         transactions: prev.transactions.map((tx) => (tx.id === id ? { ...tx, ...patch } : tx)),
       }));
       emitNotificationEvent("transaction_updated", { id });
+      return true;
     },
-    [commit],
+    [commit, guard, ledger.transactions],
   );
 
   const deleteTransaction = useCallback(
@@ -151,11 +223,25 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
     [setup.accounts, setup.ruleItems, ledger.transactions],
   );
 
+  const integrity = useMemo(
+    () =>
+      checkIntegrity(
+        {
+          openingAccounts: setup.accounts,
+          ruleItems: setup.ruleItems,
+          transactions: ledger.transactions,
+        },
+        snapshot,
+      ),
+    [setup.accounts, setup.ruleItems, ledger.transactions, snapshot],
+  );
+
   const value = useMemo(
     () => ({
       ledger,
       hydrated,
       snapshot,
+      integrity,
       addTransaction,
       updateTransaction,
       deleteTransaction,
@@ -168,6 +254,7 @@ export function LedgerProvider({ children }: { children: ReactNode }) {
       ledger,
       hydrated,
       snapshot,
+      integrity,
       addTransaction,
       updateTransaction,
       deleteTransaction,
