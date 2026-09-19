@@ -38,11 +38,11 @@ interface NavItem {
 /** Mobile: five deliberate destinations, the middle one is the action. */
 const mobileLeft: NavItem[] = [
   { to: "/app", label: "Início", icon: Home },
-  { to: "/app/transactions", label: "Atividade", icon: ArrowLeftRight },
+  { to: "/app/analytics", label: "Análise", icon: BarChart3 },
 ];
 const mobileRight: NavItem[] = [
-  { to: "/app/plan", label: "Plano", icon: LayoutGrid },
-  { to: "/app/agent", label: "Agente", icon: MessageSquare },
+  { to: "/app/goals", label: "Objetivos", icon: Target },
+  { to: "/app/settings", label: "Mais", icon: LayoutGrid },
 ];
 
 const desktopGroups: { title: string; items: NavItem[] }[] = [
