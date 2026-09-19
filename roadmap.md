@@ -121,3 +121,13 @@
 
 ### Em falta (configuração externa)
 Credenciais Apple/Google, chave do fornecedor de IA em produção, fornecedor de email, credenciais de push, identidade legal e contactos nas páginas legais.
+
+## Fase 12 — Sistema Operativo Pessoal (done)
+- Quatro conceitos separados: contas (motor financeiro), planos, estratégia, contexto.
+- Planos com ou sem dinheiro, estados (ideia/ativo/pausa/concluído), passos e ligação a carteira de propósito.
+- Estratégia: 10 formas de organizar, sem hierarquia, modo sugerir por omissão, simulação de entrada.
+- Migração da regra fixa antiga para "Minha estratégia anterior" (apenas sugere, editável).
+- Direção escrita pela pessoa, contexto visível/editável com permissões por área.
+- Revisão calma, sem pontuações; conflitos de planos mostrados, nunca corrigidos sozinhos.
+- Agente ganhou get_plans, get_direction, get_strategy (respeitam permissões; valores vêm do motor).
+- Navegação: Início, Planos, +, Agente, Eu. Docs: docs/personal-os-architecture.md.
