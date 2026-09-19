@@ -487,59 +487,9 @@ export function TransactionComposer({
             ))}
           </div>
 
-          {moneyType === "personal" ? (
-            <div className="overflow-hidden rounded-2xl border border-border/70 bg-surface">
-              <div className="flex items-center justify-between border-b border-border/70 px-4 py-2">
-                <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Distribuição</p>
-                <button
-                  type="button"
-                  onClick={() => setManualAllocation((v) => !v)}
-                  className="text-xs text-primary underline"
-                >
-                  {manualAllocation ? "Usar a minha regra" : "Ajustar manualmente"}
-                </button>
-              </div>
-              {setup.ruleItems.map((item) => {
-                const current = allocations.find((a) => a.bucketId === item.id)?.amountMinor ?? 0;
-                return (
-                  <div key={item.id} className="flex items-center justify-between gap-3 border-b border-border/70 px-4 py-2 last:border-b-0">
-                    <span className="text-sm">
-                      <Symbol name={item.icon} className="size-4" /> {item.name}
-                    </span>
-                    {manualAllocation ? (
-                      <Input
-                        className="numeric w-28 text-right"
-                        inputMode="numeric"
-                        value={String(current)}
-                        aria-label={`Valor para ${item.name}`}
-                        onChange={(e) => {
-                          const digits = Number(e.target.value.replace(/\D/g, "")) || 0;
-                          setAllocations((prev) => {
-                            const others = prev.filter((a) => a.bucketId !== item.id);
-                            return [...others, { bucketId: item.id, amountMinor: digits }];
-                          });
-                        }}
-                      />
-                    ) : (
-                      <span className="numeric text-sm text-muted-foreground">
-                        {formatMoney(current, currency)}
-                      </span>
-                    )}
-                  </div>
-                );
-              })}
-              {manualAllocation ? (
-                <p
-                  className={cn(
-                    "px-4 py-2 text-xs",
-                    allocationsTotal(allocations) === amountMinor ? "text-primary" : "text-muted-foreground",
-                  )}
-                >
-                  Distribuído: {formatMoney(allocationsTotal(allocations), currency)} de {formatMoney(amountMinor, currency)}
-                </p>
-              ) : null}
-            </div>
-          ) : null}
+          <p className="type-meta">
+            O dinheiro entra na conta e fica disponível. Podes dar-lhe um propósito quando quiseres.
+          </p>
         </>
       ) : null}
 
