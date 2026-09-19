@@ -15,6 +15,7 @@ export function TransactionRow({
   buckets,
   currencyCode,
   onOpen,
+  showDate = false,
 }: {
   tx: Transaction;
   categories: Category[];
@@ -22,6 +23,8 @@ export function TransactionRow({
   buckets: AllocationRuleItem[];
   currencyCode: string;
   onOpen: (tx: Transaction) => void;
+  /** When true, the row shows the date (and time) — used in account history. */
+  showDate?: boolean;
 }) {
   const category = findCategory(categories, tx.categoryId);
   const accountName = (id?: string) => accounts.find((a) => a.id === id)?.name ?? "—";
@@ -51,7 +54,9 @@ export function TransactionRow({
     icon = "other";
   }
 
-  const time = new Date(tx.occurredAt).toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+  const when = new Date(tx.occurredAt);
+  const time = when.toLocaleTimeString("pt-PT", { hour: "2-digit", minute: "2-digit" });
+  const dateLabel = when.toLocaleDateString("pt-PT", { day: "numeric", month: "short", year: "numeric" });
 
   return (
     <button type="button" onClick={() => onOpen(tx)} className="list-row">
@@ -75,7 +80,7 @@ export function TransactionRow({
           {formatMoney(tx.amountMinor, currencyCode, { withSymbol: false, compactDecimals: true })}
           <span className="ml-1 text-[0.6875rem] font-medium text-muted-foreground">{currencyCode}</span>
         </span>
-        <span className="type-meta block">{time}</span>
+        <span className="type-meta block">{showDate ? `${dateLabel} • ${time}` : time}</span>
       </span>
     </button>
   );
