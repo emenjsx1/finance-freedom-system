@@ -31,7 +31,12 @@ import {
 import type { AppNotification, NotificationPrefs } from "@/lib/notifications/types";
 import { runAutomations } from "@/lib/automations/engine";
 import type { AutomationRule, AutomationRun } from "@/lib/automations/types";
+import { loadCloudNotifications, saveCloudNotifications } from "@/lib/backend/cloud-store";
+import { useCloudSync } from "@/lib/backend/use-cloud-sync";
 import { loadNotifications, saveNotifications } from "@/lib/storage/notifications-store";
+
+/** The notification state is one document; the base copy is only a fallback. */
+const loadCloudNotificationsState = () => loadCloudNotifications();
 import type { Transaction } from "@/lib/finance/ledger-types";
 
 /** A money movement an automation or notification proposed. Never executed on its own. */
@@ -103,6 +108,19 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
       return next;
     });
   }, []);
+
+  const applyCloud = useCallback((next: NotificationsState) => {
+    saveNotifications(next);
+    setState(next);
+  }, []);
+
+  useCloudSync({
+    state,
+    hydrated,
+    apply: applyCloud,
+    load: loadCloudNotificationsState,
+    save: saveCloudNotifications,
+  });
 
   /**
    * One scheduler pass. Deterministic: the same moment and the same data
