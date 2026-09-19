@@ -47,7 +47,7 @@ export function TransactionComposer({
   onDone: () => void;
 }) {
   const { kind, quick, base, editingId, preset } = options;
-  const { setup } = useSetup();
+  const { setup, update } = useSetup();
   const { ledger, snapshot, addTransaction, updateTransaction } = useLedger();
   const currency = setup.currencyCode;
   /** "25 000 MZN" — the same shape the screens use, in every confirmation. */
