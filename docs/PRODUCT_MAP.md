@@ -87,3 +87,28 @@ The architecture above is frozen. Open decisions are listed in `MIGRATION_PLAN.m
   Dinheiro de negócio nunca entra como património pessoal.
 - "Eu" é o único destino pessoal. Perfil e definições vivem dentro de Eu; o avatar abre Eu e a
   navegação lateral deixou de ter uma entrada de perfil concorrente.
+
+## Desenvolvimento pessoal (domínio de primeira classe)
+
+O produto tem dois lados com o mesmo peso: DINHEIRO (determinístico, rígido) e
+DESENVOLVIMENTO (flexível, conversacional). O Agente é a mesma interface para os dois.
+
+Quatro camadas: COMPREENDER → DIREÇÃO → AÇÃO → REVISÃO.
+
+Destinos:
+- `/app/development` — casa do desenvolvimento: direção, agora, programas, próximas ações, evolução, decisões, revisão.
+- `/app/development/today` — Hoje: atrasadas, hoje, a seguir, um dia, feitas, itens de programa.
+- `/app/development/programs` e `/app/development/programs/:id` — caminhos temporários (3/7/14/30/90 dias).
+- `/app/development/evolution` — linha do tempo de mudanças reais, com opção de ocultar.
+- `/app/development/decisions` — decisões explícitas (ativa / rever / mudou).
+- `/app/review` — revisão semanal e mensal, agora com factos de desenvolvimento.
+- `/app/context` — contexto pessoal aprovado (o que o sistema sabe).
+- `/app/me` — centro pessoal, começa por "Meu momento".
+
+Regras de produto:
+- Um único domínio Plan (financeiro, não financeiro ou misto). Nunca PersonalPlan separado.
+- Plano = resultado. Programa = caminho estruturado. Um plano pode ter programa; um programa pode existir sozinho.
+- Ação ≠ Compromisso (dinheiro) e Ação ≠ Lembrete (notificação da ação).
+- Prioridade humana: Agora / Importante / Depois.
+- Sem pontuações, sem streaks, sem culpa. Uma ação passada da data fica "atrasada", nunca "falhada".
+- Nada pessoal é guardado sem a pessoa dizer que sim.

@@ -87,6 +87,34 @@ export interface PreparedAction {
   summary: string;
 }
 
+/**
+ * Personal proposals the Agent may prepare. They are written only after the
+ * person confirms — the same PREPARE → CONFIRM rule as money, but proportional:
+ * no amounts are involved, so the card is a quiet preview, not an alarm.
+ */
+export type PreparedPersonalActionType =
+  | "create_program"
+  | "create_action"
+  | "update_direction"
+  | "record_decision"
+  | "save_context";
+
+export interface PreparedPersonalAction {
+  type: PreparedPersonalActionType;
+  summary: string;
+  title?: string;
+  purpose?: string;
+  durationDays?: number;
+  items?: { type: "action" | "reflection" | "checkin" | "review" | "milestone"; title: string; day: number }[];
+  date?: string;
+  time?: string;
+  priority?: "now" | "important" | "later";
+  horizon?: "now" | "year" | "later" | "exploring";
+  content?: string;
+  reason?: string;
+  category?: string;
+}
+
 export interface ChatMessage {
   id: string;
   role: "user" | "agent";
@@ -95,6 +123,9 @@ export interface ChatMessage {
   /** Present only on agent messages that prepared an action. */
   action?: PreparedAction;
   actionStatus?: "pending" | "confirmed" | "cancelled";
+  /** Present only on agent messages that prepared a personal action. */
+  personalAction?: PreparedPersonalAction;
+  personalActionStatus?: "pending" | "confirmed" | "cancelled";
   failed?: boolean;
 }
 

@@ -56,6 +56,43 @@ function MePage() {
         subtitle={state.headline ?? "O teu espaço: direção, planos e o que o Agente sabe."}
       />
 
+      {(() => {
+        /* Meu momento: only what the person has written themselves. */
+        const agora = state.direction.filter((d) => d.horizon === "now");
+        const questoes = state.direction.filter((d) => d.horizon === "exploring");
+        const prioridades = activePlans.filter((p) => p.priority === "now");
+        if (!agora.length && !questoes.length && !prioridades.length) return null;
+        return (
+          <section className="card-standard space-y-4">
+            <p className="type-meta">Meu momento</p>
+            {agora.length ? (
+              <div>
+                <p className="type-meta">Agora</p>
+                {agora.slice(0, 2).map((item) => (
+                  <p key={item.id} className="type-heading mt-1">{item.content}</p>
+                ))}
+              </div>
+            ) : null}
+            {prioridades.length ? (
+              <div>
+                <p className="type-meta">Prioridades atuais</p>
+                {prioridades.slice(0, 3).map((plan) => (
+                  <p key={plan.id} className="type-secondary mt-1">{plan.name}</p>
+                ))}
+              </div>
+            ) : null}
+            {questoes.length ? (
+              <div>
+                <p className="type-meta">Questões em aberto</p>
+                {questoes.slice(0, 3).map((item) => (
+                  <p key={item.id} className="type-secondary mt-1">{item.content}</p>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        );
+      })()}
+
       <section className="list-group">
         <Link to="/app/direction" className="list-row justify-between">
           <span>Direção</span>
@@ -63,9 +100,29 @@ function MePage() {
             {state.direction.length ? `${state.direction.length} notas` : "Por escrever"}
           </span>
         </Link>
+        <Link to="/app/development" className="list-row justify-between">
+          <span>Meu desenvolvimento</span>
+          <span className="type-meta">
+            {state.development.programs.filter((p) => p.status === "active").length
+              ? `${state.development.programs.filter((p) => p.status === "active").length} a decorrer`
+              : "Explorar"}
+          </span>
+        </Link>
         <Link to="/app/plans" className="list-row justify-between">
           <span>Planos</span>
           <span className="type-meta">{state.plans.length || "Nenhum"}</span>
+        </Link>
+        <Link to="/app/development/programs" className="list-row justify-between">
+          <span>Os meus programas</span>
+          <span className="type-meta">{state.development.programs.length || "Nenhum"}</span>
+        </Link>
+        <Link to="/app/development/evolution" className="list-row justify-between">
+          <span>A minha evolução</span>
+          <span className="type-meta">{state.development.evolution.length || "Ainda nada"}</span>
+        </Link>
+        <Link to="/app/development/decisions" className="list-row justify-between">
+          <span>As minhas decisões</span>
+          <span className="type-meta">{state.development.decisions.length || "Nenhuma"}</span>
         </Link>
         <Link to="/app/strategy" className="list-row justify-between">
           <span>Estratégia</span>

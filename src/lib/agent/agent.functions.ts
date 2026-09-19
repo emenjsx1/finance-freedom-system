@@ -25,9 +25,47 @@ const ActionSchema = z.object({
   summary: z.string(),
 });
 
+/**
+ * Personal domain proposals. The Agent may only PREPARE these; the person
+ * confirms, and the app writes. Nothing personal is ever saved silently.
+ */
+const PersonalActionSchema = z.object({
+  type: z.enum([
+    "create_program",
+    "create_action",
+    "update_direction",
+    "record_decision",
+    "save_context",
+  ]),
+  summary: z.string(),
+  title: z.string().nullable(),
+  purpose: z.string().nullable(),
+  durationDays: z.number().int().positive().max(365).nullable(),
+  items: z
+    .array(
+      z.object({
+        type: z.enum(["action", "reflection", "checkin", "review", "milestone"]),
+        title: z.string(),
+        day: z.number().int().positive().max(365),
+      }),
+    )
+    .max(40)
+    .nullable(),
+  date: z.string().nullable(),
+  time: z.string().nullable(),
+  priority: z.enum(["now", "important", "later"]).nullable(),
+  horizon: z.enum(["now", "year", "later", "exploring"]).nullable(),
+  content: z.string().nullable(),
+  reason: z.string().nullable(),
+  category: z
+    .enum(["goals", "life", "work", "family", "preferences", "plans", "philosophy", "other"])
+    .nullable(),
+});
+
 const ReplySchema = z.object({
   reply: z.string(),
   action: ActionSchema.nullable(),
+  personalAction: PersonalActionSchema.nullable(),
   memorySuggestion: z
     .object({
       category: z.enum(["goals", "life", "work", "family", "preferences", "plans", "philosophy", "other"]),
@@ -40,6 +78,8 @@ const RequestSchema = z.object({
   question: z.string().min(1).max(2000),
   agentName: z.string().max(40),
   style: z.enum(["concise", "balanced", "detailed"]),
+  /** "conversar" is the deep conversation mode: listen first, do not push actions. */
+  mode: z.enum(["normal", "conversar"]).default("normal"),
   /** Deterministic facts calculated by the app's financial engine. */
   context: z.unknown(),
   history: z
@@ -64,7 +104,16 @@ const STYLE_HINT: Record<string, string> = {
   detailed: "Podes explicar com mais detalhe, até 8 frases, usando listas curtas quando ajudar.",
 };
 
-function systemPrompt(agentName: string, style: string) {
+const CONVERSATION_RULES = [
+  "MODO CONVERSAR: a pessoa quer pensar em voz alta. Ouve primeiro. Faz UMA pergunta de cada vez, escolhida pelo que ela disse — nunca um questionário numerado.",
+  "Trabalha só com o que a pessoa disse explicitamente. Não diagnosticas nada (sobretudo nada de saúde mental), não atribuis traços psicológicos, não afirmas conhecê-la melhor do que ela.",
+  "Podes separar problema de sintoma, apontar contradições com respeito, clarificar trocas e ajudar a organizar o pensamento.",
+  "Não forces um plano, um programa ou uma ação no fim. Às vezes a conversa útil é o resultado.",
+  "Quando houver material suficiente, podes perguntar: \"Queres que eu organize o que saiu desta conversa?\" e só então apresentar um resumo com O QUE PARECE IMPORTAR AGORA, QUESTÕES EM ABERTO e POSSÍVEIS PRÓXIMOS PASSOS — como rascunho editável.",
+  "Nada é guardado sem a pessoa dizer que sim. `personalAction` é apenas uma proposta.",
+].join("\n");
+
+function systemPrompt(agentName: string, style: string, mode: "normal" | "conversar") {
   return [
     `És "${agentName}", o assistente pessoal de organização financeira e de vida dentro da aplicação Personal Finance OS.`,
     "Escreves sempre em português de Portugal, num tom calmo, direto, analítico e sem julgamentos.",
@@ -81,8 +130,15 @@ function systemPrompt(agentName: string, style: string) {
     "Para cenários hipotéticos, começa a resposta com 'Simulação:'.",
     "Quando o utilizador não souber como organizar o dinheiro, usa APENAS as opções de `factos.simulate_organization`: apresenta-as como caminhos diferentes, explica as consequências, nunca digas que uma é a melhor e nunca inventes valores. Para aplicar, encaminha para o ecrã \"Ajuda-me a organizar\" — organizar nunca acontece dentro da conversa sem confirmação.",
     "Se receberes uma imagem (recibo, fatura, captura de ecrã), lê o que conseguires e apresenta os valores como SUGESTÃO a confirmar. Preenche `action` com o total e o comerciante que leste, e diz claramente que o utilizador deve confirmar antes de registares.",
+    "Podes propor uma ação pessoal em `personalAction`: criar um programa (caminho curto com dias), criar uma ação, acrescentar algo à direção, registar uma decisão ou guardar contexto pessoal. Preenche só os campos que fazem sentido para o tipo e deixa os outros a null. Nunca digas que já criaste alguma coisa: a pessoa confirma primeiro.",
+    "Um programa é um caminho temporário com dias numerados (dia 1, dia 2, ...) e no máximo 3, 7, 14, 30 ou 90 dias. Não gamificas, não falas em sequências nem em falhar.",
+    "Se uma ação ficar por fazer, nunca dizes que a pessoa falhou; perguntas se quer remarcar, ajustar ou remover.",
+    "Nunca inventes história pessoal. Se não existir contexto guardado sobre algo, diz que não tens essa informação.",
+    mode === "conversar" ? CONVERSATION_RULES : "",
     STYLE_HINT[style] ?? STYLE_HINT['balanced'],
-  ].join("\n");
+  ]
+    .filter(Boolean)
+    .join("\n");
 }
 
 export const askAgent = createServerFn({ method: "POST" })
@@ -121,7 +177,7 @@ export const askAgent = createServerFn({ method: "POST" })
 
       const result = streamText({
         model: lovable.responses("openai/gpt-6-astra"),
-        system: systemPrompt(data.agentName || "Agente", data.style),
+        system: systemPrompt(data.agentName || "Agente", data.style, data.mode),
         ...(images.length ? { messages } : { prompt }),
         output: Output.object({ schema: ReplySchema }),
         providerOptions: {

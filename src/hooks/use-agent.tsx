@@ -20,6 +20,7 @@ import {
   type Conversation,
   type Memory,
   type PreparedAction,
+  type PreparedPersonalAction,
 } from "@/lib/agent/types";
 import { previewAllocation } from "@/lib/finance/engine";
 import { newId, useLedger } from "@/hooks/use-ledger";
@@ -40,8 +41,11 @@ interface AgentContextValue {
     conversationId: string,
     question: string,
     images?: { mime: string; dataUrl: string }[],
+    mode?: "normal" | "conversar",
   ) => Promise<void>;
   resolveAction: (conversationId: string, messageId: string, confirm: boolean) => void;
+  /** Personal writes follow the same PREPARE → CONFIRM rule as money. */
+  resolvePersonalAction: (conversationId: string, messageId: string, confirm: boolean) => void;
   addMemory: (memory: Omit<Memory, "id" | "createdAt">) => void;
   updateMemory: (id: string, patch: Partial<Memory>) => void;
   deleteMemory: (id: string) => void;
@@ -53,7 +57,14 @@ const AgentCtx = createContext<AgentContextValue | null>(null);
 export function AgentProvider({ children }: { children: ReactNode }) {
   const { setup } = useSetup();
   const { ledger, snapshot, addTransaction } = useLedger();
-  const { state: personal } = usePersonal();
+  const {
+    state: personal,
+    createProgram,
+    addAction,
+    addDirection,
+    addDecision,
+    addContext,
+  } = usePersonal();
   const { prefs } = usePrefs();
   const [state, setState] = useState<AgentState>(EMPTY_AGENT_STATE);
   const [hydrated, setHydrated] = useState(false);
@@ -144,7 +155,12 @@ export function AgentProvider({ children }: { children: ReactNode }) {
   );
 
   const send = useCallback(
-    async (conversationId: string, question: string, images?: { mime: string; dataUrl: string }[]) => {
+    async (
+      conversationId: string,
+      question: string,
+      images?: { mime: string; dataUrl: string }[],
+      mode: "normal" | "conversar" = "normal",
+    ) => {
       const trimmed = question.trim();
       if ((!trimmed && !images?.length) || sending) return;
 
@@ -173,6 +189,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
             question: trimmed || "Analisa esta imagem e diz-me o que encontraste.",
             agentName: prefs.agentName,
             style: prefs.agentStyle,
+            mode,
             context: buildAgentContext(trimmed, deps),
             history,
             ...(images?.length ? { images } : {}),
@@ -192,6 +209,9 @@ export function AgentProvider({ children }: { children: ReactNode }) {
         }
 
         const action = result.action ? normaliseAction(result.action) : undefined;
+        const personalAction = result.personalAction
+          ? normalisePersonalAction(result.personalAction)
+          : undefined;
         const messageId = newId();
         appendMessage(conversationId, {
           id: messageId,
@@ -199,6 +219,9 @@ export function AgentProvider({ children }: { children: ReactNode }) {
           content: result.reply,
           createdAt: new Date().toISOString(),
           ...(action ? { action, actionStatus: "pending" as const } : {}),
+          ...(personalAction
+            ? { personalAction, personalActionStatus: "pending" as const }
+            : {}),
         });
 
         if (action) {
@@ -302,6 +325,102 @@ export function AgentProvider({ children }: { children: ReactNode }) {
     [addTransaction, commit, setup.ruleItems, state.conversations],
   );
 
+  /**
+   * Writes the person confirmed. The Agent never writes on its own, and the
+   * app — not the model — creates the record.
+   */
+  const resolvePersonalAction = useCallback(
+    (conversationId: string, messageId: string, confirm: boolean) => {
+      const conversation = state.conversations.find((c) => c.id === conversationId);
+      const message = conversation?.messages.find((m) => m.id === messageId);
+      const proposal = message?.personalAction;
+      if (!proposal || message?.personalActionStatus !== "pending") return;
+
+      if (confirm) {
+        const todayKey = new Date().toISOString().slice(0, 10);
+        switch (proposal.type) {
+          case "create_program":
+            createProgram({
+              title: proposal.title ?? proposal.summary,
+              ...(proposal.purpose ? { purpose: proposal.purpose } : {}),
+              status: "active",
+              startDate: proposal.date ?? todayKey,
+              durationDays: proposal.durationDays ?? 7,
+              source: "agent_confirmed",
+              items: (proposal.items ?? []).map((item, index) => ({
+                type: item.type,
+                title: item.title,
+                day: item.day,
+                reminder: false,
+                order: index,
+              })),
+            });
+            break;
+          case "create_action":
+            addAction({
+              title: proposal.title ?? proposal.summary,
+              priority: proposal.priority ?? "important",
+              reminder: false,
+              ...(proposal.date ? { scheduledDate: proposal.date } : {}),
+              ...(proposal.time ? { scheduledTime: proposal.time } : {}),
+              source: "agent_confirmed",
+            });
+            break;
+          case "update_direction":
+            addDirection({
+              content: proposal.content ?? proposal.summary,
+              horizon:
+                proposal.horizon === "year"
+                  ? "next"
+                  : proposal.horizon === "exploring"
+                    ? "exploring"
+                    : proposal.horizon === "later"
+                      ? "later"
+                      : "now",
+            });
+            break;
+          case "record_decision":
+            addDecision({
+              statement: proposal.content ?? proposal.summary,
+              ...(proposal.reason ? { reason: proposal.reason } : {}),
+              date: proposal.date ?? todayKey,
+              source: "agent_confirmed",
+            });
+            break;
+          case "save_context":
+            addContext({
+              content: proposal.content ?? proposal.summary,
+              category: "important",
+              source: "agent_confirmed",
+            });
+            break;
+        }
+      }
+
+      commit((prev) => ({
+        ...prev,
+        conversations: prev.conversations.map((c) =>
+          c.id === conversationId
+            ? {
+                ...c,
+                messages: c.messages.map((m) =>
+                  m.id === messageId
+                    ? {
+                        ...m,
+                        personalActionStatus: confirm
+                          ? ("confirmed" as const)
+                          : ("cancelled" as const),
+                      }
+                    : m,
+                ),
+              }
+            : c,
+        ),
+      }));
+    },
+    [addAction, addContext, addDecision, addDirection, commit, createProgram, state.conversations],
+  );
+
   const addMemory = useCallback(
     (memory: Omit<Memory, "id" | "createdAt">) => {
       commit((prev) => ({
@@ -348,6 +467,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       deleteConversation,
       send,
       resolveAction,
+      resolvePersonalAction,
       addMemory,
       updateMemory,
       deleteMemory,
@@ -364,6 +484,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
       deleteConversation,
       send,
       resolveAction,
+      resolvePersonalAction,
       addMemory,
       updateMemory,
       deleteMemory,
@@ -372,6 +493,28 @@ export function AgentProvider({ children }: { children: ReactNode }) {
   );
 
   return <AgentCtx.Provider value={value}>{children}</AgentCtx.Provider>;
+}
+
+/** Drops nulls coming from the model's JSON schema. */
+function normalisePersonalAction(raw: Record<string, unknown>): PreparedPersonalAction {
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  const str = (key: string) => (typeof raw[key] === "string" && raw[key] ? (raw[key] as string) : undefined);
+  const items = Array.isArray(raw['items']) ? (raw['items'] as PreparedPersonalAction["items"]) : undefined;
+  return {
+    type: raw['type'] as PreparedPersonalAction["type"],
+    summary: (raw['summary'] as string) ?? "",
+    ...(str("title") ? { title: str("title") as string } : {}),
+    ...(str("purpose") ? { purpose: str("purpose") as string } : {}),
+    ...(typeof raw['durationDays'] === "number" ? { durationDays: raw['durationDays'] } : {}),
+    ...(items && items.length ? { items } : {}),
+    ...(str("date") ? { date: str("date") as string } : {}),
+    ...(str("time") ? { time: str("time") as string } : {}),
+    ...(str("priority") ? { priority: str("priority") as "now" | "important" | "later" } : {}),
+    ...(str("horizon") ? { horizon: str("horizon") as "now" | "year" | "later" | "exploring" } : {}),
+    ...(str("content") ? { content: str("content") as string } : {}),
+    ...(str("reason") ? { reason: str("reason") as string } : {}),
+    ...(str("category") ? { category: str("category") as string } : {}),
+  };
 }
 
 /** Drops nulls coming from the model's JSON schema. */

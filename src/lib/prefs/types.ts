@@ -31,6 +31,7 @@ export type HomeModuleId =
   | "month_spending"
   | "wealth_building"
   | "agent"
+  | "focus"
   | "insight";
 
 export const HOME_MODULES: { id: HomeModuleId; label: string; description: string }[] = [
@@ -44,12 +45,14 @@ export const HOME_MODULES: { id: HomeModuleId; label: string; description: strin
   { id: "month_spending", label: "Gastos do mês", description: "Entradas e gastos deste mês." },
   { id: "wealth_building", label: "Construção", description: "Quanto construíste este mês." },
   { id: "agent", label: "Resumo do Agente", description: "Uma observação baseada nos teus dados." },
+  { id: "focus", label: "Agora", description: "A tua direção atual e a próxima ação." },
   { id: "insight", label: "Observação do mês", description: "Um facto relevante calculado a partir dos teus dados." },
 ];
 
 /** Home stays focused: money card, actions, goals, one agent note, recent activity. */
 export const DEFAULT_HOME_MODULES: HomeModuleId[] = [
   "available",
+  "focus",
   "goals",
   "agent",
   "recent",

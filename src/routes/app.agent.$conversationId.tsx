@@ -18,6 +18,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { PreparedActionCard } from "@/components/agent/prepared-action-card";
+import { PreparedPersonalCard } from "@/components/agent/prepared-personal-card";
 import { Button } from "@/components/ui/button";
 import { useAgent } from "@/hooks/use-agent";
 import { usePrefs } from "@/hooks/use-prefs";
@@ -29,7 +30,8 @@ export const Route = createFileRoute("/app/agent/$conversationId")({
 
 function AgentChat() {
   const { conversationId } = Route.useParams();
-  const { state, send, sending, resolveAction, hydrated } = useAgent();
+  const { state, send, sending, resolveAction, resolvePersonalAction, hydrated } = useAgent();
+  const [deepMode, setDeepMode] = useState(false);
   const { prefs } = usePrefs();
   const navigate = useNavigate();
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -89,7 +91,7 @@ function AgentChat() {
                     key={suggestion}
                     variant="secondary"
                     size="sm"
-                    onClick={() => void send(conversationId, suggestion)}
+                    onClick={() => void send(conversationId, suggestion, undefined, deepMode ? "conversar" : "normal")}
                   >
                     {suggestion}
                   </Button>
@@ -102,6 +104,14 @@ function AgentChat() {
             <Message key={message.id} from={message.role === "user" ? "user" : "assistant"}>
               <MessageContent>
                 <MessageResponse>{message.content}</MessageResponse>
+                {message.personalAction && message.personalActionStatus ? (
+                  <PreparedPersonalCard
+                    action={message.personalAction}
+                    status={message.personalActionStatus}
+                    onConfirm={() => resolvePersonalAction(conversationId, message.id, true)}
+                    onCancel={() => resolvePersonalAction(conversationId, message.id, false)}
+                  />
+                ) : null}
                 {message.action && message.actionStatus ? (
                   <PreparedActionCard
                     action={message.action}
@@ -133,13 +143,17 @@ function AgentChat() {
           if (!text && pendingImages.length === 0) return;
           const images = pendingImages.map(({ mime, dataUrl }) => ({ mime, dataUrl }));
           setPendingImages([]);
-          void send(conversationId, text, images);
+          void send(conversationId, text, images, deepMode ? "conversar" : "normal");
         }}
       >
         <PromptInputTextarea
           ref={textareaRef}
           name="message"
-          placeholder={`Pergunta ao ${prefs.agentName}...`}
+          placeholder={
+            deepMode
+              ? "Fala à vontade. Só ouço e pergunto."
+              : `Pergunta ao ${prefs.agentName}...`
+          }
         />
         {pendingImages.length ? (
           <ul className="flex gap-2 px-3 pt-3">
@@ -178,6 +192,18 @@ function AgentChat() {
             className="flex size-9 items-center justify-center rounded-full border border-border/70 text-muted-foreground"
           >
             <Plus className="size-4" aria-hidden />
+          </button>
+          <button
+            type="button"
+            aria-pressed={deepMode}
+            onClick={() => setDeepMode((v) => !v)}
+            className={
+              deepMode
+                ? "rounded-full bg-foreground px-3 py-1.5 text-xs font-medium text-background"
+                : "rounded-full border border-border/70 px-3 py-1.5 text-xs text-muted-foreground"
+            }
+          >
+            Conversar
           </button>
           <PromptInputSubmit {...(sending ? { status: "submitted" as const } : {})} disabled={sending} />
         </PromptInputFooter>
