@@ -32,7 +32,7 @@ export const pt = {
     monthSummary: "Resumo do mês",
     income: "Entradas",
     expenses: "Gastos",
-    built: "Construído",
+    built: "Guardado",
     buckets: "Os teus potes",
   },
   onboarding: {

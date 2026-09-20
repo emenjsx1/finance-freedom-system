@@ -1,28 +1,6 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import {
-  BarChart3,
-  Home,
-  ArrowLeftRight,
-  Plus,
-  LayoutGrid,
-  MessageSquare,
-  Wallet,
-  PieChart,
-  Repeat,
-  Settings,
-  Landmark,
-  Map,
-  Target,
-  Lock,
-  Sliders,
-  User,
-  Bell,
-  Zap,
-  Compass,
-  Sun,
-  ListChecks,
-} from "lucide-react";
+import { Home, Plus, LayoutGrid, MessageSquare, Target, User } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
@@ -33,6 +11,7 @@ import { haptic } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
 import { BrandMark } from "@/components/brand/brand-mark";
+import { NAV_GROUPS } from "@/lib/nav/catalogue";
 
 interface NavItem {
   to: string;
@@ -50,57 +29,7 @@ const mobileRight: NavItem[] = [
   { to: "/app/me", label: "Eu", icon: User },
 ];
 
-const desktopGroups: { title: string; items: NavItem[] }[] = [
-  {
-    title: "Diário",
-    items: [
-      { to: "/app", label: "Início", icon: Home },
-      { to: "/app/activity", label: "Atividade", icon: ArrowLeftRight },
-      { to: "/app/agent", label: "Agente", icon: MessageSquare },
-    ],
-  },
-  {
-    title: "Dinheiro",
-    items: [
-      { to: "/app/accounts", label: "Contas", icon: Landmark },
-      { to: "/app/wallets", label: "Carteiras", icon: Wallet },
-      { to: "/app/money-map", label: "Mapa do dinheiro", icon: Map },
-      { to: "/app/protected", label: "Protegido", icon: Lock },
-    ],
-  },
-  {
-    title: "Pessoal",
-    items: [
-      { to: "/app/me", label: "Eu", icon: User },
-      { to: "/app/development", label: "Desenvolvimento", icon: Compass },
-      { to: "/app/development/today", label: "Hoje", icon: Sun },
-      { to: "/app/development/programs", label: "Programas", icon: ListChecks },
-      { to: "/app/plans", label: "Planos", icon: Target },
-      { to: "/app/strategy", label: "Estratégia", icon: Sliders },
-      { to: "/app/direction", label: "Direção", icon: Map },
-      { to: "/app/context", label: "O que o Agente sabe", icon: MessageSquare },
-      { to: "/app/review", label: "Revisão", icon: PieChart },
-    ],
-  },
-  {
-    title: "Planeamento",
-    items: [
-      { to: "/app/analytics", label: "Análise", icon: BarChart3 },
-      { to: "/app/goals", label: "Objetivos", icon: Target },
-      { to: "/app/recurring", label: "Recorrentes", icon: Repeat },
-      { to: "/app/reports", label: "Relatórios", icon: PieChart },
-    ],
-  },
-  {
-    title: "Sistema",
-    items: [
-      { to: "/app/notifications", label: "Notificações", icon: Bell },
-      { to: "/app/automations", label: "Automações", icon: Zap },
-      { to: "/app/personalization", label: "Personalização", icon: Sliders },
-      { to: "/app/settings", label: "Definições", icon: Settings },
-    ],
-  },
-];
+const desktopGroups: { title: string; items: NavItem[] }[] = NAV_GROUPS;
 
 export function AppShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
@@ -191,7 +120,14 @@ export function AppShell() {
 
       <main className="pb-[calc(6.75rem+env(safe-area-inset-bottom))] lg:ml-64 lg:pb-12">
         <div className="mx-auto w-full max-w-2xl px-4 pt-[max(env(safe-area-inset-top),0.75rem)] sm:px-5 lg:max-w-4xl lg:px-10 lg:pt-6">
-          <div className="sticky top-[max(env(safe-area-inset-top),0.75rem)] z-30 mb-2 flex h-11 justify-end pointer-events-none">
+          <div className="sticky top-[max(env(safe-area-inset-top),0.75rem)] z-30 mb-2 flex h-11 items-center justify-end gap-1 pointer-events-none">
+            <Link
+              to="/app/all"
+              aria-label="Tudo"
+              className="pointer-events-auto flex size-11 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground"
+            >
+              <LayoutGrid className="size-5" />
+            </Link>
             <NotificationBell className="pointer-events-auto" />
           </div>
           <Outlet />

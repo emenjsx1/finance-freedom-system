@@ -100,7 +100,7 @@ export function buildInsights(input: AnalyticsInput, period: Period, limit = 3):
     out.push({
       id: "build-rate",
       kind: "build_rate",
-      title: `Direcionaste ${formatPercent(building.buildRate * 100)} das entradas deste período para construção.`,
+      title: `Direcionaste ${formatPercent(building.buildRate * 100)} das entradas deste período para propósitos guardados.`,
       detail: `${money(building.totalMinor)} de ${money(comparison.current.incomeMinor)}.`,
       relevance: 70,
       to: "/app/analytics",

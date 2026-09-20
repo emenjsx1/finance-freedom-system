@@ -398,7 +398,7 @@ export function scheduledDrafts(
         prefKey: "weekly_review",
         priority: "normal",
         title: "Resumo semanal pronto",
-        body: `Entradas ${money(facts.summary.incomeMinor, c)} · Gastos ${money(facts.summary.expensesMinor, c)} · Construído ${money(facts.summary.builtMinor, c)}`,
+        body: `Entradas ${money(facts.summary.incomeMinor, c)} · Gastos ${money(facts.summary.expensesMinor, c)} · Guardado ${money(facts.summary.builtMinor, c)}`,
         payload: {
           kind: "weekly_review",
           startISO: start.toISOString(),
@@ -428,7 +428,7 @@ export function scheduledDrafts(
         prefKey: "monthly_review",
         priority: "normal",
         title: `Fecho do mês · ${facts.label}`,
-        body: `Entradas ${money(facts.summary.incomeMinor, c)} · Gastos ${money(facts.summary.expensesMinor, c)} · Construído ${money(facts.summary.builtMinor, c)}`,
+        body: `Entradas ${money(facts.summary.incomeMinor, c)} · Gastos ${money(facts.summary.expensesMinor, c)} · Guardado ${money(facts.summary.builtMinor, c)}`,
         payload: {
           kind: "monthly_review",
           monthLabel: facts.label,

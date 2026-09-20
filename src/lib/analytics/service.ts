@@ -48,8 +48,8 @@ export const METRIC_DEFINITIONS: Record<string, { label: string; explanation: st
     explanation: "Dinheiro pessoal que saiu durante o período. Transferências entre contas não são gastos.",
   },
   built: {
-    label: "Construído",
-    explanation: "Dinheiro direcionado durante este período para carteiras marcadas como construção de património.",
+    label: "Guardado",
+    explanation: "Dinheiro que passou a estar guardado para um propósito durante este período.",
   },
   goals: {
     label: "Objetivos",
@@ -60,8 +60,8 @@ export const METRIC_DEFINITIONS: Record<string, { label: string; explanation: st
     explanation: "Entradas menos gastos do período. Não inclui ajustes de saldo.",
   },
   buildRate: {
-    label: "Taxa de construção",
-    explanation: "Construído a dividir pelas entradas pessoais do período. É um facto, não uma nota.",
+    label: "Taxa de poupança",
+    explanation: "Guardado a dividir pelas entradas pessoais do período. É um facto, não uma nota.",
   },
   spendRate: {
     label: "Percentagem utilizada",

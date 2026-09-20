@@ -102,6 +102,10 @@ export function TransactionComposer({
   const position = financialPosition(snapshot);
   const purposes = useMemo(() => listPurposes(setup.ruleItems, snapshot), [setup.ruleItems, snapshot]);
   const purposeOptions = purposes.map((p) => ({ value: p.id, label: p.name }));
+  // Only purposes that actually hold money can pay for an expense.
+  const fundedPurposeOptions = purposes
+    .filter((p) => (snapshot.bucketBalances[p.id] ?? 0) > 0)
+    .map((p) => ({ value: p.id, label: p.name }));
 
   // A purpose can be born right here: never send someone to another screen in
   // the middle of putting money aside.
@@ -577,19 +581,28 @@ export function TransactionComposer({
 
       {kind === "expense" ? (
         <div className="space-y-3">
-          <div className="grid grid-cols-2 gap-3">
-            <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
-            <SelectField
-              label="Propósito"
-              value={bucketId ?? ""}
-              onChange={setBucketId}
-              options={purposeOptions}
-              emptyLabel="Dinheiro disponível"
-            />
-          </div>
-          <p className="type-meta">
-            Se este dinheiro não estava guardado para nada, deixa em “Dinheiro disponível”.
-          </p>
+          <SelectField label="Conta" value={accountId ?? ""} onChange={setAccountId} options={accountOptions} />
+          {/* A despesa sai do disponível. Só quem já guardou dinheiro precisa de escolher de onde. */}
+          {fundedPurposeOptions.length > 0 ? (
+            <details className="rounded-2xl border border-border/70 bg-surface p-4" open={Boolean(bucketId)}>
+              <summary className="cursor-pointer text-sm font-medium">
+                Sai de dinheiro guardado? {bucket?.name ? `(${bucket.name})` : "(não)"}
+              </summary>
+              <div className="mt-3 space-y-2">
+                <SelectField
+                  label="De que propósito"
+                  value={bucketId ?? ""}
+                  onChange={setBucketId}
+                  options={fundedPurposeOptions}
+                  emptyLabel="Dinheiro disponível"
+                />
+                <p className="type-meta">
+                  Por norma a despesa sai do dinheiro disponível. Escolhe um propósito só se estavas a
+                  gastar dinheiro que tinhas guardado para isso.
+                </p>
+              </div>
+            </details>
+          ) : null}
         </div>
       ) : null}
 
