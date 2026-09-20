@@ -298,6 +298,48 @@ function PlanningPage() {
           <Button className="w-full" onClick={savePlanned}>Guardar plano</Button>
         </div>
       </NativeSheet>
+
+      <NativeSheet open={addOpen} onOpenChange={setAddOpen} title="Novo gasto mensal">
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="cost-name">O que é</Label>
+            <Input
+              id="cost-name"
+              value={costName}
+              autoFocus
+              onChange={(e) => setCostName(e.target.value)}
+              placeholder="Renda, internet, escola…"
+            />
+          </div>
+          <AmountInput
+            valueMinor={costMinor}
+            onChange={setCostMinor}
+            currencyCode={setup.currencyCode}
+            label="Quanto por mês"
+          />
+          <div className="space-y-2">
+            <Label htmlFor="cost-day">Dia do mês</Label>
+            <Input
+              id="cost-day"
+              type="number"
+              min={1}
+              max={31}
+              value={costDay}
+              onChange={(e) => setCostDay(e.target.value)}
+            />
+          </div>
+          <Button
+            className="w-full"
+            disabled={!costName.trim() || costMinor <= 0}
+            onClick={saveCost}
+          >
+            Guardar gasto mensal
+          </Button>
+          <p className="type-meta">
+            Não sai dinheiro nenhum. Aparece na lista e marcas como pago quando pagares.
+          </p>
+        </div>
+      </NativeSheet>
     </div>
   );
 }
