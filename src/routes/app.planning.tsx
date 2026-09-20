@@ -1,12 +1,14 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Check, Pencil } from "lucide-react";
+import { AlertTriangle, Check, Pencil, Plus } from "lucide-react";
 
 import { NativeSheet } from "@/components/design/native-sheet";
 import { Money } from "@/components/money";
 import { PageHeader } from "@/components/page-header";
 import { AmountInput } from "@/components/transactions/amount-input";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
@@ -33,9 +35,27 @@ export const Route = createFileRoute("/app/planning")({
 function PlanningPage() {
   const { setup, update } = useSetup();
   const { ledger, snapshot, upsertRecurring } = useLedger();
-  const { state, updateCommitment } = usePersonal();
+  const { state, updateCommitment, addCommitment } = usePersonal();
   const [editing, setEditing] = useState<{ id: string; name: string } | null>(null);
   const [draftMinor, setDraftMinor] = useState(0);
+  const [addOpen, setAddOpen] = useState(false);
+  const [costName, setCostName] = useState("");
+  const [costMinor, setCostMinor] = useState(0);
+  const [costDay, setCostDay] = useState("1");
+
+  function saveCost() {
+    addCommitment({
+      name: costName.trim(),
+      amountMinor: costMinor,
+      cadence: "monthly",
+      active: true,
+      dueDay: Number(costDay) || 1,
+    });
+    setAddOpen(false);
+    setCostName("");
+    setCostMinor(0);
+    setCostDay("1");
+  }
 
   const position = financialPosition(snapshot);
 
@@ -164,13 +184,18 @@ function PlanningPage() {
           <h2 className="type-section">Gastos mensais</h2>
           <p className="type-meta">{monthLabel}</p>
         </div>
+        <Button size="sm" className="w-full" onClick={() => setAddOpen(true)}>
+          <Plus className="size-4" aria-hidden />
+          Adicionar gasto mensal
+        </Button>
         {plan.costs.length === 0 ? (
           <div className="card-standard text-center">
             <p className="type-secondary">
-              Ainda não tens compromissos nem despesas recorrentes registados.
+              Escreve aqui os teus gastos de todos os meses — renda, internet, escola. Depois é só
+              marcar cada um como pago.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
-              <Button asChild size="sm"><Link to="/app/commitments">Compromissos</Link></Button>
+              <Button asChild size="sm" variant="secondary"><Link to="/app/commitments">Ver compromissos</Link></Button>
               <Button asChild size="sm" variant="secondary"><Link to="/app/recurring">Recorrentes</Link></Button>
             </div>
           </div>
@@ -271,6 +296,48 @@ function PlanningPage() {
             Isto é só o teu plano. O dinheiro só sai de disponível quando guardares.
           </p>
           <Button className="w-full" onClick={savePlanned}>Guardar plano</Button>
+        </div>
+      </NativeSheet>
+
+      <NativeSheet open={addOpen} onOpenChange={setAddOpen} title="Novo gasto mensal">
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="cost-name">O que é</Label>
+            <Input
+              id="cost-name"
+              value={costName}
+              autoFocus
+              onChange={(e) => setCostName(e.target.value)}
+              placeholder="Renda, internet, escola…"
+            />
+          </div>
+          <AmountInput
+            valueMinor={costMinor}
+            onChange={setCostMinor}
+            currencyCode={setup.currencyCode}
+            label="Quanto por mês"
+          />
+          <div className="space-y-2">
+            <Label htmlFor="cost-day">Dia do mês</Label>
+            <Input
+              id="cost-day"
+              type="number"
+              min={1}
+              max={31}
+              value={costDay}
+              onChange={(e) => setCostDay(e.target.value)}
+            />
+          </div>
+          <Button
+            className="w-full"
+            disabled={!costName.trim() || costMinor <= 0}
+            onClick={saveCost}
+          >
+            Guardar gasto mensal
+          </Button>
+          <p className="type-meta">
+            Não sai dinheiro nenhum. Aparece na lista e marcas como pago quando pagares.
+          </p>
         </div>
       </NativeSheet>
     </div>

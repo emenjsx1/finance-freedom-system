@@ -1,10 +1,11 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
-import { Home, Plus, LayoutGrid, MessageSquare, Target, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Home, Plus, LayoutGrid, MessageSquare, User } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
+import { NativeSheet } from "@/components/design/native-sheet";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { PreparedMovementSheet } from "@/components/notifications/prepared-movement";
 import { haptic } from "@/hooks/use-ledger";
@@ -19,15 +20,12 @@ interface NavItem {
   icon: ComponentType<{ className?: string }>;
 }
 
-/** Mobile: five deliberate destinations, the middle one is the action. */
+/** Mobile: four destinations plus the action, and "Secções" opens everything. */
 const mobileLeft: NavItem[] = [
   { to: "/app", label: "Início", icon: Home },
-  { to: "/app/plans", label: "Planos", icon: Target },
-];
-const mobileRight: NavItem[] = [
   { to: "/app/agent", label: "Agente", icon: MessageSquare },
-  { to: "/app/me", label: "Eu", icon: User },
 ];
+const mobileRight: NavItem[] = [{ to: "/app/me", label: "Eu", icon: User }];
 
 const desktopGroups: { title: string; items: NavItem[] }[] = NAV_GROUPS;
 
@@ -36,6 +34,7 @@ export function AppShell() {
   const { openQuickActions, openComposer } = useTransactionLauncher();
   const { setup } = useSetup();
   const { prefs } = usePrefs();
+  const [sectionsOpen, setSectionsOpen] = useState(false);
 
   // Privacy mode hides every monetary value, including screens that format money directly.
   useEffect(() => {
@@ -160,11 +159,45 @@ export function AppShell() {
               <Plus className="size-5" />
             </button>
           </div>
+          <button
+            type="button"
+            onClick={() => setSectionsOpen(true)}
+            className="flex min-w-0 flex-col items-center gap-1 rounded-lg py-1.5 text-muted-foreground transition-colors"
+          >
+            <LayoutGrid className="size-5" />
+            <span className="w-full truncate text-center text-[10.5px] font-medium">Secções</span>
+          </button>
           {mobileRight.map((item) => (
             <BottomLink key={item.to} item={item} active={pathname.startsWith(item.to)} />
           ))}
         </div>
       </nav>
+
+      {/* Every destination, one tap from the bar. Nothing hidden behind search. */}
+      <NativeSheet open={sectionsOpen} onOpenChange={setSectionsOpen} title="Secções">
+        <div className="space-y-6 pb-2">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.title}>
+              <p className="type-section mb-2">{group.title}</p>
+              <div className="list-group">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setSectionsOpen(false)}
+                    className="list-row justify-between"
+                  >
+                    <span className="flex items-center gap-3">
+                      <item.icon className="size-4 text-muted-foreground" />
+                      {item.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </NativeSheet>
 
       {prefs.density === "compact" ? null : null}
     </div>

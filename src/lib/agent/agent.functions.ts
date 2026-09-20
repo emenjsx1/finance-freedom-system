@@ -12,11 +12,21 @@ import { Output, streamText } from "ai";
 import { z } from "zod";
 
 const ActionSchema = z.object({
-  type: z.enum(["expense", "income", "transfer", "reallocation", "goal_suggestion"]),
+  type: z.enum([
+    "expense",
+    "income",
+    "transfer",
+    "reservation",
+    "release",
+    "reallocation",
+    "goal_suggestion",
+  ]),
   amountMinor: z.number().int().nonnegative(),
   categoryId: z.string().nullable(),
   accountId: z.string().nullable(),
   bucketId: z.string().nullable(),
+  /** Name of a purpose that may still need to be created. */
+  bucketName: z.string().nullable(),
   fromAccountId: z.string().nullable(),
   toAccountId: z.string().nullable(),
   fromBucketId: z.string().nullable(),
@@ -127,7 +137,9 @@ function systemPrompt(agentName: string, style: string, mode: "normal" | "conver
     "`amountMinor` é em unidades mínimas: multiplica o valor por 100 (1.500 MZN = 150000).",
     "Nunca digas que a ação já foi feita — ela só existe depois de o utilizador confirmar.",
     "Preenche `memorySuggestion` apenas quando o utilizador partilhar algo pessoal e duradouro que valha a pena recordar. Caso contrário, deixa a null.",
-    "Separar dinheiro para um plano é uma `reallocation` com o `bucketId` do plano e, quando o utilizador disser de que conta vem, o `accountId` dessa conta. Separar não muda o saldo da conta: muda só o propósito do dinheiro. Nunca peças uma percentagem para alimentar um plano — percentagens só existem em regras para dinheiro futuro.",
+    "GUARDAR dinheiro para um propósito é uma `reservation`: preenche `toBucketId` com o id do propósito se ele já existir em `referencias`, ou `bucketName` com o nome exato se for novo (a aplicação cria-o quando o utilizador confirmar), e `accountId` com a conta de onde vem (se o utilizador não disser, escolhe a conta com mais disponível em `factos` e diz qual escolheste). Guardar não muda o saldo da conta: muda só o propósito do dinheiro.",
+    "Tirar dinheiro de um propósito é `release` com `fromBucketId`. Mover de um propósito para outro é `reallocation` com `fromBucketId` e `toBucketId` (ou `bucketName` para um propósito novo).",
+    "Se o utilizador pedir uma percentagem de um valor que está nos factos (por exemplo \"guarda 10% do disponível para Viagem\"), CALCULA tu o montante a partir desse valor e prepara a `reservation`. Não peças o valor: ele está nos factos. Diz no texto que percentagem usaste e sobre que valor.",
     "Para cenários hipotéticos, começa a resposta com 'Simulação:'.",
     "Quando o utilizador não souber como organizar o dinheiro, usa APENAS as opções de `factos.simulate_organization`: apresenta-as como caminhos diferentes, explica as consequências, nunca digas que uma é a melhor e nunca inventes valores. Para aplicar, encaminha para o ecrã \"Ajuda-me a organizar\" — organizar nunca acontece dentro da conversa sem confirmação.",
     "Se receberes uma imagem (recibo, fatura, captura de ecrã), lê o que conseguires e apresenta os valores como SUGESTÃO a confirmar. Preenche `action` com o total e o comerciante que leste, e diz claramente que o utilizador deve confirmar antes de registares.",

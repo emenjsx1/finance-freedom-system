@@ -23,6 +23,8 @@ import {
   type PreparedPersonalAction,
 } from "@/lib/agent/types";
 import { previewAllocation } from "@/lib/finance/engine";
+import { upsertWallet } from "@/lib/finance/setup-ops";
+import type { AllocationRuleItem } from "@/lib/finance/types";
 import { newId, useLedger } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useNotifications } from "@/hooks/use-notifications";
@@ -59,7 +61,7 @@ interface AgentContextValue {
 const AgentCtx = createContext<AgentContextValue | null>(null);
 
 export function AgentProvider({ children }: { children: ReactNode }) {
-  const { setup } = useSetup();
+  const { setup, update: updateSetup } = useSetup();
   const { ledger, snapshot, addTransaction } = useLedger();
   const {
     state: personal,
@@ -283,6 +285,33 @@ export function AgentProvider({ children }: { children: ReactNode }) {
 
       let transactionId: string | undefined;
       if (confirm && action.type !== "goal_suggestion") {
+        // A purpose the agent named but that does not exist yet is created by
+        // the app, never by the model, and only at this confirmation.
+        let targetBucketId = action.toBucketId ?? action.bucketId;
+        if (!targetBucketId && action.bucketName) {
+          const normalized = action.bucketName.trim().toLocaleLowerCase("pt-PT");
+          const existing = setup.ruleItems.find(
+            (item) => !item.archived && item.name.trim().toLocaleLowerCase("pt-PT") === normalized,
+          );
+          if (existing) {
+            targetBucketId = existing.id;
+          } else {
+            const wallet: AllocationRuleItem = {
+              id: newId(),
+              name: action.bucketName.trim(),
+              percentage: 0,
+              icon: "target",
+              kind: "goals",
+              order: setup.ruleItems.length,
+            };
+            const next = upsertWallet(setup, wallet).ruleItems;
+            if (next) updateSetup({ ruleItems: next });
+            targetBucketId = wallet.id;
+          }
+        }
+
+        const isReserve = action.type === "reservation";
+        const isMove = action.type === "reallocation";
         transactionId = newId();
         addTransaction({
           id: transactionId,
@@ -295,11 +324,12 @@ export function AgentProvider({ children }: { children: ReactNode }) {
           attachments: [],
           ...(action.categoryId ? { categoryId: action.categoryId } : {}),
           ...(action.accountId ? { accountId: action.accountId } : {}),
-          ...(action.bucketId ? { bucketId: action.bucketId } : {}),
+          ...(action.bucketId && !isReserve && !isMove ? { bucketId: action.bucketId } : {}),
           ...(action.fromAccountId ? { fromAccountId: action.fromAccountId } : {}),
           ...(action.toAccountId ? { toAccountId: action.toAccountId } : {}),
           ...(action.fromBucketId ? { fromBucketId: action.fromBucketId } : {}),
-          ...(action.toBucketId ? { toBucketId: action.toBucketId } : {}),
+          ...((isReserve || isMove) && targetBucketId ? { toBucketId: targetBucketId } : {}),
+          ...(!isReserve && !isMove && action.toBucketId ? { toBucketId: action.toBucketId } : {}),
           ...(action.merchant ? { merchant: action.merchant } : {}),
           // Income always lands in wallets through the financial rule, so the
           // physical/purpose invariant holds exactly as in the manual flow.
@@ -334,7 +364,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
         ),
       }));
     },
-    [addTransaction, commit, setup.ruleItems, state.conversations],
+    [addTransaction, commit, setup, updateSetup, state.conversations],
   );
 
   /**
@@ -550,6 +580,7 @@ function normaliseAction(raw: {
   categoryId?: string | null;
   accountId?: string | null;
   bucketId?: string | null;
+  bucketName?: string | null;
   fromAccountId?: string | null;
   toAccountId?: string | null;
   fromBucketId?: string | null;
@@ -564,6 +595,7 @@ function normaliseAction(raw: {
     ...(clean(raw.categoryId) ? { categoryId: raw.categoryId as string } : {}),
     ...(clean(raw.accountId) ? { accountId: raw.accountId as string } : {}),
     ...(clean(raw.bucketId) ? { bucketId: raw.bucketId as string } : {}),
+    ...(clean(raw.bucketName) ? { bucketName: raw.bucketName as string } : {}),
     ...(clean(raw.fromAccountId) ? { fromAccountId: raw.fromAccountId as string } : {}),
     ...(clean(raw.toAccountId) ? { toAccountId: raw.toAccountId as string } : {}),
     ...(clean(raw.fromBucketId) ? { fromBucketId: raw.fromBucketId as string } : {}),
