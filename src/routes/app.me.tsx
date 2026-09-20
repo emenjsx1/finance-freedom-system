@@ -116,6 +116,10 @@ function MePage() {
       })()}
 
       <section className="list-group">
+        <Link to="/app/all" className="list-row justify-between">
+          <span>Tudo</span>
+          <span className="type-meta">Todas as secções</span>
+        </Link>
         <Link to="/app/direction" className="list-row justify-between">
           <span>Direção</span>
           <span className="type-meta">
