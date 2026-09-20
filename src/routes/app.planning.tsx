@@ -142,7 +142,10 @@ function PlanningPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="type-section">Custos mensais</h2>
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="type-section">Gastos mensais</h2>
+          <p className="type-meta">{monthLabel}</p>
+        </div>
         {plan.costs.length === 0 ? (
           <div className="card-standard text-center">
             <p className="type-secondary">
@@ -154,17 +157,44 @@ function PlanningPage() {
             </div>
           </div>
         ) : (
-          plan.costs.map((cost) => (
-            <div key={cost.id} className="card-compact flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{cost.name}</p>
-                <p className="type-meta mt-1">
-                  {cost.detail} · {cost.source === "commitment" ? "Compromisso" : "Recorrente"}
-                </p>
-              </div>
-              <p className="shrink-0 text-sm"><Money minor={cost.amountMinor} /></p>
+          <>
+            <div className="card-compact flex items-baseline justify-between gap-4">
+              <p className="type-secondary text-sm">Já pago este mês</p>
+              <p className="text-sm font-medium"><Money minor={plan.costsPaidMinor} /></p>
             </div>
-          ))
+            <div className="card-compact flex items-baseline justify-between gap-4">
+              <p className="type-secondary text-sm">Falta pagar</p>
+              <p className="text-sm font-medium"><Money minor={plan.costsUnpaidMinor} /></p>
+            </div>
+            {plan.costs.map((cost) => (
+              <div key={cost.id} className="card-compact flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className={`truncate text-sm font-medium ${cost.paid ? "text-muted-foreground line-through" : ""}`}>
+                    {cost.name}
+                  </p>
+                  <p className="type-meta mt-1">
+                    {cost.detail} · {cost.source === "commitment" ? "Compromisso" : "Recorrente"}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <p className="text-sm"><Money minor={cost.amountMinor} /></p>
+                  <Button
+                    variant={cost.paid ? "secondary" : "outline"}
+                    size="sm"
+                    className="min-h-11"
+                    aria-label={cost.paid ? `Desmarcar ${cost.name} como pago` : `Marcar ${cost.name} como pago`}
+                    onClick={() => togglePaid(cost)}
+                  >
+                    {cost.paid ? <Check className="size-4" aria-hidden /> : null}
+                    {cost.paid ? "Pago" : "Marcar pago"}
+                  </Button>
+                </div>
+              </div>
+            ))}
+            <p className="type-meta">
+              Marcar como pago não mexe em dinheiro. A cada mês novo, tudo volta a aparecer por pagar.
+            </p>
+          </>
         )}
       </section>
 
