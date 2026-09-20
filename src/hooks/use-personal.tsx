@@ -390,6 +390,15 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
+  const updateCommitment = useCallback<PersonalContextValue["updateCommitment"]>(
+    (id, patch) =>
+      commit((prev) => ({
+        ...prev,
+        commitments: prev.commitments.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+      })),
+    [commit],
+  );
+
   const removeCommitment = useCallback(
     (id: string) =>
       commit((prev) => ({ ...prev, commitments: prev.commitments.filter((c) => c.id !== id) })),
