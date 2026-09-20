@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Pencil } from "lucide-react";
+import { AlertTriangle, Check, Pencil } from "lucide-react";
 
 import { NativeSheet } from "@/components/design/native-sheet";
 import { Money } from "@/components/money";
