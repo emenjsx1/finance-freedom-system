@@ -46,9 +46,9 @@ export const Route = createFileRoute("/app/analytics/")({
   head: () => ({
     meta: [
       { title: "Análise — Norte" },
-      { name: "description", content: "O que aconteceu com o teu dinheiro: entradas, gastos, construção e padrões." },
+      { name: "description", content: "O que aconteceu com o teu dinheiro: entradas, gastos, dinheiro guardado e padrões." },
       { property: "og:title", content: "Análise — Norte" },
-      { property: "og:description", content: "Entradas, gastos, construção e padrões do teu dinheiro." },
+      { property: "og:description", content: "Entradas, gastos, dinheiro guardado e padrões do teu dinheiro." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -192,7 +192,7 @@ function AnalyticsPage() {
             <Section title="Fluxo do dinheiro">
               <FlowRow label="Recebido" minor={data.flow.receivedMinor} />
               <FlowRow label="Gasto" minor={data.flow.spentMinor} />
-              <FlowRow label="Construção" minor={data.flow.builtMinor} />
+              <FlowRow label="Guardado" minor={data.flow.builtMinor} />
               <FlowRow label="dos quais para objetivos" minor={data.flow.goalsMinor} />
               <FlowRow label="Protegido" minor={data.flow.protectedMinor} />
               <FlowRow label="Resta em carteiras de uso" minor={data.flow.remainingSpendableMinor} />
@@ -309,12 +309,12 @@ function AnalyticsPage() {
           ) : null}
 
           {enabled("wealth") ? (
-            <Section title="Construção">
+            <Section title="Guardado">
               <Money minor={data.wealth.totalMinor} className="type-display block" />
               <p className="type-caption mt-2">
                 {data.wealth.buildRate === null
                   ? "Sem entradas neste período."
-                  : `Taxa de construção: ${formatPercent(data.wealth.buildRate * 100)} das entradas.`}
+                  : `Taxa de poupança: ${formatPercent(data.wealth.buildRate * 100)} das entradas.`}
                 {data.summary.spendRate !== null
                   ? ` · Percentagem utilizada: ${formatPercent(data.summary.spendRate * 100)}.`
                   : ""}

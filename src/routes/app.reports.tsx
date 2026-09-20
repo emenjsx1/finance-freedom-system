@@ -101,7 +101,7 @@ function ReportsPage() {
             <h2 className="type-section">{period.label}{period.partial ? " (em curso)" : ""}</h2>
             <Row label="Entradas" minor={summary.incomeMinor} />
             <Row label="Gastos" minor={summary.expensesMinor} />
-            <Row label="Construído" minor={summary.builtMinor} />
+            <Row label="Guardado" minor={summary.builtMinor} />
             <Row label="Objetivos" minor={summary.goalsMinor} />
             <Row label="Resultado" minor={summary.netMinor} />
           </section>

@@ -107,7 +107,7 @@ function WalletDetailPage() {
       <section className="mt-4 grid grid-cols-2 gap-2">
         <div className="rounded-xl border border-border/70 bg-surface p-3">
           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
-            {wallet.wealthBuilding ? "Construído este mês" : "Recebido este mês"}
+            {wallet.wealthBuilding ? "Guardado este mês" : "Recebido este mês"}
           </p>
           <Money minor={stats.addedMinor} className="mt-1 block text-sm font-semibold text-income" />
         </div>

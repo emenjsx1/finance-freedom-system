@@ -43,7 +43,7 @@ export const HOME_MODULES: { id: HomeModuleId; label: string; description: strin
   { id: "recent", label: "Atividade recente", description: "Os últimos movimentos." },
   { id: "upcoming", label: "Próximos pagamentos", description: "O que está agendado." },
   { id: "month_spending", label: "Gastos do mês", description: "Entradas e gastos deste mês." },
-  { id: "wealth_building", label: "Construção", description: "Quanto construíste este mês." },
+  { id: "wealth_building", label: "Guardado", description: "Quanto guardaste este mês." },
   { id: "agent", label: "Resumo do Agente", description: "Uma observação baseada nos teus dados." },
   { id: "focus", label: "Agora", description: "A tua direção atual e a próxima ação." },
   { id: "insight", label: "Observação do mês", description: "Um facto relevante calculado a partir dos teus dados." },
@@ -80,7 +80,7 @@ export const ANALYTICS_MODULES: { id: AnalyticsModuleId; label: string }[] = [
   { id: "trend", label: "Tendência" },
   { id: "comparison", label: "Comparação de períodos" },
   { id: "income", label: "Entradas" },
-  { id: "wealth", label: "Construção" },
+  { id: "wealth", label: "Guardado" },
   { id: "net_worth", label: "Evolução do património" },
   { id: "wallets", label: "Carteiras" },
   { id: "protected", label: "Dinheiro protegido" },
@@ -104,7 +104,7 @@ export type TerminologyKey =
   | "net_worth";
 
 export const TERMINOLOGY_DEFAULTS: Record<TerminologyKey, string> = {
-  wealth_building: "Construção",
+  wealth_building: "Guardado",
   goals: "Objetivos",
   life: "Vida",
   family: "Família",
