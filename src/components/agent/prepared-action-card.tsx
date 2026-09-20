@@ -11,6 +11,8 @@ const TYPE_LABEL: Record<PreparedAction["type"], string> = {
   expense: "Despesa",
   income: "Entrada",
   transfer: "Transferência",
+  reservation: "Guardar dinheiro",
+  release: "Libertar dinheiro",
   reallocation: "Redistribuição",
   goal_suggestion: "Sugestão de objetivo",
 };
@@ -40,16 +42,18 @@ export function PreparedActionCard({
   const rows: { label: string; value: string }[] = [];
   if (category) rows.push({ label: "Categoria", value: category });
   if (action.accountId) rows.push({ label: "Conta", value: accountName(action.accountId) ?? "—" });
-  if (action.bucketId) rows.push({ label: "Carteira", value: walletName(action.bucketId) ?? "—" });
+  if (action.bucketId) rows.push({ label: "Propósito", value: walletName(action.bucketId) ?? "—" });
   if (action.fromAccountId)
     rows.push({ label: "De", value: accountName(action.fromAccountId) ?? "—" });
   if (action.toAccountId) rows.push({ label: "Para", value: accountName(action.toAccountId) ?? "—" });
   if (action.fromBucketId)
     rows.push({ label: "De", value: walletName(action.fromBucketId) ?? "—" });
   if (action.toBucketId) rows.push({ label: "Para", value: walletName(action.toBucketId) ?? "—" });
+  if (!action.bucketId && !action.toBucketId && action.bucketName)
+    rows.push({ label: "Propósito novo", value: action.bucketName });
   if (action.merchant) rows.push({ label: "Descrição", value: action.merchant });
 
-  const sourceWallet = action.bucketId ?? action.fromBucketId;
+  const sourceWallet = action.type === "reallocation" ? action.fromBucketId : undefined;
   const beforeMinor = sourceWallet ? (snapshot.bucketBalances[sourceWallet] ?? 0) : null;
 
   return (
