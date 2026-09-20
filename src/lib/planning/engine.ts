@@ -27,6 +27,15 @@ export interface MonthlyCostLine {
   amountMinor: number;
   source: MonthlyCostSource;
   detail: string;
+  /** Id of the commitment or recurring rule behind this line. */
+  sourceId: string;
+  /** Marked as paid for the month being shown. Nothing moves money. */
+  paid: boolean;
+}
+
+/** "YYYY-MM" key used to mark a cost as paid in a given month. */
+export function monthKey(date: Date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
 export interface PurposePlanLine {
