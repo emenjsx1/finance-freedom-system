@@ -184,13 +184,18 @@ function PlanningPage() {
           <h2 className="type-section">Gastos mensais</h2>
           <p className="type-meta">{monthLabel}</p>
         </div>
+        <Button size="sm" className="w-full" onClick={() => setAddOpen(true)}>
+          <Plus className="size-4" aria-hidden />
+          Adicionar gasto mensal
+        </Button>
         {plan.costs.length === 0 ? (
           <div className="card-standard text-center">
             <p className="type-secondary">
-              Ainda não tens compromissos nem despesas recorrentes registados.
+              Escreve aqui os teus gastos de todos os meses — renda, internet, escola. Depois é só
+              marcar cada um como pago.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
-              <Button asChild size="sm"><Link to="/app/commitments">Compromissos</Link></Button>
+              <Button asChild size="sm" variant="secondary"><Link to="/app/commitments">Ver compromissos</Link></Button>
               <Button asChild size="sm" variant="secondary"><Link to="/app/recurring">Recorrentes</Link></Button>
             </div>
           </div>
