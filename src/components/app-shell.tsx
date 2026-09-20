@@ -33,6 +33,7 @@ import { haptic } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useSetup } from "@/hooks/use-setup";
 import { BrandMark } from "@/components/brand/brand-mark";
+import { NAV_GROUPS } from "@/lib/nav/catalogue";
 
 interface NavItem {
   to: string;
