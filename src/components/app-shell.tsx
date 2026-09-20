@@ -1,10 +1,11 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
-import { Home, Plus, LayoutGrid, MessageSquare, Target, User } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Home, Plus, LayoutGrid, MessageSquare, User } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
 import { useTransactionLauncher } from "@/components/transactions/transaction-launcher";
+import { NativeSheet } from "@/components/design/native-sheet";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { PreparedMovementSheet } from "@/components/notifications/prepared-movement";
 import { haptic } from "@/hooks/use-ledger";
@@ -19,15 +20,12 @@ interface NavItem {
   icon: ComponentType<{ className?: string }>;
 }
 
-/** Mobile: five deliberate destinations, the middle one is the action. */
+/** Mobile: four destinations plus the action, and "Secções" opens everything. */
 const mobileLeft: NavItem[] = [
   { to: "/app", label: "Início", icon: Home },
-  { to: "/app/plans", label: "Planos", icon: Target },
-];
-const mobileRight: NavItem[] = [
   { to: "/app/agent", label: "Agente", icon: MessageSquare },
-  { to: "/app/me", label: "Eu", icon: User },
 ];
+const mobileRight: NavItem[] = [{ to: "/app/me", label: "Eu", icon: User }];
 
 const desktopGroups: { title: string; items: NavItem[] }[] = NAV_GROUPS;
 
