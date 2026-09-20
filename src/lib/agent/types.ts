@@ -68,6 +68,8 @@ export type PreparedActionType =
   | "expense"
   | "income"
   | "transfer"
+  | "reservation"
+  | "release"
   | "reallocation"
   | "goal_suggestion";
 
@@ -77,6 +79,11 @@ export interface PreparedAction {
   categoryId?: string;
   accountId?: string;
   bucketId?: string;
+  /**
+   * Name of a purpose that may not exist yet. The app — never the model —
+   * creates it when the person confirms.
+   */
+  bucketName?: string;
   fromAccountId?: string;
   toAccountId?: string;
   fromBucketId?: string;

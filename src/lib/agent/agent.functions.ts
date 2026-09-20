@@ -12,11 +12,21 @@ import { Output, streamText } from "ai";
 import { z } from "zod";
 
 const ActionSchema = z.object({
-  type: z.enum(["expense", "income", "transfer", "reallocation", "goal_suggestion"]),
+  type: z.enum([
+    "expense",
+    "income",
+    "transfer",
+    "reservation",
+    "release",
+    "reallocation",
+    "goal_suggestion",
+  ]),
   amountMinor: z.number().int().nonnegative(),
   categoryId: z.string().nullable(),
   accountId: z.string().nullable(),
   bucketId: z.string().nullable(),
+  /** Name of a purpose that may still need to be created. */
+  bucketName: z.string().nullable(),
   fromAccountId: z.string().nullable(),
   toAccountId: z.string().nullable(),
   fromBucketId: z.string().nullable(),
