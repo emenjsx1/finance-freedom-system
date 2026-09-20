@@ -35,9 +35,27 @@ export const Route = createFileRoute("/app/planning")({
 function PlanningPage() {
   const { setup, update } = useSetup();
   const { ledger, snapshot, upsertRecurring } = useLedger();
-  const { state, updateCommitment } = usePersonal();
+  const { state, updateCommitment, addCommitment } = usePersonal();
   const [editing, setEditing] = useState<{ id: string; name: string } | null>(null);
   const [draftMinor, setDraftMinor] = useState(0);
+  const [addOpen, setAddOpen] = useState(false);
+  const [costName, setCostName] = useState("");
+  const [costMinor, setCostMinor] = useState(0);
+  const [costDay, setCostDay] = useState("1");
+
+  function saveCost() {
+    addCommitment({
+      name: costName.trim(),
+      amountMinor: costMinor,
+      cadence: "monthly",
+      active: true,
+      dueDay: Number(costDay) || 1,
+    });
+    setAddOpen(false);
+    setCostName("");
+    setCostMinor(0);
+    setCostDay("1");
+  }
 
   const position = financialPosition(snapshot);
 
