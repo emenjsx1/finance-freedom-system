@@ -72,6 +72,7 @@ interface PersonalContextValue {
   updateContext: (id: string, patch: Partial<PersonalContextItem>) => void;
   removeContext: (id: string) => void;
   addCommitment: (item: Omit<Commitment, "id" | "createdAt">) => void;
+  updateCommitment: (id: string, patch: Partial<Commitment>) => void;
   removeCommitment: (id: string) => void;
   setPermissions: (patch: Partial<AgentPermissions>) => void;
 
@@ -389,6 +390,15 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
     [commit],
   );
 
+  const updateCommitment = useCallback<PersonalContextValue["updateCommitment"]>(
+    (id, patch) =>
+      commit((prev) => ({
+        ...prev,
+        commitments: prev.commitments.map((c) => (c.id === id ? { ...c, ...patch } : c)),
+      })),
+    [commit],
+  );
+
   const removeCommitment = useCallback(
     (id: string) =>
       commit((prev) => ({ ...prev, commitments: prev.commitments.filter((c) => c.id !== id) })),
@@ -645,6 +655,7 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
       updateContext,
       removeContext,
       addCommitment,
+      updateCommitment,
       removeCommitment,
       setPermissions,
       createProgram,
@@ -684,6 +695,7 @@ export function PersonalProvider({ children }: { children: ReactNode }) {
       updateContext,
       removeContext,
       addCommitment,
+      updateCommitment,
       removeCommitment,
       setPermissions,
       createProgram,

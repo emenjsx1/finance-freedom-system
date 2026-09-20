@@ -101,6 +101,8 @@ export interface RecurringRule {
   isSubscription?: boolean | undefined;
   /** ISO date of the last occurrence marked paid or skipped. */
   lastHandledAt?: string | undefined;
+  /** Months already marked as paid, as "YYYY-MM". Nothing moves money. */
+  paidMonths?: string[] | undefined;
 }
 
 export interface BucketView {

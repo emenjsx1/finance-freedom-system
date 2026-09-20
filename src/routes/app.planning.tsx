@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { AlertTriangle, Pencil } from "lucide-react";
+import { AlertTriangle, Check, Pencil } from "lucide-react";
 
 import { NativeSheet } from "@/components/design/native-sheet";
 import { Money } from "@/components/money";
@@ -11,7 +11,7 @@ import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
 import { financialPosition } from "@/lib/finance/position";
-import { buildMonthlyPlan } from "@/lib/planning/engine";
+import { buildMonthlyPlan, type MonthlyCostLine } from "@/lib/planning/engine";
 
 export const Route = createFileRoute("/app/planning")({
   head: () => ({
@@ -32,8 +32,8 @@ export const Route = createFileRoute("/app/planning")({
 
 function PlanningPage() {
   const { setup, update } = useSetup();
-  const { ledger, snapshot } = useLedger();
-  const { state } = usePersonal();
+  const { ledger, snapshot, upsertRecurring } = useLedger();
+  const { state, updateCommitment } = usePersonal();
   const [editing, setEditing] = useState<{ id: string; name: string } | null>(null);
   const [draftMinor, setDraftMinor] = useState(0);
 
@@ -50,6 +50,24 @@ function PlanningPage() {
       }),
     [state.commitments, ledger.recurring, setup.ruleItems, snapshot.bucketBalances, position.availableMinor],
   );
+
+  const monthLabel = new Date().toLocaleDateString("pt-PT", { month: "long", year: "numeric" });
+
+  function togglePaid(cost: MonthlyCostLine) {
+    const key = plan.monthKey;
+    const next = (list: string[] | undefined) =>
+      cost.paid ? (list ?? []).filter((m) => m !== key) : [...(list ?? []), key];
+
+    if (cost.source === "commitment") {
+      const commitment = state.commitments.find((c) => c.id === cost.sourceId);
+      if (!commitment) return;
+      updateCommitment(commitment.id, { paidMonths: next(commitment.paidMonths) });
+      return;
+    }
+    const rule = ledger.recurring.find((r) => r.id === cost.sourceId);
+    if (!rule) return;
+    upsertRecurring({ ...rule, paidMonths: next(rule.paidMonths) });
+  }
 
   function savePlanned() {
     if (!editing) return;
@@ -142,7 +160,10 @@ function PlanningPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="type-section">Custos mensais</h2>
+        <div className="flex items-baseline justify-between gap-3">
+          <h2 className="type-section">Gastos mensais</h2>
+          <p className="type-meta">{monthLabel}</p>
+        </div>
         {plan.costs.length === 0 ? (
           <div className="card-standard text-center">
             <p className="type-secondary">
@@ -154,17 +175,44 @@ function PlanningPage() {
             </div>
           </div>
         ) : (
-          plan.costs.map((cost) => (
-            <div key={cost.id} className="card-compact flex items-start justify-between gap-4">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{cost.name}</p>
-                <p className="type-meta mt-1">
-                  {cost.detail} · {cost.source === "commitment" ? "Compromisso" : "Recorrente"}
-                </p>
-              </div>
-              <p className="shrink-0 text-sm"><Money minor={cost.amountMinor} /></p>
+          <>
+            <div className="card-compact flex items-baseline justify-between gap-4">
+              <p className="type-secondary text-sm">Já pago este mês</p>
+              <p className="text-sm font-medium"><Money minor={plan.costsPaidMinor} /></p>
             </div>
-          ))
+            <div className="card-compact flex items-baseline justify-between gap-4">
+              <p className="type-secondary text-sm">Falta pagar</p>
+              <p className="text-sm font-medium"><Money minor={plan.costsUnpaidMinor} /></p>
+            </div>
+            {plan.costs.map((cost) => (
+              <div key={cost.id} className="card-compact flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <p className={`truncate text-sm font-medium ${cost.paid ? "text-muted-foreground line-through" : ""}`}>
+                    {cost.name}
+                  </p>
+                  <p className="type-meta mt-1">
+                    {cost.detail} · {cost.source === "commitment" ? "Compromisso" : "Recorrente"}
+                  </p>
+                </div>
+                <div className="flex shrink-0 items-center gap-2">
+                  <p className="text-sm"><Money minor={cost.amountMinor} /></p>
+                  <Button
+                    variant={cost.paid ? "secondary" : "outline"}
+                    size="sm"
+                    className="min-h-11"
+                    aria-label={cost.paid ? `Desmarcar ${cost.name} como pago` : `Marcar ${cost.name} como pago`}
+                    onClick={() => togglePaid(cost)}
+                  >
+                    {cost.paid ? <Check className="size-4" aria-hidden /> : null}
+                    {cost.paid ? "Pago" : "Marcar pago"}
+                  </Button>
+                </div>
+              </div>
+            ))}
+            <p className="type-meta">
+              Marcar como pago não mexe em dinheiro. A cada mês novo, tudo volta a aparecer por pagar.
+            </p>
+          </>
         )}
       </section>
 

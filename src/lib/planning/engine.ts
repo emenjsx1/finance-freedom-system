@@ -27,6 +27,15 @@ export interface MonthlyCostLine {
   amountMinor: number;
   source: MonthlyCostSource;
   detail: string;
+  /** Id of the commitment or recurring rule behind this line. */
+  sourceId: string;
+  /** Marked as paid for the month being shown. Nothing moves money. */
+  paid: boolean;
+}
+
+/** "YYYY-MM" key used to mark a cost as paid in a given month. */
+export function monthKey(date: Date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
 
 export interface PurposePlanLine {
@@ -44,6 +53,12 @@ export type PlanningAlert = "none" | "watch" | "zero";
 export interface MonthlyPlan {
   costs: MonthlyCostLine[];
   costsTotalMinor: number;
+  /** Month being shown, as "YYYY-MM". */
+  monthKey: string;
+  /** Costs already marked as paid this month. */
+  costsPaidMinor: number;
+  /** Costs still to pay this month. */
+  costsUnpaidMinor: number;
   purposes: PurposePlanLine[];
   purposesTotalMinor: number;
   /** Costs + planned purpose contributions. */
@@ -110,6 +125,7 @@ export interface MonthlyPlanInput {
 
 export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
   const now = input.now ?? new Date();
+  const key = monthKey(now);
 
   const costs: MonthlyCostLine[] = [];
   for (const commitment of input.commitments) {
@@ -121,6 +137,8 @@ export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
       amountMinor,
       source: "commitment",
       detail: COMMITMENT_CADENCE_DETAIL[commitment.cadence],
+      sourceId: commitment.id,
+      paid: (commitment.paidMonths ?? []).includes(key),
     });
   }
   for (const rule of input.recurring) {
@@ -132,9 +150,11 @@ export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
       amountMinor,
       source: "recurring",
       detail: "Despesa recorrente",
+      sourceId: rule.id,
+      paid: (rule.paidMonths ?? []).includes(key),
     });
   }
-  costs.sort((a, b) => b.amountMinor - a.amountMinor);
+  costs.sort((a, b) => Number(a.paid) - Number(b.paid) || b.amountMinor - a.amountMinor);
 
   const purposes: PurposePlanLine[] = input.purposes
     .filter((purpose) => !purpose.archived)
@@ -170,6 +190,9 @@ export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
   return {
     costs,
     costsTotalMinor,
+    monthKey: key,
+    costsPaidMinor: costs.filter((l) => l.paid).reduce((sum, l) => sum + l.amountMinor, 0),
+    costsUnpaidMinor: costs.filter((l) => !l.paid).reduce((sum, l) => sum + l.amountMinor, 0),
     purposes,
     purposesTotalMinor,
     outflowMinor,
