@@ -11,7 +11,7 @@ import { useLedger } from "@/hooks/use-ledger";
 import { usePersonal } from "@/hooks/use-personal";
 import { useSetup } from "@/hooks/use-setup";
 import { financialPosition } from "@/lib/finance/position";
-import { buildMonthlyPlan } from "@/lib/planning/engine";
+import { buildMonthlyPlan, type MonthlyCostLine } from "@/lib/planning/engine";
 
 export const Route = createFileRoute("/app/planning")({
   head: () => ({
@@ -32,8 +32,8 @@ export const Route = createFileRoute("/app/planning")({
 
 function PlanningPage() {
   const { setup, update } = useSetup();
-  const { ledger, snapshot } = useLedger();
-  const { state } = usePersonal();
+  const { ledger, snapshot, upsertRecurring } = useLedger();
+  const { state, updateCommitment } = usePersonal();
   const [editing, setEditing] = useState<{ id: string; name: string } | null>(null);
   const [draftMinor, setDraftMinor] = useState(0);
 
