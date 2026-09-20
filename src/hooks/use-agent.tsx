@@ -364,7 +364,7 @@ export function AgentProvider({ children }: { children: ReactNode }) {
         ),
       }));
     },
-    [addTransaction, commit, setup.ruleItems, state.conversations],
+    [addTransaction, commit, setup, updateSetup, state.conversations],
   );
 
   /**
@@ -580,6 +580,7 @@ function normaliseAction(raw: {
   categoryId?: string | null;
   accountId?: string | null;
   bucketId?: string | null;
+  bucketName?: string | null;
   fromAccountId?: string | null;
   toAccountId?: string | null;
   fromBucketId?: string | null;
@@ -594,6 +595,7 @@ function normaliseAction(raw: {
     ...(clean(raw.categoryId) ? { categoryId: raw.categoryId as string } : {}),
     ...(clean(raw.accountId) ? { accountId: raw.accountId as string } : {}),
     ...(clean(raw.bucketId) ? { bucketId: raw.bucketId as string } : {}),
+    ...(clean(raw.bucketName) ? { bucketName: raw.bucketName as string } : {}),
     ...(clean(raw.fromAccountId) ? { fromAccountId: raw.fromAccountId as string } : {}),
     ...(clean(raw.toAccountId) ? { toAccountId: raw.toAccountId as string } : {}),
     ...(clean(raw.fromBucketId) ? { fromBucketId: raw.fromBucketId as string } : {}),
