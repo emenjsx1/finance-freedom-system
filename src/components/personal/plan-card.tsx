@@ -63,7 +63,14 @@ export function PlanCard({ plan, savedMinor }: { plan: Plan; savedMinor: number 
           </p>
         </div>
       ) : plan.financial ? (
-        <p className="type-meta mt-4">Sem valor definido.</p>
+        savedMinor > 0 ? (
+          <p className="type-secondary mt-4">
+            <Money minor={savedMinor} options={{ compactDecimals: true }} />
+            <span className="text-muted-foreground"> guardado · sem meta definida</span>
+          </p>
+        ) : (
+          <p className="type-meta mt-4">Sem meta definida.</p>
+        )
       ) : plan.milestones.length ? (
         <p className="type-meta mt-4">
           {plan.milestones.filter((m) => m.done).length} de {plan.milestones.length} passos concluídos
