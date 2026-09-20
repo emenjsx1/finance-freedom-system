@@ -53,6 +53,12 @@ export type PlanningAlert = "none" | "watch" | "zero";
 export interface MonthlyPlan {
   costs: MonthlyCostLine[];
   costsTotalMinor: number;
+  /** Month being shown, as "YYYY-MM". */
+  monthKey: string;
+  /** Costs already marked as paid this month. */
+  costsPaidMinor: number;
+  /** Costs still to pay this month. */
+  costsUnpaidMinor: number;
   purposes: PurposePlanLine[];
   purposesTotalMinor: number;
   /** Costs + planned purpose contributions. */
