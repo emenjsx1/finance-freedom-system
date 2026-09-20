@@ -83,12 +83,12 @@ export function TransactionLauncherProvider({ children }: { children: ReactNode 
             <span className="type-meta">Algo que queres construir</span>
           </Link>
           <Link
-            to="/app/commitments"
+            to="/app/planning"
             onClick={() => setQuickOpen(false)}
             className="list-row justify-between"
           >
-            <span>Adicionar compromisso</span>
-            <span className="type-meta">Renda, internet, propinas</span>
+            <span>Adicionar gasto mensal</span>
+            <span className="type-meta">Renda, internet, escola</span>
           </Link>
           <Link
             to="/app/reminders"
