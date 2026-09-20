@@ -190,6 +190,9 @@ export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
   return {
     costs,
     costsTotalMinor,
+    monthKey: key,
+    costsPaidMinor: costs.filter((l) => l.paid).reduce((sum, l) => sum + l.amountMinor, 0),
+    costsUnpaidMinor: costs.filter((l) => !l.paid).reduce((sum, l) => sum + l.amountMinor, 0),
     purposes,
     purposesTotalMinor,
     outflowMinor,
