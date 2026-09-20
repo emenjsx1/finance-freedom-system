@@ -51,6 +51,24 @@ function PlanningPage() {
     [state.commitments, ledger.recurring, setup.ruleItems, snapshot.bucketBalances, position.availableMinor],
   );
 
+  const monthLabel = new Date().toLocaleDateString("pt-PT", { month: "long", year: "numeric" });
+
+  function togglePaid(cost: MonthlyCostLine) {
+    const key = plan.monthKey;
+    const next = (list: string[] | undefined) =>
+      cost.paid ? (list ?? []).filter((m) => m !== key) : [...(list ?? []), key];
+
+    if (cost.source === "commitment") {
+      const commitment = state.commitments.find((c) => c.id === cost.sourceId);
+      if (!commitment) return;
+      updateCommitment(commitment.id, { paidMonths: next(commitment.paidMonths) });
+      return;
+    }
+    const rule = ledger.recurring.find((r) => r.id === cost.sourceId);
+    if (!rule) return;
+    upsertRecurring({ ...rule, paidMonths: next(rule.paidMonths) });
+  }
+
   function savePlanned() {
     if (!editing) return;
     const id = editing.id;
