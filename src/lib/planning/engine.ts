@@ -119,6 +119,7 @@ export interface MonthlyPlanInput {
 
 export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
   const now = input.now ?? new Date();
+  const key = monthKey(now);
 
   const costs: MonthlyCostLine[] = [];
   for (const commitment of input.commitments) {
@@ -130,6 +131,8 @@ export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
       amountMinor,
       source: "commitment",
       detail: COMMITMENT_CADENCE_DETAIL[commitment.cadence],
+      sourceId: commitment.id,
+      paid: (commitment.paidMonths ?? []).includes(key),
     });
   }
   for (const rule of input.recurring) {
@@ -141,9 +144,11 @@ export function buildMonthlyPlan(input: MonthlyPlanInput): MonthlyPlan {
       amountMinor,
       source: "recurring",
       detail: "Despesa recorrente",
+      sourceId: rule.id,
+      paid: (rule.paidMonths ?? []).includes(key),
     });
   }
-  costs.sort((a, b) => b.amountMinor - a.amountMinor);
+  costs.sort((a, b) => Number(a.paid) - Number(b.paid) || b.amountMinor - a.amountMinor);
 
   const purposes: PurposePlanLine[] = input.purposes
     .filter((purpose) => !purpose.archived)
