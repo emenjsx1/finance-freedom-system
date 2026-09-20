@@ -23,6 +23,8 @@ import {
   type PreparedPersonalAction,
 } from "@/lib/agent/types";
 import { previewAllocation } from "@/lib/finance/engine";
+import { upsertWallet } from "@/lib/finance/setup-ops";
+import type { AllocationRuleItem } from "@/lib/finance/types";
 import { newId, useLedger } from "@/hooks/use-ledger";
 import { usePrefs } from "@/hooks/use-prefs";
 import { useNotifications } from "@/hooks/use-notifications";
