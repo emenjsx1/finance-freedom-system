@@ -102,6 +102,10 @@ export function TransactionComposer({
   const position = financialPosition(snapshot);
   const purposes = useMemo(() => listPurposes(setup.ruleItems, snapshot), [setup.ruleItems, snapshot]);
   const purposeOptions = purposes.map((p) => ({ value: p.id, label: p.name }));
+  // Only purposes that actually hold money can pay for an expense.
+  const fundedPurposeOptions = purposes
+    .filter((p) => (snapshot.bucketBalances[p.id] ?? 0) > 0)
+    .map((p) => ({ value: p.id, label: p.name }));
 
   // A purpose can be born right here: never send someone to another screen in
   // the middle of putting money aside.
