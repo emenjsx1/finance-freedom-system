@@ -61,7 +61,7 @@ interface AgentContextValue {
 const AgentCtx = createContext<AgentContextValue | null>(null);
 
 export function AgentProvider({ children }: { children: ReactNode }) {
-  const { setup } = useSetup();
+  const { setup, update: updateSetup } = useSetup();
   const { ledger, snapshot, addTransaction } = useLedger();
   const {
     state: personal,
