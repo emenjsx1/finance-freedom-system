@@ -72,6 +72,7 @@ interface PersonalContextValue {
   updateContext: (id: string, patch: Partial<PersonalContextItem>) => void;
   removeContext: (id: string) => void;
   addCommitment: (item: Omit<Commitment, "id" | "createdAt">) => void;
+  updateCommitment: (id: string, patch: Partial<Commitment>) => void;
   removeCommitment: (id: string) => void;
   setPermissions: (patch: Partial<AgentPermissions>) => void;
 
