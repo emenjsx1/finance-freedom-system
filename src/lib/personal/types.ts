@@ -270,6 +270,8 @@ export interface Commitment {
   accountId?: string | undefined;
   /** A commitment only becomes an expense when it is actually paid. */
   active: boolean;
+  /** Months already marked as paid, as "YYYY-MM". Nothing moves money. */
+  paidMonths?: string[] | undefined;
   createdAt: string;
 }
 
