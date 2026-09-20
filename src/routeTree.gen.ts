@@ -25,6 +25,7 @@ import { Route as AppAccountsRouteImport } from './routes/app.accounts'
 import { Route as AppActivityRouteImport } from './routes/app.activity'
 import { Route as AppAgentRouteImport } from './routes/app.agent'
 import { Route as AppAgentSettingsRouteImport } from './routes/app.agent-settings'
+import { Route as AppAllRouteImport } from './routes/app.all'
 import { Route as AppAnalyticsRouteImport } from './routes/app.analytics'
 import { Route as AppAutomationsRouteImport } from './routes/app.automations'
 import { Route as AppCommitmentsRouteImport } from './routes/app.commitments'
@@ -160,6 +161,11 @@ const AppAgentRoute = AppAgentRouteImport.update({
 const AppAgentSettingsRoute = AppAgentSettingsRouteImport.update({
   id: '/agent-settings',
   path: '/agent-settings',
+  getParentRoute: () => AppRoute,
+} as any)
+const AppAllRoute = AppAllRouteImport.update({
+  id: '/all',
+  path: '/all',
   getParentRoute: () => AppRoute,
 } as any)
 const AppAnalyticsRoute = AppAnalyticsRouteImport.update({
@@ -462,6 +468,7 @@ export interface FileRoutesByFullPath {
   '/app/activity': typeof AppActivityRoute
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
+  '/app/all': typeof AppAllRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
   '/app/commitments': typeof AppCommitmentsRoute
@@ -533,6 +540,7 @@ export interface FileRoutesByTo {
   '/terms': typeof TermsRoute
   '/app/activity': typeof AppActivityRoute
   '/app/agent-settings': typeof AppAgentSettingsRoute
+  '/app/all': typeof AppAllRoute
   '/app/automations': typeof AppAutomationsRoute
   '/app/commitments': typeof AppCommitmentsRoute
   '/app/context': typeof AppContextRoute
@@ -602,6 +610,7 @@ export interface FileRoutesById {
   '/app/activity': typeof AppActivityRoute
   '/app/agent': typeof AppAgentRouteWithChildren
   '/app/agent-settings': typeof AppAgentSettingsRoute
+  '/app/all': typeof AppAllRoute
   '/app/analytics': typeof AppAnalyticsRouteWithChildren
   '/app/automations': typeof AppAutomationsRoute
   '/app/commitments': typeof AppCommitmentsRoute
@@ -678,6 +687,7 @@ export interface FileRouteTypes {
     | '/app/activity'
     | '/app/agent'
     | '/app/agent-settings'
+    | '/app/all'
     | '/app/analytics'
     | '/app/automations'
     | '/app/commitments'
@@ -749,6 +759,7 @@ export interface FileRouteTypes {
     | '/terms'
     | '/app/activity'
     | '/app/agent-settings'
+    | '/app/all'
     | '/app/automations'
     | '/app/commitments'
     | '/app/context'
@@ -817,6 +828,7 @@ export interface FileRouteTypes {
     | '/app/activity'
     | '/app/agent'
     | '/app/agent-settings'
+    | '/app/all'
     | '/app/analytics'
     | '/app/automations'
     | '/app/commitments'
@@ -1003,6 +1015,13 @@ declare module '@tanstack/react-router' {
       path: '/agent-settings'
       fullPath: '/app/agent-settings'
       preLoaderRoute: typeof AppAgentSettingsRouteImport
+      parentRoute: typeof AppRoute
+    }
+    '/app/all': {
+      id: '/app/all'
+      path: '/all'
+      fullPath: '/app/all'
+      preLoaderRoute: typeof AppAllRouteImport
       parentRoute: typeof AppRoute
     }
     '/app/analytics': {
@@ -1531,6 +1550,7 @@ interface AppRouteChildren {
   AppActivityRoute: typeof AppActivityRoute
   AppAgentRoute: typeof AppAgentRouteWithChildren
   AppAgentSettingsRoute: typeof AppAgentSettingsRoute
+  AppAllRoute: typeof AppAllRoute
   AppAnalyticsRoute: typeof AppAnalyticsRouteWithChildren
   AppAutomationsRoute: typeof AppAutomationsRoute
   AppCommitmentsRoute: typeof AppCommitmentsRoute
@@ -1571,6 +1591,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppActivityRoute: AppActivityRoute,
   AppAgentRoute: AppAgentRouteWithChildren,
   AppAgentSettingsRoute: AppAgentSettingsRoute,
+  AppAllRoute: AppAllRoute,
   AppAnalyticsRoute: AppAnalyticsRouteWithChildren,
   AppAutomationsRoute: AppAutomationsRoute,
   AppCommitmentsRoute: AppCommitmentsRoute,
