@@ -159,11 +159,45 @@ export function AppShell() {
               <Plus className="size-5" />
             </button>
           </div>
+          <button
+            type="button"
+            onClick={() => setSectionsOpen(true)}
+            className="flex min-w-0 flex-col items-center gap-1 rounded-lg py-1.5 text-muted-foreground transition-colors"
+          >
+            <LayoutGrid className="size-5" />
+            <span className="w-full truncate text-center text-[10.5px] font-medium">Secções</span>
+          </button>
           {mobileRight.map((item) => (
             <BottomLink key={item.to} item={item} active={pathname.startsWith(item.to)} />
           ))}
         </div>
       </nav>
+
+      {/* Every destination, one tap from the bar. Nothing hidden behind search. */}
+      <NativeSheet open={sectionsOpen} onOpenChange={setSectionsOpen} title="Secções">
+        <div className="space-y-6 pb-2">
+          {NAV_GROUPS.map((group) => (
+            <div key={group.title}>
+              <p className="type-section mb-2">{group.title}</p>
+              <div className="list-group">
+                {group.items.map((item) => (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    onClick={() => setSectionsOpen(false)}
+                    className="list-row justify-between"
+                  >
+                    <span className="flex items-center gap-3">
+                      <item.icon className="size-4 text-muted-foreground" />
+                      {item.label}
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </NativeSheet>
 
       {prefs.density === "compact" ? null : null}
     </div>
