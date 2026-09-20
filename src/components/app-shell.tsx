@@ -1,28 +1,6 @@
 import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useEffect, useRef } from "react";
-import {
-  BarChart3,
-  Home,
-  ArrowLeftRight,
-  Plus,
-  LayoutGrid,
-  MessageSquare,
-  Wallet,
-  PieChart,
-  Repeat,
-  Settings,
-  Landmark,
-  Map,
-  Target,
-  Lock,
-  Sliders,
-  User,
-  Bell,
-  Zap,
-  Compass,
-  Sun,
-  ListChecks,
-} from "lucide-react";
+import { Home, Plus, LayoutGrid, MessageSquare, Target, User } from "lucide-react";
 import type { ComponentType } from "react";
 
 import { cn } from "@/lib/utils";
