@@ -34,6 +34,7 @@ export function AppShell() {
   const { openQuickActions, openComposer } = useTransactionLauncher();
   const { setup } = useSetup();
   const { prefs } = usePrefs();
+  const [sectionsOpen, setSectionsOpen] = useState(false);
 
   // Privacy mode hides every monetary value, including screens that format money directly.
   useEffect(() => {
